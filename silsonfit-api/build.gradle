@@ -1,0 +1,65 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.5.13'
+	id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.silsonfit'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	// 운영 상태 확인, 헬스 체크, 메트릭 수집용
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+	// JPA 기반 DB 접근
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+
+	// 인증 / 인가 처리
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+
+	// DTO 요청값 검증 (@Valid, @NotNull 등)
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	// REST API 및 Spring MVC
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	// Swagger/OpenAPI 문서 및 UI 제공
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.16'
+
+	// Lombok 사용
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	// 로컬 개발 또는 테스트용 DB
+	runtimeOnly 'com.h2database:h2'
+
+	// 실제 PostgreSQL 연동용 드라이버
+	runtimeOnly 'org.postgresql:postgresql'
+
+	// 테스트 기본 라이브러리
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+	// Spring Security 관련 테스트 지원
+	testImplementation 'org.springframework.security:spring-security-test'
+
+	// 테스트 코드에서도 Lombok 사용
+	testCompileOnly 'org.projectlombok:lombok'
+	testAnnotationProcessor 'org.projectlombok:lombok'
+
+	// JUnit 플랫폼 실행 지원
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}

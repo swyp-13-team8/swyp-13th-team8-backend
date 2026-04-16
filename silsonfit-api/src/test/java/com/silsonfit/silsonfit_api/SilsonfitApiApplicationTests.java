@@ -1,0 +1,13 @@
+package com.silsonfit.silsonfit_api;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+
+@SpringBootTest
+class SilsonfitApiApplicationTests {
+
+	@Test
+	void contextLoads() {
+	}
+
+}

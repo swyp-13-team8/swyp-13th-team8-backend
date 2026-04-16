@@ -1,4 +1,4 @@
-package com.silsonfit.silsonfit_api.config;
+package com.silsonfit.silsonfit_api.global.config;
 
 
 import org.springframework.context.annotation.Bean;

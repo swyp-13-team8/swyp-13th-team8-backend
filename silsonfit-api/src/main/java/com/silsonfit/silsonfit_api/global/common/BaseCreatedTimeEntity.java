@@ -9,6 +9,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
+/**
+ * 생성 일자만 필요한 엔티티의 공통 시간 필드를 처리하는 클래스
+ */
 @Getter
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)

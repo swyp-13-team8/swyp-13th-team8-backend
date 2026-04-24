@@ -21,5 +21,5 @@ public interface AnalysisHistoryRepository extends JpaRepository<AnalysisHistory
             where a.userId = :userId
             order by a.isFavorite desc, a.createdAt desc
             """)
-    Page<AnalysisHistory> findHistoriesByUserId(@Param("user_id") Long userId, Pageable pageable);
+    Page<AnalysisHistory> findHistoriesByUserId(@Param("userId") Long userId, Pageable pageable);
 }

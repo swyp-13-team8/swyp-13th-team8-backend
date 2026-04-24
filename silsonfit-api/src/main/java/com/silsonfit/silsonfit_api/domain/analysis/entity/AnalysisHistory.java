@@ -1,6 +1,6 @@
 package com.silsonfit.silsonfit_api.domain.analysis.entity;
 
-import com.silsonfit.silsonfit_api.domain.analysis.dto.AnalysisResultDTO;
+import com.silsonfit.silsonfit_api.domain.analysis.vo.AnalysisResult;
 import com.silsonfit.silsonfit_api.global.common.BaseCreatedTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -55,7 +55,7 @@ public class AnalysisHistory extends BaseCreatedTimeEntity {
     // 3. AI 분석 결과
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "ai_summary", columnDefinition = "jsonb")
-    private AnalysisResultDTO aiSummary;
+    private AnalysisResult aiSummary;
 
     // 4. 추가 기능
     @Column(name = "is_favorite", nullable = false)
@@ -66,7 +66,7 @@ public class AnalysisHistory extends BaseCreatedTimeEntity {
     public static AnalysisHistory create(Long userId, String originalFileName, String pdfFileUrl,
                                          String companyName, String productName, String contractType,
                                          String generation, String coverageStructure, String cautionPoint,
-                                         AnalysisResultDTO aiSummary) {
+                                         AnalysisResult aiSummary) {
         return AnalysisHistory.builder()
                 .userId(userId)
                 .originalFileName(originalFileName)

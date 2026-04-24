@@ -1,11 +1,11 @@
-package com.silsonfit.silsonfit_api.domain.analysis.dto;
+package com.silsonfit.silsonfit_api.domain.analysis.vo;
 
 import java.util.List;
 
 /**
  * AI API 의 응답을 받을 수 있는 DTO
  */
-public record AnalysisResultDTO(
+public record AnalysisResult(
         Metadata metadata,
         SummaryContent content
 ) {

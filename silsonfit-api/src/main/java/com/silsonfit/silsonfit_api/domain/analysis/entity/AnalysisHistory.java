@@ -34,22 +34,22 @@ public class AnalysisHistory extends BaseCreatedTimeEntity {
     private String pdfFileUrl; // S3 스토리지 URL
 
     // 2. 보험 관련 정보 스냅샷
-    @Column(name = "company_name")
+    @Column(name = "company_name", nullable = false)
     private String companyName; // 보험사
 
-    @Column(name = "product_name")
+    @Column(name = "product_name", nullable = false)
     private String productName; // 약관 이름
 
-    @Column(name = "contract_type")
+    @Column(name = "contract_type", nullable = false)
     private String contractType; // 계약 유형
 
-    @Column(name = "generation")
+    @Column(name = "generation", nullable = false)
     private String generation; // 보험 세대
 
-    @Column(name = "coverage_structure")
+    @Column(name = "coverage_structure", nullable = false)
     private String coverageStructure; // 보장 구조
 
-    @Column(name = "caution_point")
+    @Column(name = "caution_point", nullable = false)
     private String cautionPoint; // 주의 포인트
 
     // 3. AI 분석 결과

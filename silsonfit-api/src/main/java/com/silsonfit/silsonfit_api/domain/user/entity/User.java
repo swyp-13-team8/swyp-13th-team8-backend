@@ -30,9 +30,19 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false)
     private String name;
 
+    // 이메일 (카카오 선택 동의 항목, 미동의 시 null)
+    @Column
+    private String email;
+
+    // 프로필 이미지 URL (카카오 선택 동의 항목, 미동의 시 null)
+    @Column
+    private String profileImageUrl;
+
     @Builder
-    public User(Long socialId, String name) {
+    public User(Long socialId, String name, String email, String profileImageUrl) {
         this.socialId = socialId;
         this.name = name;
+        this.email = email;
+        this.profileImageUrl = profileImageUrl;
     }
 }

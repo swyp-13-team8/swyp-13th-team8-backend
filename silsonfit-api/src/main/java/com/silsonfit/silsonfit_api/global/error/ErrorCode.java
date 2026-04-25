@@ -19,6 +19,10 @@ public enum ErrorCode {
     // ── Auth ──
     INVALID_TOKEN(401, "유효하지 않은 토큰입니다."),
     EXPIRED_TOKEN(401, "만료된 토큰입니다."),
+    INVALID_KAKAO_TOKEN(401, "유효하지 않은 카카오 토큰입니다."),
+    KAKAO_SERVER_ERROR(502, "카카오 서버와의 통신에 실패했습니다."),
+    REFRESH_TOKEN_NOT_FOUND(401, "리프레시 토큰을 찾을 수 없습니다."),
+    REFRESH_TOKEN_EXPIRED(401, "만료된 리프레시 토큰입니다."),
 
     // ── User ──
     USER_NOT_FOUND(404, "사용자를 찾을 수 없습니다."),

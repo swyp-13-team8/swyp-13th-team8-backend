@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
  * 카카오 로그인과 토큰 재발급 제공
  */
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
 

@@ -3,6 +3,7 @@ package com.silsonfit.silsonfit_api.global.auth;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -13,11 +14,12 @@ import java.util.Base64;
 import java.util.Date;
 
 /**
- * JWT 토큰 생성/파싱/검증을 담당하는 Provider
+ * JWT 토큰 생성/파싱/검증 Provider
  *
- * Access Token: userId를 subject로 하는 JWT
- * Refresh Token: 무작위 바이트를 Base64로 인코딩한 문자열 (DB 조회용)
+ * Access Token: userId를 subject로 포함하는 JWT
+ * Refresh Token: Base64 인코딩 랜덤 문자열 (DB 조회용)
  */
+@Slf4j
 @Component
 public class JwtTokenProvider {
 
@@ -36,9 +38,7 @@ public class JwtTokenProvider {
     }
 
     /**
-     * Access Token을 생성한다.
-     *
-     * @param userId 사용자 ID (subject로 저장)
+     * Access Token 생성
      */
     public String createAccessToken(Long userId) {
         Date now = new Date();
@@ -53,8 +53,7 @@ public class JwtTokenProvider {
     }
 
     /**
-     * Refresh Token을 생성한다 (DB 조회용 랜덤 문자열).
-     * claims를 포함하지 않는다.
+     * Refresh Token 생성 (DB 조회용 랜덤 문자열, claims 미포함)
      */
     public String createRefreshToken() {
         byte[] randomBytes = new byte[32];
@@ -63,27 +62,28 @@ public class JwtTokenProvider {
     }
 
     /**
-     * Access Token에서 userId를 추출한다.
+     * Access Token에서 userId 추출
      */
     public Long getUserId(String token) {
         return Long.valueOf(parseClaims(token).getSubject());
     }
 
     /**
-     * Access Token의 유효성을 검증한다.
-     * 서명 불일치, 만료, 형식 오류 시 false를 반환한다.
+     * Access Token 유효성 검증
+     * 서명 불일치, 만료, 형식 오류 시 false 반환
      */
     public boolean validateToken(String token) {
         try {
             parseClaims(token);
             return true;
         } catch (Exception e) {
+            log.debug("토큰 검증 실패: {}", e.getMessage());
             return false;
         }
     }
 
     /**
-     * Refresh Token의 만료 시각(ms)을 반환한다.
+     * Refresh Token 만료 시각(ms) 반환
      */
     public long getRefreshTokenExpiration() {
         return refreshTokenExpiration;

@@ -13,11 +13,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import jakarta.servlet.http.HttpServletResponse;
 
-/**
- * Spring Security 설정
- *
- * JWT 인증 필터 등록, 세션 STATELESS, 경로별 인증 정책 설정
- */
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {

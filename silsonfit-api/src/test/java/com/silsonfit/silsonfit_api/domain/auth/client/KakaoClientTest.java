@@ -23,8 +23,8 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 /**
  * KakaoClient 통합 테스트
  *
- * MockRestServiceServer로 카카오 API 응답을 스텁한 뒤,
- * RestClient 호출 → JSON 파싱 → KakaoUserInfo 반환 흐름을 검증한다.
+ * MockRestServiceServer로 카카오 API 응답 스텁 후
+ * RestClient 호출 → JSON 파싱 → KakaoUserInfo 반환 흐름 검증
  */
 class KakaoClientTest {
 

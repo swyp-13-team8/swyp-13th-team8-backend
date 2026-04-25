@@ -11,8 +11,8 @@ import java.util.Collections;
 /**
  * SecurityContext에 저장되는 인증 사용자 정보
  *
- * Access Token의 subject(userId)를 바탕으로 구성된다.
- * DB를 매번 조회하지 않고 토큰 자체의 정보만으로 인증을 처리한다.
+ * Access Token의 subject(userId) 기반 구성
+ * DB 조회 없이 토큰 정보만으로 인증 처리
  */
 @Getter
 @RequiredArgsConstructor

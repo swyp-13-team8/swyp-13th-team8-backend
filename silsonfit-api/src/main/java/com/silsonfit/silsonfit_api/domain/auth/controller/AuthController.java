@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * 인증 관련 API
  *
- * 카카오 로그인과 토큰 재발급을 제공한다.
+ * 카카오 로그인과 토큰 재발급 제공
  */
 @RestController
 @RequestMapping("/auth")
@@ -26,10 +26,10 @@ public class AuthController {
     private final AuthService authService;
 
     /**
-     * 카카오 로그인.
+     * 카카오 로그인
      *
-     * 클라이언트가 카카오 SDK로 받은 Access Token을 전달하면,
-     * 서비스의 Access/Refresh Token을 발급해 반환한다.
+     * 클라이언트가 카카오 SDK로 받은 Access Token 전달 시
+     * 서비스의 Access/Refresh Token 발급
      */
     @PostMapping("/login")
     public ApiResponse<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
@@ -37,7 +37,7 @@ public class AuthController {
     }
 
     /**
-     * 토큰 재발급 (Refresh Token Rotation).
+     * 토큰 재발급 (Refresh Token Rotation)
      */
     @PostMapping("/reissue")
     public ApiResponse<TokenReissueResponse> reissue(

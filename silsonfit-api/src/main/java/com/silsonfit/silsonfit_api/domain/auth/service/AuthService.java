@@ -23,7 +23,7 @@ import java.util.Optional;
 /**
  * 인증 관련 비즈니스 로직
  *
- * 카카오 로그인, 토큰 재발급을 처리한다.
+ * 카카오 로그인, 토큰 재발급 처리
  */
 @Service
 @RequiredArgsConstructor
@@ -35,13 +35,10 @@ public class AuthService {
     private final JwtTokenProvider jwtTokenProvider;
 
     /**
-     * 카카오 로그인 처리.
+     * 카카오 로그인 처리
      *
-     * 최초 로그인 시 사용자를 생성하고, Access/Refresh Token을 발급한다.
-     * 기존 사용자는 Refresh Token만 Rotation 한다.
-     *
-     * @param request 카카오 Access Token
-     * @return 서비스 토큰 및 신규 가입 여부
+     * 최초 로그인 시 사용자 생성 + Access/Refresh Token 발급
+     * 기존 사용자는 Refresh Token만 Rotation
      */
     @Transactional
     public LoginResponse login(LoginRequest request) {
@@ -72,13 +69,10 @@ public class AuthService {
     }
 
     /**
-     * Access Token 재발급 (Refresh Token Rotation).
+     * Access Token 재발급 (Refresh Token Rotation)
      *
-     * 기존 Refresh Token을 검증한 뒤, Access/Refresh Token 모두 새로 발급한다.
-     * 기존 Refresh Token은 DB 갱신을 통해 자연스럽게 무효화된다.
-     *
-     * @param request 재발급에 사용할 Refresh Token
-     * @return 새로 발급된 Access/Refresh Token
+     * 기존 Refresh Token 검증 후 Access/Refresh Token 모두 새로 발급
+     * 기존 Refresh Token은 DB 갱신으로 무효화
      */
     @Transactional
     public TokenReissueResponse reissue(TokenReissueRequest request) {
@@ -104,7 +98,7 @@ public class AuthService {
     }
 
     /**
-     * Refresh Token을 저장하거나, 기존 토큰이 있으면 Rotation 한다.
+     * Refresh Token 저장 또는 기존 토큰 Rotation
      */
     private void saveOrUpdateRefreshToken(User user, String token, LocalDateTime expiresAt) {
         refreshTokenRepository.findByUser(user).ifPresentOrElse(
@@ -120,7 +114,7 @@ public class AuthService {
     }
 
     /**
-     * 현재 시각을 기준으로 Refresh Token의 만료 시각을 계산한다.
+     * 현재 시각 기준 Refresh Token 만료 시각 계산
      */
     private LocalDateTime calculateRefreshExpiresAt() {
         return LocalDateTime.now()

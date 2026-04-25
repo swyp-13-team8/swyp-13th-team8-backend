@@ -21,8 +21,8 @@ import java.time.LocalDateTime;
 /**
  * 리프레시 토큰 엔티티
  *
- * 로그인 시 발급되며 Access Token 재발급에 사용된다.
- * 사용자당 1개만 유지되고 재발급 시 Rotation 된다.
+ * 로그인 시 발급되며 Access Token 재발급에 사용
+ * 사용자당 1개만 유지, 재발급 시 Rotation
  */
 @Entity
 @Table(name = "refresh_tokens")
@@ -55,10 +55,7 @@ public class RefreshToken extends BaseCreatedTimeEntity {
     }
 
     /**
-     * 토큰 값과 만료 시각을 갱신한다 (Rotation).
-     *
-     * @param token      새 토큰 값
-     * @param expiresAt  새 만료 시각
+     * 토큰 값과 만료 시각 갱신 (Rotation)
      */
     public void updateToken(String token, LocalDateTime expiresAt) {
         this.token = token;
@@ -66,7 +63,7 @@ public class RefreshToken extends BaseCreatedTimeEntity {
     }
 
     /**
-     * 토큰이 만료되었는지 확인한다.
+     * 토큰 만료 여부 확인
      */
     public boolean isExpired() {
         return expiresAt.isBefore(LocalDateTime.now());

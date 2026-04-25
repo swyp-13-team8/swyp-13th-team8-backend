@@ -10,11 +10,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
 /**
- * 카카오 API와의 통신을 담당하는 Client
+ * 카카오 API 통신 Client
  *
- * 카카오 Access Token을 이용해 사용자 정보를 조회한다.
- * 토큰이 유효하지 않으면 INVALID_KAKAO_TOKEN,
- * 그 외 통신/응답 오류는 KAKAO_SERVER_ERROR로 변환한다.
+ * 카카오 Access Token으로 사용자 정보 조회
+ * 토큰 무효 시 INVALID_KAKAO_TOKEN, 그 외 오류는 KAKAO_SERVER_ERROR로 변환
  */
 @Component
 public class KakaoClient {
@@ -31,11 +30,7 @@ public class KakaoClient {
     }
 
     /**
-     * 카카오 Access Token으로 사용자 정보를 조회한다.
-     *
-     * @param kakaoAccessToken 카카오 Access Token
-     * @return 카카오 사용자 정보
-     * @throws BusinessException 토큰 무효(401) 또는 카카오 서버 오류 시
+     * 카카오 Access Token으로 사용자 정보 조회
      */
     public KakaoUserInfo getUserInfo(String kakaoAccessToken) {
         KakaoResponse response;
@@ -63,7 +58,7 @@ public class KakaoClient {
             throw new BusinessException(ErrorCode.KAKAO_SERVER_ERROR);
         }
 
-        // 카카오 응답은 선택 동의 항목이 null일 수 있어 방어적으로 꺼낸다
+        // 카카오 선택 동의 항목은 null일 수 있으므로 null 체크 후 추출
         KakaoAccount account = response.kakaoAccount();
         Profile profile = (account != null) ? account.profile() : null;
 
@@ -76,10 +71,10 @@ public class KakaoClient {
     }
 
     /**
-     * KakaoClient가 외부로 반환하는 사용자 정보
+     * KakaoClient 외부 반환 사용자 정보
      *
-     * name 필드는 카카오의 profile.nickname 값을 매핑한 것이다.
-     * 서비스 도메인(User 엔티티)의 name과 의미를 일치시키기 위해 외부 명칭은 name으로 통일한다.
+     * name 필드는 카카오 profile.nickname 매핑
+     * User 엔티티의 name과 통일
      */
     public record KakaoUserInfo(
             Long id,

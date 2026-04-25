@@ -11,10 +11,7 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     /**
-     * 카카오 소셜 ID로 사용자를 조회한다.
-     *
-     * @param socialId 카카오 고유 ID
-     * @return 사용자
+     * 카카오 소셜 ID로 사용자 조회
      */
     Optional<User> findBySocialId(Long socialId);
 }

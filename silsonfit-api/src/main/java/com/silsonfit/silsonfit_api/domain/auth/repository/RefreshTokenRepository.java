@@ -9,12 +9,12 @@ import java.util.Optional;
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long> {
 
     /**
-     * 토큰 값으로 RefreshToken을 조회한다.
+     * 토큰 값으로 RefreshToken 조회
      */
     Optional<RefreshToken> findByToken(String token);
 
     /**
-     * 사용자로 RefreshToken을 조회한다 (사용자당 1개).
+     * 사용자로 RefreshToken 조회 (사용자당 1개)
      */
     Optional<RefreshToken> findByUser(User user);
 }

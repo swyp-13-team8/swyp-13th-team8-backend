@@ -34,8 +34,8 @@ import static org.mockito.Mockito.verify;
 /**
  * AuthService 단위 테스트
  *
- * Mockito로 의존성을 격리한 순수 단위 테스트.
- * 비즈니스 로직(신규/기존 사용자 분기, Refresh Token Rotation, 예외 분기)을 검증한다.
+ * Mockito로 의존성 격리한 순수 단위 테스트
+ * 비즈니스 로직(신규/기존 사용자 분기, Refresh Token Rotation, 예외 분기) 검증
  */
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {

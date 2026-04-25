@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 /**
  * 사용자 엔티티
  *
- * 카카오 소셜 로그인 기반 회원 정보를 관리한다.
+ * 카카오 소셜 로그인 기반 회원 정보 관리
  */
 @Entity
 @Table(name = "users")

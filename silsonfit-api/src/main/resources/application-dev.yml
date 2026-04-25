@@ -22,6 +22,10 @@ spring:
       hibernate:
         format_sql: true
 
+jwt:
+  # 로컬 개발용 공유 secret. HS256 기준 최소 32자 필요.
+  secret: silsonfit-dev-secret-for-local-development-only-32chars
+
 management:
   endpoint:
     health:

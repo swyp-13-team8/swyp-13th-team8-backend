@@ -8,6 +8,13 @@ spring:
   profiles:
     active: dev
 
+jwt:
+  access-token-expiration: 3600000      # 60분
+  refresh-token-expiration: 1209600000  # 14일
+
+kakao:
+  user-info-uri: https://kapi.kakao.com/v2/user/me
+
 management:
   endpoints:
     web:

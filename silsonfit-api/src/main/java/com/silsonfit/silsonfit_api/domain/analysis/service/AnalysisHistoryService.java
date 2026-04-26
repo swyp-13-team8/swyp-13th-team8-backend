@@ -45,7 +45,7 @@ public class AnalysisHistoryService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.HISTORY_NOT_FOUND));
 
         if (!history.getUserId().equals(userId)) {
-            log.warn("이력 삭제 권한이 없습니다. - userId={}, historyId={}", userId, historyId);
+            log.warn("이력 조회 권한이 없습니다. - userId={}, historyId={}", userId, historyId);
             throw new BusinessException(ErrorCode.HISTORY_ACCESS_DENIED);
         }
 

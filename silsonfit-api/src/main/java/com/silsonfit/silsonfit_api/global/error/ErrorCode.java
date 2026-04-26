@@ -28,6 +28,10 @@ public enum ErrorCode {
     USER_NOT_FOUND(404, "사용자를 찾을 수 없습니다."),
     DEACTIVATED_USER(403, "탈퇴한 사용자입니다."),
 
+    // ── Analysis ──
+    HISTORY_NOT_FOUND(404, "해당 분석 이력을 찾을 수 없습니다."),
+    HISTORY_ACCESS_DENIED(403, "해당 분석 이력에 대한 접근 권한이 없습니다."),
+
     // ── Insurance ──
 
     // ── Calculator ──

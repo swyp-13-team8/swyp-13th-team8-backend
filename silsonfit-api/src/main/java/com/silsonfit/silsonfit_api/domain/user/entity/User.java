@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 /**
  * 사용자 엔티티
  *
@@ -38,11 +40,22 @@ public class User extends BaseTimeEntity {
     @Column
     private String profileImageUrl;
 
+    // 약관 동의 시각 (null이면 미동의)
+    @Column
+    private LocalDateTime termsAgreedAt;
+
     @Builder
     public User(Long socialId, String name, String email, String profileImageUrl) {
         this.socialId = socialId;
         this.name = name;
         this.email = email;
         this.profileImageUrl = profileImageUrl;
+    }
+
+    /**
+     * 약관 동의 처리
+     */
+    public void agreeTerms() {
+        this.termsAgreedAt = LocalDateTime.now();
     }
 }

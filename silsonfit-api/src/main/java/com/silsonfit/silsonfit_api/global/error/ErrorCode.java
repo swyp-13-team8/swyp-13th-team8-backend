@@ -23,6 +23,7 @@ public enum ErrorCode {
     KAKAO_SERVER_ERROR(502, "카카오 서버와의 통신에 실패했습니다."),
     REFRESH_TOKEN_NOT_FOUND(401, "리프레시 토큰을 찾을 수 없습니다."),
     REFRESH_TOKEN_EXPIRED(401, "만료된 리프레시 토큰입니다."),
+    ALREADY_AGREED_TERMS(409, "이미 약관에 동의한 사용자입니다."),
 
     // ── User ──
     USER_NOT_FOUND(404, "사용자를 찾을 수 없습니다."),

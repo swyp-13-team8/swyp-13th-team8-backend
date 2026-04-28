@@ -23,7 +23,7 @@ import java.util.Optional;
 /**
  * 인증 관련 비즈니스 로직
  *
- * 카카오 로그인, 토큰 재발급 처리
+ * 카카오 로그인, 토큰 재발급, 약관 동의 처리
  */
 @Service
 @RequiredArgsConstructor
@@ -95,6 +95,23 @@ public class AuthService {
         refreshToken.updateToken(newRefreshTokenValue, expiresAt);
 
         return new TokenReissueResponse(newAccessToken, newRefreshTokenValue);
+    }
+
+    /**
+     * 약관 동의 처리
+     *
+     * 신규 회원의 약관 동의를 저장하여 가입 완료 처리
+     */
+    @Transactional
+    public void agreeTerms(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+
+        if (user.getTermsAgreedAt() != null) {
+            throw new BusinessException(ErrorCode.ALREADY_AGREED_TERMS);
+        }
+
+        user.agreeTerms();
     }
 
     /**

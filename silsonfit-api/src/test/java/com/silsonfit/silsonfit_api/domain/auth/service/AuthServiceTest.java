@@ -187,6 +187,48 @@ class AuthServiceTest {
                 .isEqualTo(ErrorCode.REFRESH_TOKEN_EXPIRED);
     }
 
+    // ──────────── agreeTerms ────────────
+
+    @Test
+    @DisplayName("약관 동의 성공 시 termsAgreedAt이 설정된다")
+    void agreeTerms_success() {
+        // given
+        User user = userWithId(1L, 111L);
+        given(userRepository.findById(1L)).willReturn(Optional.of(user));
+
+        // when
+        authService.agreeTerms(1L);
+
+        // then
+        assertThat(user.getTermsAgreedAt()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 사용자의 약관 동의 시 USER_NOT_FOUND 예외")
+    void agreeTerms_userNotFound() {
+        given(userRepository.findById(999L)).willReturn(Optional.empty());
+
+        assertThatThrownBy(() -> authService.agreeTerms(999L))
+                .isInstanceOf(BusinessException.class)
+                .extracting(e -> ((BusinessException) e).getErrorCode())
+                .isEqualTo(ErrorCode.USER_NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("이미 약관 동의한 사용자가 다시 요청 시 ALREADY_AGREED_TERMS 예외")
+    void agreeTerms_alreadyAgreed() {
+        // given
+        User user = userWithId(1L, 111L);
+        user.agreeTerms(); // 이미 동의
+        given(userRepository.findById(1L)).willReturn(Optional.of(user));
+
+        // when & then
+        assertThatThrownBy(() -> authService.agreeTerms(1L))
+                .isInstanceOf(BusinessException.class)
+                .extracting(e -> ((BusinessException) e).getErrorCode())
+                .isEqualTo(ErrorCode.ALREADY_AGREED_TERMS);
+    }
+
     // ──────────── helper ────────────
 
     private User userWithId(Long id, Long socialId) {

@@ -23,7 +23,7 @@ import java.util.Optional;
 /**
  * 인증 관련 비즈니스 로직
  *
- * 카카오 로그인, 토큰 재발급, 약관 동의 처리
+ * 카카오 로그인, 토큰 재발급, 약관 동의, 로그아웃 처리
  */
 @Service
 @RequiredArgsConstructor
@@ -112,6 +112,19 @@ public class AuthService {
         }
 
         user.agreeTerms();
+    }
+
+    /**
+     * 로그아웃 처리
+     *
+     * Refresh Token을 DB에서 삭제하여 토큰 재발급 차단
+     */
+    @Transactional
+    public void logout(String refreshToken) {
+        RefreshToken token = refreshTokenRepository.findByToken(refreshToken)
+                .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_REFRESH_TOKEN));
+
+        refreshTokenRepository.delete(token);
     }
 
     /**

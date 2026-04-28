@@ -229,6 +229,42 @@ class AuthServiceTest {
                 .isEqualTo(ErrorCode.ALREADY_AGREED_TERMS);
     }
 
+    // ──────────── logout ────────────
+
+    @Test
+    @DisplayName("로그아웃 성공 시 Refresh Token이 삭제된다")
+    void logout_success() {
+        // given
+        User user = userWithId(1L, 111L);
+        RefreshToken stored = RefreshToken.builder()
+                .user(user)
+                .token("valid-refresh")
+                .expiresAt(LocalDateTime.now().plusDays(7))
+                .build();
+        given(refreshTokenRepository.findByToken("valid-refresh"))
+                .willReturn(Optional.of(stored));
+
+        // when
+        authService.logout("valid-refresh");
+
+        // then
+        verify(refreshTokenRepository).delete(stored);
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 Refresh Token으로 로그아웃 시 INVALID_REFRESH_TOKEN 예외")
+    void logout_invalidToken() {
+        // given
+        given(refreshTokenRepository.findByToken("invalid-token"))
+                .willReturn(Optional.empty());
+
+        // when & then
+        assertThatThrownBy(() -> authService.logout("invalid-token"))
+                .isInstanceOf(BusinessException.class)
+                .extracting(e -> ((BusinessException) e).getErrorCode())
+                .isEqualTo(ErrorCode.INVALID_REFRESH_TOKEN);
+    }
+
     // ──────────── helper ────────────
 
     private User userWithId(Long id, Long socialId) {

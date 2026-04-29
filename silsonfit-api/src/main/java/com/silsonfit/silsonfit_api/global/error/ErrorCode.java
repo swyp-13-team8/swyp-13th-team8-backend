@@ -29,6 +29,7 @@ public enum ErrorCode {
     // ── User ──
     USER_NOT_FOUND(404, "사용자를 찾을 수 없습니다."),
     DEACTIVATED_USER(403, "탈퇴한 사용자입니다."),
+    INVALID_NICKNAME(400, "사용할 수 없는 닉네임입니다."),
 
     // ── Analysis ──
     HISTORY_NOT_FOUND(404, "해당 분석 이력을 찾을 수 없습니다."),

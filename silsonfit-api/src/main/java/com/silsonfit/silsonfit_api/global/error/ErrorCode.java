@@ -38,6 +38,7 @@ public enum ErrorCode {
     // ── Insurance ──
 
     // ── Calculator ──
+    COVERAGE_RULE_NOT_FOUND(404, "보장 룰을 찾을 수 없습니다."),
 
     ;
 

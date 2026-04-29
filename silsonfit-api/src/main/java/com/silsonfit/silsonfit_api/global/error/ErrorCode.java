@@ -39,6 +39,7 @@ public enum ErrorCode {
 
     // ── Calculator ──
     COVERAGE_RULE_NOT_FOUND(404, "보장 룰을 찾을 수 없습니다."),
+    EDI_CODE_NOT_FOUND(404, "EDI 코드를 찾을 수 없습니다."),
 
     ;
 

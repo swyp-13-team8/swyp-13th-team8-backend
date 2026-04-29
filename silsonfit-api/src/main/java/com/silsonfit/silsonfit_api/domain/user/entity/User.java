@@ -58,4 +58,11 @@ public class User extends BaseTimeEntity {
     public void agreeTerms() {
         this.termsAgreedAt = LocalDateTime.now();
     }
+
+    /**
+     * 닉네임 수정
+     */
+    public void updateName(String name) {
+        this.name = name;
+    }
 }

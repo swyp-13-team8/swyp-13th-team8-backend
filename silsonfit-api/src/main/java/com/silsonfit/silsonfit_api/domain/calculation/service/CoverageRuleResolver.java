@@ -42,6 +42,10 @@ public class CoverageRuleResolver {
     ) {
         if (StringUtils.hasText(ediCode)) {
             return coverageRuleRepository.findByInsuranceIdAndEdiCode(insuranceId, ediCode.trim())
+                    // TODO(calculation): EDI 기반 CoverageRule이 없으면 EdiCodeResolver로 EDI 정보를 조회한다.
+                    //  - DB에 EDI 코드가 없으면 공공 EDI API client로 조회 후 edi_code에 저장한다.
+                    //  - 보험 ID로 보험 세대/약관 정보를 조회해 CoverageRuleGenerationContext를 만든다.
+                    //  - CoverageRuleGenerator로 EDI + 보험 정책 기반 CoverageRule을 생성하고 저장한 뒤 반환한다.
                     .orElseGet(() -> resolveByTreatmentInfo(
                             insuranceId,
                             visitType,

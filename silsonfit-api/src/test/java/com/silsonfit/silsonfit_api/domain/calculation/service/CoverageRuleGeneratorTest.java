@@ -50,8 +50,10 @@ class CoverageRuleGeneratorTest {
         assertThat(coverageRule.getDeductibleAmount()).isEqualTo(10000);
         assertThat(coverageRule.getLimitAmount()).isEqualTo(100000);
         assertThat(coverageRule.getIsCovered()).isTrue();
-        assertThat(coverageRule.getBasis())
-                .contains("4세대", "EDI001", "MRI 검사", "MRI", "급여", "진료수가", "100000", "123.45", "2026-01-01", "보장");
+        assertThat(coverageRule.getBasis()).hasSize(2);
+        assertThat(coverageRule.getBasis().get(0)).contains("4세대", "보장");
+        assertThat(coverageRule.getBasis().get(1))
+                .contains("EDI001", "MRI 검사", "MRI", "급여", "진료수가", "100000", "123.45", "2026-01-01");
     }
 
     @Test
@@ -68,7 +70,8 @@ class CoverageRuleGeneratorTest {
         assertThat(coverageRule.getCoverageRate()).isEqualTo(70);
         assertThat(coverageRule.getDeductibleAmount()).isEqualTo(30000);
         assertThat(coverageRule.getLimitAmount()).isEqualTo(100000);
-        assertThat(coverageRule.getBasis()).contains("EDI002", "도수치료", "도수", "비급여", "진료수가");
+        assertThat(coverageRule.getBasis()).hasSize(2);
+        assertThat(coverageRule.getBasis().get(1)).contains("EDI002", "도수치료", "도수", "비급여", "진료수가");
     }
 
     @Test
@@ -96,7 +99,9 @@ class CoverageRuleGeneratorTest {
         assertThat(coverageRule.getIsCovered()).isFalse();
         assertThat(coverageRule.getCoverageRate()).isZero();
         assertThat(coverageRule.getDeductibleAmount()).isZero();
-        assertThat(coverageRule.getBasis()).contains("건강검진 검사", "비보장");
+        assertThat(coverageRule.getBasis()).hasSize(2);
+        assertThat(coverageRule.getBasis().get(0)).contains("비보장");
+        assertThat(coverageRule.getBasis().get(1)).contains("건강검진 검사");
     }
 
     @Test

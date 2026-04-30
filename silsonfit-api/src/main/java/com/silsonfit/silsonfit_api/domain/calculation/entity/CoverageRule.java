@@ -6,6 +6,8 @@ import com.silsonfit.silsonfit_api.domain.calculation.enums.VisitType;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 /**
  * 보험별 보장 계산 룰 엔티티
  *
@@ -62,9 +64,10 @@ public class CoverageRule {
     @Column(name = "limit_amount")
     private Integer limitAmount;
 
-    /** 계산 근거 설명 */
+    /** 계산 근거 목록 */
+    @Convert(converter = StringListConverter.class)
     @Column(name = "basis", nullable = false)
-    private String basis;
+    private List<String> basis;
 
     /** 면책 또는 주의사항 */
     @Column(name = "disclaimer")
@@ -83,7 +86,7 @@ public class CoverageRule {
             Integer coverageRate,
             Integer deductibleAmount,
             Integer limitAmount,
-            String basis,
+            List<String> basis,
             String disclaimer
     ) {
         return CoverageRule.builder()

@@ -11,6 +11,8 @@ import com.silsonfit.silsonfit_api.domain.calculation.vo.CoverageRuleContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 /**
  * 보장 룰 생성기
  *
@@ -104,23 +106,28 @@ public class CoverageRuleGenerator {
     /**
      * EDI 코드 원본 응답 필드를 계산 근거로 생성
      */
-    private String createBasis(
+    private List<String> createBasis(
             CoverageRuleContext context,
             EdiCode ediCode,
             boolean isCovered
     ) {
-        return String.format(
-                "보험세대 %s, EDI 코드 %s, 한글명 %s, 수가분류번호 %s, 급여구분 %s, 수가유형 %s, 단가 %s원, 상대가치점수 %s, 적용시작일자 %s, 보장여부 %s 기준 보장 룰",
-                context.generation().getDescription(),
-                ediCode.getCode(),
-                ediCode.getTreatmentName(),
-                formatNullable(ediCode.getFeeDivisionNumber()),
-                ediCode.getPayType().getDescription(),
-                ediCode.getFeeType().getDescription(),
-                formatNullable(ediCode.getUnitPrice()),
-                formatNullable(ediCode.getRelativeValuePoint()),
-                formatNullable(ediCode.getEffectiveStartDate()),
-                isCovered ? "보장" : "비보장"
+        return List.of(
+                String.format(
+                        "보험세대 %s, 보장여부 %s 기준 보장 룰",
+                        context.generation().getDescription(),
+                        isCovered ? "보장" : "비보장"
+                ),
+                String.format(
+                        "EDI 코드 %s, 한글명 %s, 수가분류번호 %s, 급여구분 %s, 수가유형 %s, 단가 %s원, 상대가치점수 %s, 적용시작일자 %s 기준",
+                        ediCode.getCode(),
+                        ediCode.getTreatmentName(),
+                        formatNullable(ediCode.getFeeDivisionNumber()),
+                        ediCode.getPayType().getDescription(),
+                        ediCode.getFeeType().getDescription(),
+                        formatNullable(ediCode.getUnitPrice()),
+                        formatNullable(ediCode.getRelativeValuePoint()),
+                        formatNullable(ediCode.getEffectiveStartDate())
+                )
         );
     }
 

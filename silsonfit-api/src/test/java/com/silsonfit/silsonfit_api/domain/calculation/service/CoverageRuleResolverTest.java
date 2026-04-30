@@ -15,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -62,7 +64,7 @@ class CoverageRuleResolverTest {
                 PurposeType.TREATMENT
         );
 
-        assertThat(resolvedRule.getBasis()).isEqualTo("EDI 룰");
+        assertThat(resolvedRule.getBasis()).containsExactly("EDI 룰");
     }
 
     @Test
@@ -126,7 +128,7 @@ class CoverageRuleResolverTest {
                 70,
                 10000,
                 null,
-                basis,
+                List.of(basis),
                 null
         );
     }

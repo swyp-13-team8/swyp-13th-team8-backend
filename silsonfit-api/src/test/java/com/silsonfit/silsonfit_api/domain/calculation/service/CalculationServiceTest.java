@@ -15,6 +15,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
@@ -105,7 +107,7 @@ class CalculationServiceTest {
                 coverageRate,
                 deductibleAmount,
                 limitAmount,
-                "계산 테스트 룰",
+                List.of("계산 테스트 룰"),
                 null
         );
     }

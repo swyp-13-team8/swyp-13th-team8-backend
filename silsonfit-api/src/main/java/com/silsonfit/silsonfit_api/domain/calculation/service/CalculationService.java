@@ -87,7 +87,7 @@ public class CalculationService {
                     false,
                     0,
                     medicalCost,
-                    List.of(coverageRule.getBasis()),
+                    coverageRule.getBasis(),
                     coverageRule.getDisclaimer()
             );
         }
@@ -104,7 +104,7 @@ public class CalculationService {
                 true,
                 refundAmount,
                 deductibleAmount,
-                List.of(coverageRule.getBasis()),
+                coverageRule.getBasis(),
                 coverageRule.getDisclaimer()
         );
     }

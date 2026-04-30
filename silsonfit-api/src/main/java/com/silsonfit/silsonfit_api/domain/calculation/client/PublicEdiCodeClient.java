@@ -34,31 +34,34 @@ import java.util.Optional;
 @Profile("prod | real-edi")
 public class PublicEdiCodeClient implements EdiCodeClient {
 
-    private static final int DEFAULT_PAGE_SIZE = 10;
-    private static final int DEFAULT_PAGE_NO = 1;
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd");
+    private static final List<Endpoint> ENDPOINTS = List.of(
+            new Endpoint("/getDiagnossMdfeeList", FeeType.MEDICAL),
+            new Endpoint("/getCmdcMdfeeList", FeeType.KOREAN_MEDICAL),
+            new Endpoint("/getPharmacyMdfeeList", FeeType.PHARMACY)
+    );
 
     private final String serviceKey;
+    private final int numOfRow;
+    private final int pageNo;
     private final RestClient restClient;
-    private final List<Endpoint> endpoints;
 
     public PublicEdiCodeClient(
             @Value("${edi.public-api.service-key}") String serviceKey,
             @Value("${edi.public-api.endpoint}") String endpoint,
+            @Value("${edi.public-api.num-of-row}") int numOfRow,
+            @Value("${edi.public-api.page-no}") int pageNo,
             RestClient.Builder restClientBuilder
     ) {
         this.serviceKey = serviceKey;
+        this.numOfRow = numOfRow;
+        this.pageNo = pageNo;
         this.restClient = restClientBuilder.baseUrl(endpoint).build();
-        this.endpoints = List.of(
-                new Endpoint("/getDiagnossMdfeeList", FeeType.MEDICAL),
-                new Endpoint("/getCmdcMdfeeList", FeeType.KOREAN_MEDICAL),
-                new Endpoint("/getPharmacyMdfeeList", FeeType.PHARMACY)
-        );
     }
 
     @Override
     public Optional<EdiCode> fetchByCode(String code) {
-        for (Endpoint endpoint : endpoints) {
+        for (Endpoint endpoint : ENDPOINTS) {
             Optional<EdiCode> ediCode = fetchByEndpoint(code, endpoint);
 
             if (ediCode.isPresent()) {
@@ -69,14 +72,17 @@ public class PublicEdiCodeClient implements EdiCodeClient {
         return Optional.empty();
     }
 
-    private Optional<EdiCode> fetchByEndpoint(String code, Endpoint endpoint) {
+    private Optional<EdiCode> fetchByEndpoint(
+            String code,
+            Endpoint endpoint
+    ) {
         try {
             String response = restClient.get()
                     .uri(uriBuilder -> uriBuilder
                             .path(endpoint.path())
                             .queryParam("serviceKey", serviceKey)
-                            .queryParam("numOfRow", DEFAULT_PAGE_SIZE)
-                            .queryParam("pageNo", DEFAULT_PAGE_NO)
+                            .queryParam("numOfRow", numOfRow)
+                            .queryParam("pageNo", pageNo)
                             .queryParam("mdfeeCd", code)
                             .build()
                     )

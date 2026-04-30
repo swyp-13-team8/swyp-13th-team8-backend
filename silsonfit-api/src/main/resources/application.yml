@@ -19,6 +19,8 @@ edi:
   public-api:
     endpoint: https://apis.data.go.kr/B551182/mdfeeCrtrInfoService
     service-key: ${EDI_PUBLIC_API_SERVICE_KEY:}
+    num-of-row: 10
+    page-no: 1
 
 management:
   endpoints:

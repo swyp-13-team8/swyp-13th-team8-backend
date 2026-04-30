@@ -39,7 +39,7 @@ class PublicEdiCodeClientTest {
     void setUp() {
         RestClient.Builder builder = RestClient.builder();
         this.server = MockRestServiceServer.bindTo(builder).build();
-        this.publicEdiCodeClient = new PublicEdiCodeClient(SERVICE_KEY, ENDPOINT, builder);
+        this.publicEdiCodeClient = new PublicEdiCodeClient(SERVICE_KEY, ENDPOINT, 10, 1, builder);
     }
 
     @Test
@@ -133,4 +133,5 @@ class PublicEdiCodeClientTest {
                 </response>
                 """;
     }
+
 }

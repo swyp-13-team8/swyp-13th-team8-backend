@@ -1,4 +1,4 @@
-package com.silsonfit.silsonfit_api.domain.calculation.entity;
+package com.silsonfit.silsonfit_api.global.common.converter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;

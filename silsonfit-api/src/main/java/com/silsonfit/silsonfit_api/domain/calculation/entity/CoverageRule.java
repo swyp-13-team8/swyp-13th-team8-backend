@@ -3,6 +3,7 @@ package com.silsonfit.silsonfit_api.domain.calculation.entity;
 import com.silsonfit.silsonfit_api.domain.calculation.enums.PurposeType;
 import com.silsonfit.silsonfit_api.domain.calculation.enums.TreatmentCategory;
 import com.silsonfit.silsonfit_api.domain.calculation.enums.VisitType;
+import com.silsonfit.silsonfit_api.global.common.converter.StringListConverter;
 import jakarta.persistence.*;
 import lombok.*;
 

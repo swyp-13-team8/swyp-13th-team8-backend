@@ -23,6 +23,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Transactional
 class CalculationServiceTest {
 
+    private static final Long TEST_INSURANCE_ID = 100L;
+
     @Autowired
     CalculationService calculationService;
 
@@ -50,7 +52,7 @@ class CalculationServiceTest {
 
         CalculationHistory history = calculationHistoryRepository.findAll().get(0);
         assertThat(history.getUserId()).isEqualTo(1L);
-        assertThat(history.getInsuranceId()).isEqualTo(1L);
+        assertThat(history.getInsuranceId()).isEqualTo(TEST_INSURANCE_ID);
         assertThat(history.getMedicalCost()).isEqualTo(100000);
         assertThat(history.getTreatmentCategory()).isEqualTo(TreatmentCategory.MRI);
         assertThat(history.getRefundAmount()).isEqualTo(70000);
@@ -98,7 +100,7 @@ class CalculationServiceTest {
             Integer limitAmount
     ) {
         return CoverageRule.create(
-                1L,
+                TEST_INSURANCE_ID,
                 null,
                 VisitType.OUTPATIENT,
                 TreatmentCategory.MRI,
@@ -114,7 +116,7 @@ class CalculationServiceTest {
 
     private CalculationRequest createCalculationRequest(Integer medicalCost) {
         CalculationRequest request = new CalculationRequest();
-        ReflectionTestUtils.setField(request, "insuranceId", 1L);
+        ReflectionTestUtils.setField(request, "insuranceId", TEST_INSURANCE_ID);
         ReflectionTestUtils.setField(request, "medicalCost", medicalCost);
         ReflectionTestUtils.setField(request, "visitType", VisitType.OUTPATIENT);
         ReflectionTestUtils.setField(request, "treatmentCategory", TreatmentCategory.MRI);

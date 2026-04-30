@@ -3,6 +3,7 @@ package com.silsonfit.silsonfit_api.domain.calculation.client;
 import com.silsonfit.silsonfit_api.domain.calculation.entity.EdiCode;
 import com.silsonfit.silsonfit_api.domain.calculation.enums.FeeType;
 import com.silsonfit.silsonfit_api.domain.calculation.enums.PayType;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -13,9 +14,9 @@ import java.util.Optional;
  * 공공 EDI API Fake Client
  *
  * - 실제 공공 API 연동 전까지 DB 미존재 EDI 코드 조회 흐름을 검증하기 위한 임시 구현체다.
- * TODO(calculation): 실제 공공 API Client 구현 시 한방수가/진료수가/약국수가 API 응답을 EdiCode로 매핑한다.
  */
 @Component
+@Profile("!prod & !real-edi")
 public class FakeEdiCodeClient implements EdiCodeClient {
 
     @Override

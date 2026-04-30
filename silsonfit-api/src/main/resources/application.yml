@@ -15,6 +15,11 @@ jwt:
 kakao:
   user-info-uri: https://kapi.kakao.com/v2/user/me
 
+edi:
+  public-api:
+    endpoint: https://apis.data.go.kr/B551182/mdfeeCrtrInfoService
+    service-key: ${EDI_PUBLIC_API_SERVICE_KEY:}
+
 management:
   endpoints:
     web:

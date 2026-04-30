@@ -6,6 +6,7 @@ import com.silsonfit.silsonfit_api.domain.calculation.enums.PurposeType;
 import com.silsonfit.silsonfit_api.domain.calculation.enums.TreatmentCategory;
 import com.silsonfit.silsonfit_api.domain.calculation.enums.VisitType;
 import com.silsonfit.silsonfit_api.domain.calculation.repository.CoverageRuleRepository;
+import com.silsonfit.silsonfit_api.domain.calculation.repository.EdiCodeRepository;
 import com.silsonfit.silsonfit_api.domain.calculation.vo.CoverageRuleContext;
 import com.silsonfit.silsonfit_api.global.error.BusinessException;
 import com.silsonfit.silsonfit_api.global.error.ErrorCode;
@@ -28,6 +29,9 @@ class CoverageRuleResolverTest {
 
     @Autowired
     CoverageRuleRepository coverageRuleRepository;
+
+    @Autowired
+    EdiCodeRepository ediCodeRepository;
 
     @Test
     void EDI코드_기반_보장룰이_있으면_우선_반환한다() {
@@ -73,6 +77,9 @@ class CoverageRuleResolverTest {
         );
         coverageRuleRepository.save(treatmentInfoRule);
 
+        assertThat(ediCodeRepository.findByCode("MRI001")).isEmpty();
+        assertThat(coverageRuleRepository.findByInsuranceIdAndEdiCode(1L, "MRI001")).isEmpty();
+
         CoverageRule resolvedRule = coverageRuleResolver.resolve(
                 context,
                 "MRI001",
@@ -85,6 +92,7 @@ class CoverageRuleResolverTest {
         assertThat(resolvedRule.getTreatmentCategory()).isEqualTo(TreatmentCategory.MRI);
         assertThat(resolvedRule.getCoverageRate()).isEqualTo(70);
         assertThat(coverageRuleRepository.findByInsuranceIdAndEdiCode(1L, "MRI001")).isPresent();
+        assertThat(ediCodeRepository.findByCode("MRI001")).isPresent();
     }
 
     @Test

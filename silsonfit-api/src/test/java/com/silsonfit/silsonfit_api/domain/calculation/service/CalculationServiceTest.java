@@ -106,7 +106,7 @@ class CalculationServiceTest {
                 null,
                 VisitType.OUTPATIENT,
                 TreatmentCategory.CT,
-                PurposeType.TREATMENT,
+                PurposeType.UNKNOWN,
                 isCovered,
                 coverageRate,
                 deductibleAmount,
@@ -122,7 +122,7 @@ class CalculationServiceTest {
         ReflectionTestUtils.setField(request, "medicalCost", medicalCost);
         ReflectionTestUtils.setField(request, "visitType", VisitType.OUTPATIENT);
         ReflectionTestUtils.setField(request, "treatmentCategory", TreatmentCategory.CT);
-        ReflectionTestUtils.setField(request, "purposeType", PurposeType.TREATMENT);
+        ReflectionTestUtils.setField(request, "purposeType", PurposeType.UNKNOWN);
         ReflectionTestUtils.setField(request, "ediCode", null);
         return request;
     }

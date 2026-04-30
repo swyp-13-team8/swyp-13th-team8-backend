@@ -1,5 +1,6 @@
 package com.silsonfit.silsonfit_api.domain.analysis.service;
 
+import com.silsonfit.silsonfit_api.domain.analysis.dto.AnalysisHistoryCreateCommand;
 import com.silsonfit.silsonfit_api.domain.analysis.dto.AnalysisHistoryListResponse;
 import com.silsonfit.silsonfit_api.domain.analysis.entity.AnalysisHistory;
 import com.silsonfit.silsonfit_api.domain.analysis.repository.AnalysisHistoryRepository;
@@ -28,10 +29,11 @@ class AnalysisHistoryServiceTest {
 
     @BeforeEach
     void setUp() {
-        dummy1 = AnalysisHistory.create(1L, "test1.pdf", "test1", "testCompany1",
-                "testProduct1", "testType1", "1", "testCoverage1", "testPoint1", null);
-        dummy2 = AnalysisHistory.create(1L, "test2.pdf", "test2", "testCompany2",
-                "testProduct2", "testType2", "2", "testCoverage2", "testPoint2", null);
+
+        dummy1 = AnalysisHistory.create(new AnalysisHistoryCreateCommand(1L, "test1.pdf", "test1", "testCompany1",
+                "testProduct1", "testType1", "1", "testCoverage1", "testPoint1", null));
+        dummy2 = AnalysisHistory.create(new AnalysisHistoryCreateCommand(1L, "test2.pdf", "test2", "testCompany2",
+                "testProduct2", "testType2", "2", "testCoverage2", "testPoint2", null));
         analysisHistoryRepository.saveAll(List.of(dummy1, dummy2));
     }
 

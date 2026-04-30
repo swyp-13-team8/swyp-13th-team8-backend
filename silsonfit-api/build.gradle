@@ -55,14 +55,14 @@ dependencies {
 	// 실제 PostgreSQL 연동용 드라이버
 	runtimeOnly 'org.postgresql:postgresql'
 
-	// Spring AI - Ollama (로컬 테스트용)
-	implementation 'org.springframework.ai:spring-ai-starter-model-ollama'
-
-	// Spring AI - Gemini (배포용)
-	implementation 'org.springframework.ai:spring-ai-starter-model-vertex-ai-gemini'
+	// Spring AI - Gemini
+	implementation 'org.springframework.ai:spring-ai-starter-model-google-genai'
 
 	// PDF 파싱
 	implementation 'org.apache.pdfbox:pdfbox:3.0.2'
+
+	// AWS S3
+	implementation 'software.amazon.awssdk:s3:2.25.11'
 
 	// 테스트 기본 라이브러리
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/history/analysis")
 @Slf4j
 public class AnalysisHistoryController {
 
@@ -28,7 +28,7 @@ public class AnalysisHistoryController {
      * @param pageable 페이징 정보
      * @return 분석 이력 리스트
      */
-    @GetMapping("/history/analysis")
+    @GetMapping
     public ApiResponse<Page<AnalysisHistoryListResponse>> getHistories(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                                        @PageableDefault(size = 5) Pageable pageable) {
         Long userId = userDetails.getUserId();
@@ -45,7 +45,7 @@ public class AnalysisHistoryController {
      * @param historyId 분석 이력 ID
      * @return 분석 이력 상세 정보
      */
-    @GetMapping("/history/analysis/{historyId}")
+    @GetMapping("/{historyId}")
     public ApiResponse<AnalysisHistoryDetailResponse> getHistoryDetail(@AuthenticationPrincipal CustomUserDetails userDetails,
                                                                        @PathVariable Long historyId) {
         Long userId = userDetails.getUserId();
@@ -63,7 +63,7 @@ public class AnalysisHistoryController {
      * @param historyId 분석 이력 ID
      * @return 삭제 성공 시 빈 응답 (200)
      */
-    @DeleteMapping("/history/analysis/{historyId}")
+    @DeleteMapping("/{historyId}")
     public ApiResponse<Void> deleteHistory(@AuthenticationPrincipal CustomUserDetails userDetails,
                                         @PathVariable Long historyId) {
         Long userId = userDetails.getUserId();
@@ -73,6 +73,27 @@ public class AnalysisHistoryController {
         analysisHistoryService.deleteHistory(userId, historyId);
 
         log.info("분석 이력 삭제 성공 - userId={}, historyId={}", userId, historyId);
+
+        return ApiResponse.success();
+    }
+
+    /**
+     * 분석 이력 즐겨찾기 (토글방식)
+     *
+     * @param userDetails 로그인한 사용자 정보
+     * @param historyId 분석 이력 ID
+     * @return 삭제 성공 시 빈 응답 (200)
+     */
+    @PatchMapping("/{historyId}")
+    public ApiResponse<Void> toggleFavorite(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                            @PathVariable Long historyId) {
+        Long userId = userDetails.getUserId();
+
+        log.info("이력 즐겨찾기 요청 - userId={}, historyId={}", userId, historyId);
+
+        analysisHistoryService.toggleFavorite(userId, historyId);
+
+        log.info("이력 즐겨찾기 상태 변경 완료 - userId={}, historyId={}", userId, historyId);
 
         return ApiResponse.success();
     }

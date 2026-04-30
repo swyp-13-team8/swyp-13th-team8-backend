@@ -2,7 +2,7 @@ package com.silsonfit.silsonfit_api.domain.calculation.policy;
 
 import com.silsonfit.silsonfit_api.domain.calculation.entity.EdiCode;
 import com.silsonfit.silsonfit_api.domain.calculation.enums.InsuranceGeneration;
-import com.silsonfit.silsonfit_api.domain.calculation.vo.CoverageRuleGenerationContext;
+import com.silsonfit.silsonfit_api.domain.calculation.vo.CoverageRuleContext;
 
 /**
  * 세대별 보장 룰 생성 정책 기본 구현
@@ -33,12 +33,12 @@ public abstract class AbstractCoverageRuleGenerationPolicy implements CoverageRu
     }
 
     @Override
-    public boolean supports(CoverageRuleGenerationContext context, EdiCode ediCode) {
+    public boolean supports(CoverageRuleContext context, EdiCode ediCode) {
         return context.generation() == generation;
     }
 
     @Override
-    public boolean isCovered(CoverageRuleGenerationContext context, EdiCode ediCode) {
+    public boolean isCovered(CoverageRuleContext context, EdiCode ediCode) {
         if (ediCode.containsKeyword("건강검진") || ediCode.containsKeyword("검진")) {
             return false;
         }
@@ -53,7 +53,7 @@ public abstract class AbstractCoverageRuleGenerationPolicy implements CoverageRu
     }
 
     @Override
-    public int coverageRate(CoverageRuleGenerationContext context, EdiCode ediCode) {
+    public int coverageRate(CoverageRuleContext context, EdiCode ediCode) {
         if (!isCovered(context, ediCode)) {
             return 0;
         }
@@ -66,7 +66,7 @@ public abstract class AbstractCoverageRuleGenerationPolicy implements CoverageRu
     }
 
     @Override
-    public int deductibleAmount(CoverageRuleGenerationContext context, EdiCode ediCode) {
+    public int deductibleAmount(CoverageRuleContext context, EdiCode ediCode) {
         if (!isCovered(context, ediCode)) {
             return 0;
         }
@@ -79,7 +79,7 @@ public abstract class AbstractCoverageRuleGenerationPolicy implements CoverageRu
     }
 
     @Override
-    public Integer limitAmount(CoverageRuleGenerationContext context, EdiCode ediCode) {
+    public Integer limitAmount(CoverageRuleContext context, EdiCode ediCode) {
         if (ediCode.getUnitPrice() == null || ediCode.getUnitPrice() <= 0) {
             return null;
         }
@@ -88,7 +88,7 @@ public abstract class AbstractCoverageRuleGenerationPolicy implements CoverageRu
     }
 
     @Override
-    public String disclaimer(CoverageRuleGenerationContext context, EdiCode ediCode) {
+    public String disclaimer(CoverageRuleContext context, EdiCode ediCode) {
         return disclaimer;
     }
 }

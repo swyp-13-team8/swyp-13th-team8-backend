@@ -2,7 +2,7 @@ package com.silsonfit.silsonfit_api.domain.calculation.policy;
 
 import com.silsonfit.silsonfit_api.domain.calculation.entity.EdiCode;
 import com.silsonfit.silsonfit_api.domain.calculation.enums.InsuranceGeneration;
-import com.silsonfit.silsonfit_api.domain.calculation.vo.CoverageRuleGenerationContext;
+import com.silsonfit.silsonfit_api.domain.calculation.vo.CoverageRuleContext;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -28,7 +28,7 @@ public class ThirdGenerationCoverageRuleGenerationPolicy extends AbstractCoverag
     }
 
     @Override
-    public String disclaimer(CoverageRuleGenerationContext context, EdiCode ediCode) {
+    public String disclaimer(CoverageRuleContext context, EdiCode ediCode) {
         if (!ediCode.isPay()) {
             return "3세대 실손보험 비급여는 특약 분리 항목으로, 특약 가입 및 항목별 한도 확인이 필요한 임시 정책 기준입니다.";
         }

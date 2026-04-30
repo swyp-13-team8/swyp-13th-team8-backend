@@ -2,7 +2,7 @@ package com.silsonfit.silsonfit_api.domain.calculation.service;
 
 import com.silsonfit.silsonfit_api.domain.calculation.entity.EdiCode;
 import com.silsonfit.silsonfit_api.domain.calculation.policy.CoverageRuleGenerationPolicy;
-import com.silsonfit.silsonfit_api.domain.calculation.vo.CoverageRuleGenerationContext;
+import com.silsonfit.silsonfit_api.domain.calculation.vo.CoverageRuleContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -27,7 +27,7 @@ public class CoverageRuleGenerationPolicyResolver {
      * @param ediCode EDI 코드
      * @return 적용할 보장 룰 생성 정책
      */
-    public CoverageRuleGenerationPolicy resolve(CoverageRuleGenerationContext context, EdiCode ediCode) {
+    public CoverageRuleGenerationPolicy resolve(CoverageRuleContext context, EdiCode ediCode) {
         return policies.stream()
                 .filter(policy -> policy.supports(context, ediCode))
                 .findFirst()

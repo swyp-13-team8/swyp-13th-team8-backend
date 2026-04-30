@@ -1,10 +1,12 @@
 package com.silsonfit.silsonfit_api.domain.calculation.service;
 
 import com.silsonfit.silsonfit_api.domain.calculation.entity.CoverageRule;
+import com.silsonfit.silsonfit_api.domain.calculation.enums.InsuranceGeneration;
 import com.silsonfit.silsonfit_api.domain.calculation.enums.PurposeType;
 import com.silsonfit.silsonfit_api.domain.calculation.enums.TreatmentCategory;
 import com.silsonfit.silsonfit_api.domain.calculation.enums.VisitType;
 import com.silsonfit.silsonfit_api.domain.calculation.repository.CoverageRuleRepository;
+import com.silsonfit.silsonfit_api.domain.calculation.vo.CoverageRuleContext;
 import com.silsonfit.silsonfit_api.global.error.BusinessException;
 import com.silsonfit.silsonfit_api.global.error.ErrorCode;
 import org.junit.jupiter.api.Test;
@@ -18,6 +20,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @SpringBootTest
 @Transactional
 class CoverageRuleResolverTest {
+
+    CoverageRuleContext context = new CoverageRuleContext(1L, InsuranceGeneration.FOURTH);
 
     @Autowired
     CoverageRuleResolver coverageRuleResolver;
@@ -47,7 +51,7 @@ class CoverageRuleResolverTest {
         coverageRuleRepository.save(treatmentInfoRule);
 
         CoverageRule resolvedRule = coverageRuleResolver.resolve(
-                1L,
+                context,
                 "EDI001",
                 VisitType.OUTPATIENT,
                 TreatmentCategory.MRI,
@@ -58,7 +62,7 @@ class CoverageRuleResolverTest {
     }
 
     @Test
-    void EDI코드_기반_보장룰이_없으면_진료정보_기반_보장룰을_반환한다() {
+    void EDI코드_기반_보장룰이_없으면_EDI정보로_보장룰을_생성한다() {
         CoverageRule treatmentInfoRule = createCoverageRule(
                 1L,
                 null,
@@ -70,27 +74,30 @@ class CoverageRuleResolverTest {
         coverageRuleRepository.save(treatmentInfoRule);
 
         CoverageRule resolvedRule = coverageRuleResolver.resolve(
-                1L,
-                "UNKNOWN_EDI",
+                context,
+                "MRI001",
                 VisitType.OUTPATIENT,
                 TreatmentCategory.MRI,
                 PurposeType.TREATMENT
         );
 
-        assertThat(resolvedRule.getBasis()).isEqualTo("진료정보 룰");
+        assertThat(resolvedRule.getEdiCode()).isEqualTo("MRI001");
+        assertThat(resolvedRule.getTreatmentCategory()).isEqualTo(TreatmentCategory.MRI);
+        assertThat(resolvedRule.getCoverageRate()).isEqualTo(70);
+        assertThat(coverageRuleRepository.findByInsuranceIdAndEdiCode(1L, "MRI001")).isPresent();
     }
 
     @Test
-    void 조회되는_보장룰이_없으면_예외가_발생한다() {
+    void EDI코드가_있지만_EDI정보도_없으면_예외가_발생한다() {
         assertThatThrownBy(() -> coverageRuleResolver.resolve(
-                1L,
+                context,
                 "UNKNOWN_EDI",
                 VisitType.OUTPATIENT,
                 TreatmentCategory.MRI,
                 PurposeType.TREATMENT
         ))
                 .isInstanceOf(BusinessException.class)
-                .hasMessage(ErrorCode.COVERAGE_RULE_NOT_FOUND.getMessage());
+                .hasMessage(ErrorCode.EDI_CODE_NOT_FOUND.getMessage());
     }
 
     private CoverageRule createCoverageRule(

@@ -7,7 +7,7 @@ import com.silsonfit.silsonfit_api.domain.calculation.enums.PurposeType;
 import com.silsonfit.silsonfit_api.domain.calculation.enums.TreatmentCategory;
 import com.silsonfit.silsonfit_api.domain.calculation.enums.VisitType;
 import com.silsonfit.silsonfit_api.domain.calculation.policy.CoverageRuleGenerationPolicy;
-import com.silsonfit.silsonfit_api.domain.calculation.vo.CoverageRuleGenerationContext;
+import com.silsonfit.silsonfit_api.domain.calculation.vo.CoverageRuleContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -32,7 +32,7 @@ public class CoverageRuleGenerator {
      * @return 생성된 보장 룰
      */
     public CoverageRule generate(
-            CoverageRuleGenerationContext context,
+            CoverageRuleContext context,
             EdiCode ediCode
     ) {
         CoverageRuleGenerationPolicy policy = policyResolver.resolve(context, ediCode);
@@ -105,7 +105,7 @@ public class CoverageRuleGenerator {
      * EDI 코드 원본 응답 필드를 계산 근거로 생성
      */
     private String createBasis(
-            CoverageRuleGenerationContext context,
+            CoverageRuleContext context,
             EdiCode ediCode,
             boolean isCovered
     ) {

@@ -4,8 +4,10 @@ import com.silsonfit.silsonfit_api.domain.calculation.dto.CalculationRequest;
 import com.silsonfit.silsonfit_api.domain.calculation.dto.CalculationResponse;
 import com.silsonfit.silsonfit_api.domain.calculation.entity.CalculationHistory;
 import com.silsonfit.silsonfit_api.domain.calculation.entity.CoverageRule;
+import com.silsonfit.silsonfit_api.domain.calculation.enums.InsuranceGeneration;
 import com.silsonfit.silsonfit_api.domain.calculation.repository.CalculationHistoryRepository;
 import com.silsonfit.silsonfit_api.domain.calculation.vo.CalculationResult;
+import com.silsonfit.silsonfit_api.domain.calculation.vo.CoverageRuleContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,8 +37,14 @@ public class CalculationService {
      */
     @Transactional
     public CalculationResponse calculate(Long userId, CalculationRequest request) {
-        CoverageRule coverageRule = coverageRuleResolver.resolve(
+        // TODO(calculation): 보험 도메인 연동 후 insuranceId 기반 보험 세대/약관 조회로 대체한다.
+        CoverageRuleContext context = new CoverageRuleContext(
                 request.getInsuranceId(),
+                InsuranceGeneration.FOURTH
+        );
+
+        CoverageRule coverageRule = coverageRuleResolver.resolve(
+                context,
                 request.getEdiCode(),
                 request.getVisitType(),
                 request.getTreatmentCategory(),

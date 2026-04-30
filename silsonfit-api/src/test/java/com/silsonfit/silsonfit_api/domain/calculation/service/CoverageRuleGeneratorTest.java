@@ -12,7 +12,7 @@ import com.silsonfit.silsonfit_api.domain.calculation.policy.FirstGenerationCove
 import com.silsonfit.silsonfit_api.domain.calculation.policy.FourthGenerationCoverageRuleGenerationPolicy;
 import com.silsonfit.silsonfit_api.domain.calculation.policy.SecondGenerationCoverageRuleGenerationPolicy;
 import com.silsonfit.silsonfit_api.domain.calculation.policy.ThirdGenerationCoverageRuleGenerationPolicy;
-import com.silsonfit.silsonfit_api.domain.calculation.vo.CoverageRuleGenerationContext;
+import com.silsonfit.silsonfit_api.domain.calculation.vo.CoverageRuleContext;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
@@ -32,7 +32,7 @@ class CoverageRuleGeneratorTest {
                     new FifthGenerationCoverageRuleGenerationPolicy()
             ))
     );
-    CoverageRuleGenerationContext context = new CoverageRuleGenerationContext(1L, InsuranceGeneration.FOURTH);
+    CoverageRuleContext context = new CoverageRuleContext(1L, InsuranceGeneration.FOURTH);
 
     @Test
     void 급여_EDI코드는_급여_기본_보장룰을_생성한다() {
@@ -102,10 +102,10 @@ class CoverageRuleGeneratorTest {
     @Test
     void 보험_세대별_정책값을_다르게_적용한다() {
         EdiCode ediCode = createEdiCode("EDI005", "일반 진료", "일반", PayType.NON_PAY, FeeType.MEDICAL);
-        CoverageRuleGenerationContext firstGenerationContext =
-                new CoverageRuleGenerationContext(1L, InsuranceGeneration.FIRST);
-        CoverageRuleGenerationContext fifthGenerationContext =
-                new CoverageRuleGenerationContext(1L, InsuranceGeneration.FIFTH);
+        CoverageRuleContext firstGenerationContext =
+                new CoverageRuleContext(1L, InsuranceGeneration.FIRST);
+        CoverageRuleContext fifthGenerationContext =
+                new CoverageRuleContext(1L, InsuranceGeneration.FIFTH);
 
         CoverageRule firstGenerationRule = coverageRuleGenerator.generate(firstGenerationContext, ediCode);
         CoverageRule fifthGenerationRule = coverageRuleGenerator.generate(fifthGenerationContext, ediCode);
@@ -122,8 +122,8 @@ class CoverageRuleGeneratorTest {
     void 이세대는_급여_10퍼센트_비급여_20퍼센트_자기부담_구조를_적용한다() {
         EdiCode payEdiCode = createEdiCode("EDI006", "외래 진료", "일반", PayType.PAY, FeeType.MEDICAL);
         EdiCode nonPayEdiCode = createEdiCode("EDI007", "비급여 도수치료", "도수", PayType.NON_PAY, FeeType.MEDICAL);
-        CoverageRuleGenerationContext secondGenerationContext =
-                new CoverageRuleGenerationContext(1L, InsuranceGeneration.SECOND);
+        CoverageRuleContext secondGenerationContext =
+                new CoverageRuleContext(1L, InsuranceGeneration.SECOND);
 
         CoverageRule payRule = coverageRuleGenerator.generate(secondGenerationContext, payEdiCode);
         CoverageRule nonPayRule = coverageRuleGenerator.generate(secondGenerationContext, nonPayEdiCode);
@@ -139,8 +139,8 @@ class CoverageRuleGeneratorTest {
     void 삼세대는_비급여를_특약_분리_항목으로_처리한다() {
         EdiCode payEdiCode = createEdiCode("EDI008", "외래 진료", "일반", PayType.PAY, FeeType.MEDICAL);
         EdiCode nonPayEdiCode = createEdiCode("EDI009", "비급여 MRI 검사", "MRI", PayType.NON_PAY, FeeType.MEDICAL);
-        CoverageRuleGenerationContext thirdGenerationContext =
-                new CoverageRuleGenerationContext(1L, InsuranceGeneration.THIRD);
+        CoverageRuleContext thirdGenerationContext =
+                new CoverageRuleContext(1L, InsuranceGeneration.THIRD);
 
         CoverageRule payRule = coverageRuleGenerator.generate(thirdGenerationContext, payEdiCode);
         CoverageRule nonPayRule = coverageRuleGenerator.generate(thirdGenerationContext, nonPayEdiCode);
@@ -157,8 +157,8 @@ class CoverageRuleGeneratorTest {
     void 사세대는_비급여_이용량_기반_보험료_차등_대상임을_표시한다() {
         EdiCode payEdiCode = createEdiCode("EDI010", "외래 진료", "일반", PayType.PAY, FeeType.MEDICAL);
         EdiCode nonPayEdiCode = createEdiCode("EDI011", "비급여 주사 치료", "주사", PayType.NON_PAY, FeeType.MEDICAL);
-        CoverageRuleGenerationContext fourthGenerationContext =
-                new CoverageRuleGenerationContext(1L, InsuranceGeneration.FOURTH);
+        CoverageRuleContext fourthGenerationContext =
+                new CoverageRuleContext(1L, InsuranceGeneration.FOURTH);
 
         CoverageRule payRule = coverageRuleGenerator.generate(fourthGenerationContext, payEdiCode);
         CoverageRule nonPayRule = coverageRuleGenerator.generate(fourthGenerationContext, nonPayEdiCode);

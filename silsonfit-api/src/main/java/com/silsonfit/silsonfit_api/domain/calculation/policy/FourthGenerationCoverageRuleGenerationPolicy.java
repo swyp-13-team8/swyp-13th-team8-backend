@@ -2,7 +2,7 @@ package com.silsonfit.silsonfit_api.domain.calculation.policy;
 
 import com.silsonfit.silsonfit_api.domain.calculation.entity.EdiCode;
 import com.silsonfit.silsonfit_api.domain.calculation.enums.InsuranceGeneration;
-import com.silsonfit.silsonfit_api.domain.calculation.vo.CoverageRuleGenerationContext;
+import com.silsonfit.silsonfit_api.domain.calculation.vo.CoverageRuleContext;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
@@ -30,7 +30,7 @@ public class FourthGenerationCoverageRuleGenerationPolicy extends AbstractCovera
     }
 
     @Override
-    public String disclaimer(CoverageRuleGenerationContext context, EdiCode ediCode) {
+    public String disclaimer(CoverageRuleContext context, EdiCode ediCode) {
         if (!ediCode.isPay()) {
             return "4세대 실손보험 비급여는 특약 분리 및 이용량 기반 보험료 차등 대상이며, 연간 비급여 사용량 집계가 필요한 임시 정책 기준입니다.";
         }

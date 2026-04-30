@@ -1,7 +1,7 @@
 package com.silsonfit.silsonfit_api.domain.calculation.policy;
 
 import com.silsonfit.silsonfit_api.domain.calculation.entity.EdiCode;
-import com.silsonfit.silsonfit_api.domain.calculation.vo.CoverageRuleGenerationContext;
+import com.silsonfit.silsonfit_api.domain.calculation.vo.CoverageRuleContext;
 
 /**
  * 보장 룰 생성 정책
@@ -14,30 +14,30 @@ public interface CoverageRuleGenerationPolicy {
     /**
      * 해당 정책 적용 가능 여부
      */
-    boolean supports(CoverageRuleGenerationContext context, EdiCode ediCode);
+    boolean supports(CoverageRuleContext context, EdiCode ediCode);
 
     /**
      * 보장 여부 결정
      */
-    boolean isCovered(CoverageRuleGenerationContext context, EdiCode ediCode);
+    boolean isCovered(CoverageRuleContext context, EdiCode ediCode);
 
     /**
      * 보장률 결정
      */
-    int coverageRate(CoverageRuleGenerationContext context, EdiCode ediCode);
+    int coverageRate(CoverageRuleContext context, EdiCode ediCode);
 
     /**
      * 자기부담금 결정
      */
-    int deductibleAmount(CoverageRuleGenerationContext context, EdiCode ediCode);
+    int deductibleAmount(CoverageRuleContext context, EdiCode ediCode);
 
     /**
      * 보장 한도 결정
      */
-    Integer limitAmount(CoverageRuleGenerationContext context, EdiCode ediCode);
+    Integer limitAmount(CoverageRuleContext context, EdiCode ediCode);
 
     /**
      * 면책/주의 문구
      */
-    String disclaimer(CoverageRuleGenerationContext context, EdiCode ediCode);
+    String disclaimer(CoverageRuleContext context, EdiCode ediCode);
 }

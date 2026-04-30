@@ -11,6 +11,8 @@ import com.silsonfit.silsonfit_api.domain.calculation.vo.CoverageRuleContext;
 import com.silsonfit.silsonfit_api.global.error.BusinessException;
 import com.silsonfit.silsonfit_api.global.error.ErrorCode;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -105,6 +107,36 @@ class CoverageRuleResolverTest {
         ))
                 .isInstanceOf(BusinessException.class)
                 .hasMessage(ErrorCode.EDI_CODE_NOT_FOUND.getMessage());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "FIRST, 100, 0",
+            "SECOND, 80, 20000",
+            "THIRD, 70, 30000",
+            "FOURTH, 70, 30000"
+    })
+    void EDI코드가_없으면_세대별_fallback_보장룰을_조회한다(
+            InsuranceGeneration generation,
+            Integer expectedCoverageRate,
+            Integer expectedDeductibleAmount
+    ) {
+        CoverageRuleContext generationContext = new CoverageRuleContext(1L, generation);
+
+        CoverageRule resolvedRule = coverageRuleResolver.resolve(
+                generationContext,
+                null,
+                VisitType.OUTPATIENT,
+                TreatmentCategory.MRI,
+                PurposeType.TREATMENT
+        );
+
+        assertThat(resolvedRule.getInsuranceId()).isNull();
+        assertThat(resolvedRule.getGeneration()).isEqualTo(generation);
+        assertThat(resolvedRule.getEdiCode()).isNull();
+        assertThat(resolvedRule.getCoverageRate()).isEqualTo(expectedCoverageRate);
+        assertThat(resolvedRule.getDeductibleAmount()).isEqualTo(expectedDeductibleAmount);
+        assertThat(resolvedRule.getBasis()).anySatisfy(basis -> assertThat(basis).contains(generation.getDescription()));
     }
 
     private CoverageRule createCoverageRule(

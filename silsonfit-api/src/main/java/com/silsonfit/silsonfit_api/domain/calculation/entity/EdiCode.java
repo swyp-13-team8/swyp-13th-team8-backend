@@ -100,6 +100,30 @@ public class EdiCode {
     }
 
     /**
+     * EDI 분류에 사용할 문자열 생성
+     *
+     * @return 수가 코드, 한글명, 수가 분류 번호를 합친 검색 문자열
+     */
+    public String getClassificationSource() {
+        return String.join(
+                " ",
+                nullToEmpty(code),
+                nullToEmpty(treatmentName),
+                nullToEmpty(feeDivisionNumber)
+        ).toUpperCase();
+    }
+
+    /**
+     * EDI 분류 문자열의 키워드 포함 여부 판단
+     *
+     * @param keyword 검색 키워드
+     * @return 포함 여부
+     */
+    public boolean containsKeyword(String keyword) {
+        return getClassificationSource().contains(keyword.toUpperCase());
+    }
+
+    /**
      * EDI 코드 생성
      *
      * @param code 수가 코드
@@ -131,5 +155,13 @@ public class EdiCode {
                 .effectiveStartDate(effectiveStartDate)
                 .feeType(feeType)
                 .build();
+    }
+
+    private String nullToEmpty(String value) {
+        if (value == null) {
+            return "";
+        }
+
+        return value;
     }
 }

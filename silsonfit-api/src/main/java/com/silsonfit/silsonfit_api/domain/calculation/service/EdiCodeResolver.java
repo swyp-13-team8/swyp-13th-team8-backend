@@ -34,6 +34,10 @@ public class EdiCodeResolver {
         }
 
         return ediCodeRepository.findByCode(code.trim())
+                // TODO(calculation): DB에 없는 EDI 코드는 외부 조회 흐름으로 확장한다.
+                //  - EdiCodeClient 인터페이스를 만들고 fake 구현체를 먼저 붙인다.
+                //  - 실제 공공 API 연동 시 한방수가/진료수가/약국수가 응답을 EdiCode 필드로 매핑한다.
+                //  - 조회 성공 시 edi_code 테이블에 저장한 뒤 반환한다.
                 .orElseThrow(() -> new BusinessException(ErrorCode.EDI_CODE_NOT_FOUND));
     }
 }

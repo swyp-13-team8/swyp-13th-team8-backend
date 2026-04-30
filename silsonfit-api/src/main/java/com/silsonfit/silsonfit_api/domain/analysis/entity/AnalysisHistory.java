@@ -1,5 +1,6 @@
 package com.silsonfit.silsonfit_api.domain.analysis.entity;
 
+import com.silsonfit.silsonfit_api.domain.analysis.dto.AnalysisHistoryCreateCommand;
 import com.silsonfit.silsonfit_api.domain.analysis.vo.AnalysisResult;
 import com.silsonfit.silsonfit_api.global.common.BaseCreatedTimeEntity;
 import jakarta.persistence.*;
@@ -63,21 +64,18 @@ public class AnalysisHistory extends BaseCreatedTimeEntity {
     private Boolean isFavorite = false; // 즐겨찾기
 
     // 생성자 - 정적 팩토리 메서드 패턴 + 빌더 사용
-    public static AnalysisHistory create(Long userId, String originalFileName, String pdfFileUrl,
-                                         String companyName, String productName, String contractType,
-                                         String generation, String coverageStructure, String cautionPoint,
-                                         AnalysisResult aiSummary) {
+    public static AnalysisHistory create(AnalysisHistoryCreateCommand command) {
         return AnalysisHistory.builder()
-                .userId(userId)
-                .originalFileName(originalFileName)
-                .pdfFileUrl(pdfFileUrl)
-                .companyName(companyName)
-                .productName(productName)
-                .contractType(contractType)
-                .generation(generation)
-                .coverageStructure(coverageStructure)
-                .cautionPoint(cautionPoint)
-                .aiSummary(aiSummary)
+                .userId(command.userId())
+                .originalFileName(command.originalFileName())
+                .pdfFileUrl(command.pdfFileUrl())
+                .companyName(command.companyName())
+                .productName(command.productName())
+                .contractType(command.contractType())
+                .generation(command.generation())
+                .coverageStructure(command.coverageStructure())
+                .cautionPoint(command.cautionPoint())
+                .aiSummary(command.aiSummary())
                 .build();
     }
 

@@ -42,6 +42,7 @@ public class CoverageRuleGenerator {
 
         return CoverageRule.create(
                 context.insuranceId(),
+                context.generation(),
                 ediCode.getCode(),
                 resolveVisitType(ediCode),
                 resolveTreatmentCategory(ediCode),

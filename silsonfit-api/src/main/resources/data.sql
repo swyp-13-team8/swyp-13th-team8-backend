@@ -3,6 +3,7 @@
 
 insert into coverage_rule (
     insurance_id,
+    generation,
     edi_code,
     visit_type,
     treatment_category,
@@ -15,7 +16,8 @@ insert into coverage_rule (
     disclaimer
 ) values
 (
-    1,
+    null,
+    'FOURTH',
     null,
     'OUTPATIENT',
     'MRI',
@@ -28,7 +30,8 @@ insert into coverage_rule (
     '개발용 임시 보장 룰입니다.'
 ),
 (
-    1,
+    null,
+    'FOURTH',
     null,
     'OUTPATIENT',
     'MRI',
@@ -41,7 +44,8 @@ insert into coverage_rule (
     '개발용 임시 보장 룰입니다.'
 ),
 (
-    1,
+    null,
+    'FOURTH',
     null,
     'OUTPATIENT',
     'MANUAL_THERAPY',
@@ -54,7 +58,8 @@ insert into coverage_rule (
     '개발용 임시 보장 룰입니다.'
 ),
 (
-    1,
+    null,
+    'FOURTH',
     null,
     'MEDICATION',
     'GENERAL_TREATMENT',

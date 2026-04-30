@@ -4,6 +4,7 @@ import com.silsonfit.silsonfit_api.domain.calculation.dto.CalculationRequest;
 import com.silsonfit.silsonfit_api.domain.calculation.dto.CalculationResponse;
 import com.silsonfit.silsonfit_api.domain.calculation.entity.CalculationHistory;
 import com.silsonfit.silsonfit_api.domain.calculation.entity.CoverageRule;
+import com.silsonfit.silsonfit_api.domain.calculation.enums.InsuranceGeneration;
 import com.silsonfit.silsonfit_api.domain.calculation.enums.PurposeType;
 import com.silsonfit.silsonfit_api.domain.calculation.enums.TreatmentCategory;
 import com.silsonfit.silsonfit_api.domain.calculation.enums.VisitType;
@@ -54,7 +55,7 @@ class CalculationServiceTest {
         assertThat(history.getUserId()).isEqualTo(1L);
         assertThat(history.getInsuranceId()).isEqualTo(TEST_INSURANCE_ID);
         assertThat(history.getMedicalCost()).isEqualTo(100000);
-        assertThat(history.getTreatmentCategory()).isEqualTo(TreatmentCategory.MRI);
+        assertThat(history.getTreatmentCategory()).isEqualTo(TreatmentCategory.CT);
         assertThat(history.getRefundAmount()).isEqualTo(70000);
         assertThat(history.getDeductibleAmount()).isEqualTo(30000);
     }
@@ -100,10 +101,11 @@ class CalculationServiceTest {
             Integer limitAmount
     ) {
         return CoverageRule.create(
-                TEST_INSURANCE_ID,
+                null,
+                InsuranceGeneration.FOURTH,
                 null,
                 VisitType.OUTPATIENT,
-                TreatmentCategory.MRI,
+                TreatmentCategory.CT,
                 PurposeType.TREATMENT,
                 isCovered,
                 coverageRate,
@@ -119,7 +121,7 @@ class CalculationServiceTest {
         ReflectionTestUtils.setField(request, "insuranceId", TEST_INSURANCE_ID);
         ReflectionTestUtils.setField(request, "medicalCost", medicalCost);
         ReflectionTestUtils.setField(request, "visitType", VisitType.OUTPATIENT);
-        ReflectionTestUtils.setField(request, "treatmentCategory", TreatmentCategory.MRI);
+        ReflectionTestUtils.setField(request, "treatmentCategory", TreatmentCategory.CT);
         ReflectionTestUtils.setField(request, "purposeType", PurposeType.TREATMENT);
         ReflectionTestUtils.setField(request, "ediCode", null);
         return request;

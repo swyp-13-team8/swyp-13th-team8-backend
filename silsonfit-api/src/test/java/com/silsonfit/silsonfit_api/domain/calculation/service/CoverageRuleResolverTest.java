@@ -38,7 +38,6 @@ class CoverageRuleResolverTest {
     @Test
     void EDI코드_기반_보장룰이_있으면_우선_반환한다() {
         CoverageRule ediRule = createCoverageRule(
-                1L,
                 "EDI001",
                 VisitType.OUTPATIENT,
                 TreatmentCategory.MRI,
@@ -46,7 +45,6 @@ class CoverageRuleResolverTest {
                 "EDI 룰"
         );
         CoverageRule treatmentInfoRule = createCoverageRule(
-                1L,
                 null,
                 VisitType.OUTPATIENT,
                 TreatmentCategory.MRI,
@@ -70,7 +68,6 @@ class CoverageRuleResolverTest {
     @Test
     void EDI코드_기반_보장룰이_없으면_EDI정보로_보장룰을_생성한다() {
         CoverageRule treatmentInfoRule = createCoverageRule(
-                1L,
                 null,
                 VisitType.OUTPATIENT,
                 TreatmentCategory.MRI,
@@ -111,7 +108,6 @@ class CoverageRuleResolverTest {
     }
 
     private CoverageRule createCoverageRule(
-            Long insuranceId,
             String ediCode,
             VisitType visitType,
             TreatmentCategory treatmentCategory,
@@ -119,7 +115,8 @@ class CoverageRuleResolverTest {
             String basis
     ) {
         return CoverageRule.create(
-                insuranceId,
+                resolveInsuranceId(ediCode),
+                InsuranceGeneration.FOURTH,
                 ediCode,
                 visitType,
                 treatmentCategory,
@@ -131,5 +128,13 @@ class CoverageRuleResolverTest {
                 List.of(basis),
                 null
         );
+    }
+
+    private Long resolveInsuranceId(String ediCode) {
+        if (ediCode == null) {
+            return null;
+        }
+
+        return context.insuranceId();
     }
 }

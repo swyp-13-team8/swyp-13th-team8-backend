@@ -2,7 +2,9 @@ package com.silsonfit.silsonfit_api.domain.calculation.service;
 
 import com.silsonfit.silsonfit_api.domain.calculation.dto.CalculationRequest;
 import com.silsonfit.silsonfit_api.domain.calculation.dto.CalculationResponse;
+import com.silsonfit.silsonfit_api.domain.calculation.entity.CalculationHistory;
 import com.silsonfit.silsonfit_api.domain.calculation.entity.CoverageRule;
+import com.silsonfit.silsonfit_api.domain.calculation.repository.CalculationHistoryRepository;
 import com.silsonfit.silsonfit_api.domain.calculation.vo.CalculationResult;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,14 +24,17 @@ import java.util.List;
 public class CalculationService {
 
     private final CoverageRuleResolver coverageRuleResolver;
+    private final CalculationHistoryRepository calculationHistoryRepository;
 
     /**
      * 실손 보험 예상 환급액 계산
      *
+     * @param userId 사용자 ID
      * @param request 계산 요청
      * @return 계산 응답
      */
-    public CalculationResponse calculate(CalculationRequest request) {
+    @Transactional
+    public CalculationResponse calculate(Long userId, CalculationRequest request) {
         CoverageRule coverageRule = coverageRuleResolver.resolve(
                 request.getInsuranceId(),
                 request.getEdiCode(),
@@ -39,7 +44,30 @@ public class CalculationService {
         );
 
         CalculationResult result = calculateByRule(request.getMedicalCost(), coverageRule);
+        saveHistory(userId, request, result);
         return CalculationResponse.from(result);
+    }
+
+    /**
+     * 계산 결과 이력 저장
+     */
+    private void saveHistory(
+            Long userId,
+            CalculationRequest request,
+            CalculationResult result
+    ) {
+        CalculationHistory history = CalculationHistory.create(
+                userId,
+                request.getInsuranceId(),
+                request.getMedicalCost(),
+                request.getTreatmentCategory(),
+                request.getEdiCode(),
+                result.getIsCovered(),
+                result.getRefundAmount(),
+                result.getDeductibleAmount()
+        );
+
+        calculationHistoryRepository.save(history);
     }
 
     /**

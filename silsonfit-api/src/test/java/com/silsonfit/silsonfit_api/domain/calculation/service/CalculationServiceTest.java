@@ -2,10 +2,12 @@ package com.silsonfit.silsonfit_api.domain.calculation.service;
 
 import com.silsonfit.silsonfit_api.domain.calculation.dto.CalculationRequest;
 import com.silsonfit.silsonfit_api.domain.calculation.dto.CalculationResponse;
+import com.silsonfit.silsonfit_api.domain.calculation.entity.CalculationHistory;
 import com.silsonfit.silsonfit_api.domain.calculation.entity.CoverageRule;
 import com.silsonfit.silsonfit_api.domain.calculation.enums.PurposeType;
 import com.silsonfit.silsonfit_api.domain.calculation.enums.TreatmentCategory;
 import com.silsonfit.silsonfit_api.domain.calculation.enums.VisitType;
+import com.silsonfit.silsonfit_api.domain.calculation.repository.CalculationHistoryRepository;
 import com.silsonfit.silsonfit_api.domain.calculation.repository.CoverageRuleRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,9 @@ class CalculationServiceTest {
     @Autowired
     CoverageRuleRepository coverageRuleRepository;
 
+    @Autowired
+    CalculationHistoryRepository calculationHistoryRepository;
+
     @Test
     void 보장_대상이면_보장률에_따라_환급액과_자기부담금을_계산한다() {
         coverageRuleRepository.save(createCoverageRule(
@@ -35,11 +40,19 @@ class CalculationServiceTest {
         ));
         CalculationRequest request = createCalculationRequest(100000);
 
-        CalculationResponse response = calculationService.calculate(request);
+        CalculationResponse response = calculationService.calculate(1L, request);
 
         assertThat(response.getIsCovered()).isTrue();
         assertThat(response.getRefundAmount()).isEqualTo(70000);
         assertThat(response.getDeductibleAmount()).isEqualTo(30000);
+
+        CalculationHistory history = calculationHistoryRepository.findAll().get(0);
+        assertThat(history.getUserId()).isEqualTo(1L);
+        assertThat(history.getInsuranceId()).isEqualTo(1L);
+        assertThat(history.getMedicalCost()).isEqualTo(100000);
+        assertThat(history.getTreatmentCategory()).isEqualTo(TreatmentCategory.MRI);
+        assertThat(history.getRefundAmount()).isEqualTo(70000);
+        assertThat(history.getDeductibleAmount()).isEqualTo(30000);
     }
 
     @Test
@@ -52,7 +65,7 @@ class CalculationServiceTest {
         ));
         CalculationRequest request = createCalculationRequest(100000);
 
-        CalculationResponse response = calculationService.calculate(request);
+        CalculationResponse response = calculationService.calculate(1L, request);
 
         assertThat(response.getIsCovered()).isTrue();
         assertThat(response.getRefundAmount()).isEqualTo(90000);
@@ -69,7 +82,7 @@ class CalculationServiceTest {
         ));
         CalculationRequest request = createCalculationRequest(100000);
 
-        CalculationResponse response = calculationService.calculate(request);
+        CalculationResponse response = calculationService.calculate(1L, request);
 
         assertThat(response.getIsCovered()).isFalse();
         assertThat(response.getRefundAmount()).isZero();

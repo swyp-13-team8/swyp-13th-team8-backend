@@ -6,6 +6,7 @@ import com.silsonfit.silsonfit_api.domain.calculation.enums.PurposeType;
 import com.silsonfit.silsonfit_api.domain.calculation.enums.TreatmentCategory;
 import com.silsonfit.silsonfit_api.domain.calculation.enums.VisitType;
 import com.silsonfit.silsonfit_api.domain.calculation.service.CalculationService;
+import com.silsonfit.silsonfit_api.global.auth.CustomUserDetails;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -46,10 +48,10 @@ class CalculationControllerTest {
                 .disclaimer("주의사항")
                 .build();
 
-        when(calculationService.calculate(any())).thenReturn(response);
+        when(calculationService.calculate(eq(1L), any())).thenReturn(response);
 
         mockMvc.perform(post("/api/calculations")
-                        .with(user("test-user"))
+                        .with(user(new CustomUserDetails(1L)))
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
@@ -73,7 +75,7 @@ class CalculationControllerTest {
 
         org.mockito.ArgumentCaptor<CalculationRequest> requestCaptor =
                 org.mockito.ArgumentCaptor.forClass(CalculationRequest.class);
-        verify(calculationService).calculate(requestCaptor.capture());
+        verify(calculationService).calculate(eq(1L), requestCaptor.capture());
 
         CalculationRequest capturedRequest = requestCaptor.getValue();
         assertThat(capturedRequest.getInsuranceId()).isEqualTo(1L);
@@ -88,7 +90,7 @@ class CalculationControllerTest {
     @DisplayName("필수 요청값이 없으면 400 응답을 반환한다")
     void calculate_invalidRequest() throws Exception {
         mockMvc.perform(post("/api/calculations")
-                        .with(user("test-user"))
+                        .with(user(new CustomUserDetails(1L)))
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""

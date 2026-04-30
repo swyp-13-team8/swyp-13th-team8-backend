@@ -5,7 +5,7 @@ import lombok.Getter;
 
 /**
  * 도메인별 에러 코드 정의
- *
+ * <p>
  * 각 담당자는 자기 도메인 영역에만 에러 코드를 추가한다.
  */
 @Getter
@@ -29,8 +29,16 @@ public enum ErrorCode {
     DEACTIVATED_USER(403, "탈퇴한 사용자입니다."),
 
     // ── Analysis ──
+    INVALID_REQUEST(400,"보험 ID나 약관 PDF 파일 중 하나는 필수 입니다."),
     HISTORY_NOT_FOUND(404, "해당 분석 이력을 찾을 수 없습니다."),
     HISTORY_ACCESS_DENIED(403, "해당 분석 이력에 대한 접근 권한이 없습니다."),
+    PDF_PARSING_ERROR(500, "PDF 파일에서 텍스트를 추출하는데 실패했습니다."),
+    AI_ANALYSIS_FAILED(500, "AI 약관 분석 처리 중 오류가 발생했습니다"),
+
+    // ── File ──
+    FILE_READ_FAILED(500,"파일을 읽는 중 오류가 발생했습니다."),
+    FILE_UPLOAD_FAILED(500, "파일을 업로드하는 중 오류가 발생했습니다."),
+    FILE_DELETE_FAILED(500, "파일을 삭제하는 중 오류가 발생했습니다."),
 
     // ── Insurance ──
 

@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class CoverageRuleGeneratorTest {
 
     CoverageRuleGenerator coverageRuleGenerator = new CoverageRuleGenerator(
-            new CoverageRuleGenerationPolicyResolver(List.of(
+            new CoverageRulePolicyResolver(List.of(
                     new FirstGenerationCoverageRuleGenerationPolicy(),
                     new SecondGenerationCoverageRuleGenerationPolicy(),
                     new ThirdGenerationCoverageRuleGenerationPolicy(),

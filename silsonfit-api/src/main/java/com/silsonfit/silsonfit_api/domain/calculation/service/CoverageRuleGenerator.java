@@ -24,7 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CoverageRuleGenerator {
 
-    private final CoverageRuleGenerationPolicyResolver policyResolver;
+    private final CoverageRulePolicyResolver policyResolver;
 
     /**
      * EDI 코드 기반 기본 보장 룰 생성

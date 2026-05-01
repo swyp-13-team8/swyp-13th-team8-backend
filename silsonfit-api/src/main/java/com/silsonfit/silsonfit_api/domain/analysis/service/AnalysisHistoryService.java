@@ -4,6 +4,7 @@ import com.silsonfit.silsonfit_api.domain.analysis.dto.AnalysisHistoryDetailResp
 import com.silsonfit.silsonfit_api.domain.analysis.dto.AnalysisHistoryListResponse;
 import com.silsonfit.silsonfit_api.domain.analysis.entity.AnalysisHistory;
 import com.silsonfit.silsonfit_api.domain.analysis.repository.AnalysisHistoryRepository;
+import com.silsonfit.silsonfit_api.global.aws.S3Service;
 import com.silsonfit.silsonfit_api.global.error.BusinessException;
 import com.silsonfit.silsonfit_api.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AnalysisHistoryService {
 
     private final AnalysisHistoryRepository analysisHistoryRepository;
+    private final S3Service s3Service;
 
     /**
      * 분석 이력 리스트 조회
@@ -68,8 +70,27 @@ public class AnalysisHistoryService {
             throw new BusinessException(ErrorCode.HISTORY_ACCESS_DENIED);
         }
 
-        // TODO: S3 파일 삭제 로직 추가 예정
+        s3Service.delete(history.getPdfFileUrl());
 
         analysisHistoryRepository.delete(history);
+    }
+
+    /**
+     * 분석 이력 즐겨찾기 (토글)
+     *
+     * @param userId 사용자 ID
+     * @param historyId 즐겨찾기를 적용할 이력 ID
+     */
+    @Transactional
+    public void toggleFavorite(Long userId, Long historyId) {
+        AnalysisHistory history = analysisHistoryRepository.findById(historyId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.HISTORY_NOT_FOUND));
+
+        if (!history.getUserId().equals(userId)) {
+            log.warn("즐겨찾기 권한이 없습니다. - userId={}, historyId={}", userId, historyId);
+            throw new BusinessException(ErrorCode.HISTORY_ACCESS_DENIED);
+        }
+
+        history.toggleFavorite();
     }
 }

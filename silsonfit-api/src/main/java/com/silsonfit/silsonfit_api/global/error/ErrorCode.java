@@ -29,6 +29,7 @@ public enum ErrorCode {
     // ── User ──
     USER_NOT_FOUND(404, "사용자를 찾을 수 없습니다."),
     DEACTIVATED_USER(403, "탈퇴한 사용자입니다."),
+    WITHDRAW_GRACE_PERIOD_EXPIRED(403, "탈퇴 후 30일이 경과하여 복구할 수 없습니다."),
     INVALID_NICKNAME(400, "사용할 수 없는 닉네임입니다."),
 
     // ── Analysis ──

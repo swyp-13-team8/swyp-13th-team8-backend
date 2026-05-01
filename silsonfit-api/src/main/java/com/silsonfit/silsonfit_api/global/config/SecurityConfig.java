@@ -63,8 +63,8 @@ public class SecurityConfig {
                                 "/v3/api-docs/**",
                                 "/actuator/health",
                                 "/actuator/info",
-                                "api/sse/connect",
-                                "api/analysis"
+                                "/api/sse/connect",
+                                "/api/analysis"
                         ).permitAll()
                         .anyRequest().authenticated()
                 );

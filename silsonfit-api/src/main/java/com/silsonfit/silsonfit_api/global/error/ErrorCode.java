@@ -36,6 +36,9 @@ public enum ErrorCode {
     HISTORY_ACCESS_DENIED(403, "해당 분석 이력에 대한 접근 권한이 없습니다."),
 
     // ── Insurance ──
+    INSURANCE_NOT_FOUND(404, "보험 상품을 찾을 수 없습니다."),
+    USER_INSURANCE_NOT_FOUND(404, "등록된 보험을 찾을 수 없습니다."),
+    INVALID_SUBSCRIBED_DATE(400, "세대를 판별할 수 없는 가입 연월입니다."),
 
     // ── Calculator ──
 

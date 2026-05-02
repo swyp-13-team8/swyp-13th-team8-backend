@@ -54,7 +54,6 @@ class InsuranceServiceTest {
 
         // then
         assertThat(response.generation()).isEqualTo(3);
-        assertThat(response.description()).contains("3세대");
     }
 
     @Test

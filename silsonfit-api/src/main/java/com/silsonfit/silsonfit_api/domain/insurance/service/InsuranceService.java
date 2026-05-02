@@ -34,7 +34,7 @@ public class InsuranceService {
      */
     public GenerationResponse determineGeneration(GenerationRequest request) {
         InsuranceGeneration gen = InsuranceGeneration.from(request.subscribedYearMonth());
-        return new GenerationResponse(gen.getGeneration(), gen.getDescription());
+        return new GenerationResponse(gen.getGeneration());
     }
 
     /**

@@ -6,6 +6,7 @@ import com.silsonfit.silsonfit_api.domain.insurance.dto.InsuranceInfoDto;
 import com.silsonfit.silsonfit_api.domain.insurance.dto.InsuranceProductResponse;
 import com.silsonfit.silsonfit_api.domain.insurance.dto.InsuranceRegisterRequest;
 import com.silsonfit.silsonfit_api.domain.insurance.dto.InsuranceRegisterResponse;
+import com.silsonfit.silsonfit_api.domain.insurance.dto.UserInsuranceResponse;
 import com.silsonfit.silsonfit_api.domain.insurance.entity.Insurance;
 import com.silsonfit.silsonfit_api.domain.insurance.enums.InsuranceGeneration;
 import com.silsonfit.silsonfit_api.domain.insurance.entity.UserInsurance;
@@ -113,6 +114,27 @@ public class InsuranceService {
                 .map(insurance -> new InsuranceProductResponse(
                         insurance.getId(),
                         insurance.getProductName()
+                ))
+                .toList();
+    }
+
+    /**
+     * 사용자 등록 보험 목록 조회
+     *
+     * @param userId 사용자 ID
+     * @return 등록 보험 목록
+     */
+    @Transactional(readOnly = true)
+    public List<UserInsuranceResponse> getMyInsurances(Long userId) {
+        List<UserInsurance> userInsurances = userInsuranceRepository.findByUserIdWithInsurance(userId);
+
+        return userInsurances.stream()
+                .map(ui -> new UserInsuranceResponse(
+                        ui.getId(),
+                        ui.getInsurance().getCompanyName(),
+                        ui.getInsurance().getProductName(),
+                        ui.getInsurance().getGeneration(),
+                        ui.getSubscribedAt()
                 ))
                 .toList();
     }

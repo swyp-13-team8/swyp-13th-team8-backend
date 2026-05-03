@@ -5,6 +5,7 @@ import com.silsonfit.silsonfit_api.domain.insurance.dto.GenerationResponse;
 import com.silsonfit.silsonfit_api.domain.insurance.dto.InsuranceProductResponse;
 import com.silsonfit.silsonfit_api.domain.insurance.dto.InsuranceRegisterRequest;
 import com.silsonfit.silsonfit_api.domain.insurance.dto.InsuranceRegisterResponse;
+import com.silsonfit.silsonfit_api.domain.insurance.dto.UserInsuranceResponse;
 import com.silsonfit.silsonfit_api.domain.insurance.service.InsuranceService;
 import com.silsonfit.silsonfit_api.global.auth.CustomUserDetails;
 import com.silsonfit.silsonfit_api.global.common.ApiResponse;
@@ -18,7 +19,7 @@ import java.util.List;
 /**
  * 보험 관련 API
  *
- * 세대 판별, 보험 등록/삭제, 상품 목록 조회 제공
+ * 세대 판별, 보험 등록/삭제, 내 보험 목록, 상품 목록 조회 제공
  */
 @RestController
 @RequestMapping("/api/insurance")
@@ -55,6 +56,15 @@ public class InsuranceController {
             @PathVariable("id") Long userInsuranceId) {
         insuranceService.delete(userDetails.getUserId(), userInsuranceId);
         return ApiResponse.success();
+    }
+
+    /**
+     * 내 보험 목록 조회
+     */
+    @GetMapping("/list")
+    public ApiResponse<List<UserInsuranceResponse>> getMyInsurances(
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        return ApiResponse.success(insuranceService.getMyInsurances(userDetails.getUserId()));
     }
 
     /**

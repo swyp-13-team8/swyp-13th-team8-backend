@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 /**
  * 보험 관련 API
  *
- * 세대 판별, 보험 등록 제공
+ * 세대 판별, 보험 등록/삭제 제공
  */
 @RestController
 @RequestMapping("/api/insurance")
@@ -41,5 +41,16 @@ public class InsuranceController {
             @AuthenticationPrincipal CustomUserDetails userDetails,
             @Valid @RequestBody InsuranceRegisterRequest request) {
         return ApiResponse.success(insuranceService.register(userDetails.getUserId(), request));
+    }
+
+    /**
+     * 보험 삭제
+     */
+    @DeleteMapping("/{id}")
+    public ApiResponse<Void> delete(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable("id") Long userInsuranceId) {
+        insuranceService.delete(userDetails.getUserId(), userInsuranceId);
+        return ApiResponse.success();
     }
 }

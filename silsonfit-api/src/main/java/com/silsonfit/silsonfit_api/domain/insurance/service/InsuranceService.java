@@ -3,6 +3,7 @@ package com.silsonfit.silsonfit_api.domain.insurance.service;
 import com.silsonfit.silsonfit_api.domain.insurance.dto.GenerationRequest;
 import com.silsonfit.silsonfit_api.domain.insurance.dto.GenerationResponse;
 import com.silsonfit.silsonfit_api.domain.insurance.dto.InsuranceInfoDto;
+import com.silsonfit.silsonfit_api.domain.insurance.dto.InsuranceProductResponse;
 import com.silsonfit.silsonfit_api.domain.insurance.dto.InsuranceRegisterRequest;
 import com.silsonfit.silsonfit_api.domain.insurance.dto.InsuranceRegisterResponse;
 import com.silsonfit.silsonfit_api.domain.insurance.entity.Insurance;
@@ -15,6 +16,8 @@ import com.silsonfit.silsonfit_api.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * 보험 관련 비즈니스 로직
@@ -93,6 +96,25 @@ public class InsuranceService {
         }
 
         userInsuranceRepository.delete(userInsurance);
+    }
+
+    /**
+     * 보험사별 상품 목록 조회
+     *
+     * @param companyName 보험사명
+     * @param generation 세대
+     * @return 상품 목록
+     */
+    @Transactional(readOnly = true)
+    public List<InsuranceProductResponse> getProducts(String companyName, int generation) {
+        List<Insurance> products = insuranceRepository.findByCompanyNameAndGeneration(companyName, generation);
+
+        return products.stream()
+                .map(insurance -> new InsuranceProductResponse(
+                        insurance.getId(),
+                        insurance.getProductName()
+                ))
+                .toList();
     }
 
     /**

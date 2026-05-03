@@ -2,6 +2,7 @@ package com.silsonfit.silsonfit_api.domain.insurance.controller;
 
 import com.silsonfit.silsonfit_api.domain.insurance.dto.GenerationRequest;
 import com.silsonfit.silsonfit_api.domain.insurance.dto.GenerationResponse;
+import com.silsonfit.silsonfit_api.domain.insurance.dto.InsuranceProductResponse;
 import com.silsonfit.silsonfit_api.domain.insurance.dto.InsuranceRegisterRequest;
 import com.silsonfit.silsonfit_api.domain.insurance.dto.InsuranceRegisterResponse;
 import com.silsonfit.silsonfit_api.domain.insurance.service.InsuranceService;
@@ -12,10 +13,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * 보험 관련 API
  *
- * 세대 판별, 보험 등록/삭제 제공
+ * 세대 판별, 보험 등록/삭제, 상품 목록 조회 제공
  */
 @RestController
 @RequestMapping("/api/insurance")
@@ -52,5 +55,15 @@ public class InsuranceController {
             @PathVariable("id") Long userInsuranceId) {
         insuranceService.delete(userDetails.getUserId(), userInsuranceId);
         return ApiResponse.success();
+    }
+
+    /**
+     * 보험사별 상품 목록 조회
+     */
+    @GetMapping("/products")
+    public ApiResponse<List<InsuranceProductResponse>> getProducts(
+            @RequestParam String companyName,
+            @RequestParam int generation) {
+        return ApiResponse.success(insuranceService.getProducts(companyName, generation));
     }
 }

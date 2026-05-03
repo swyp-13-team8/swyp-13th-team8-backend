@@ -3,6 +3,8 @@ package com.silsonfit.silsonfit_api.domain.insurance.service;
 import com.silsonfit.silsonfit_api.domain.insurance.dto.GenerationRequest;
 import com.silsonfit.silsonfit_api.domain.insurance.dto.GenerationResponse;
 import com.silsonfit.silsonfit_api.domain.insurance.dto.InsuranceInfoDto;
+import com.silsonfit.silsonfit_api.domain.insurance.dto.InsuranceRegisterRequest;
+import com.silsonfit.silsonfit_api.domain.insurance.dto.InsuranceRegisterResponse;
 import com.silsonfit.silsonfit_api.domain.insurance.entity.Insurance;
 import com.silsonfit.silsonfit_api.domain.insurance.enums.InsuranceGeneration;
 import com.silsonfit.silsonfit_api.domain.insurance.entity.UserInsurance;
@@ -17,11 +19,13 @@ import org.springframework.transaction.annotation.Transactional;
 /**
  * 보험 관련 비즈니스 로직
  *
- * 세대 판별, 타 도메인 보험 정보 제공
+ * 세대 판별, 보험 등록/삭제, 상품 목록 조회, 타 도메인 보험 정보 제공
  */
 @Service
 @RequiredArgsConstructor
 public class InsuranceService {
+
+    private static final int MAX_INSURANCE_COUNT = 5;
 
     private final InsuranceRepository insuranceRepository;
     private final UserInsuranceRepository userInsuranceRepository;
@@ -35,6 +39,41 @@ public class InsuranceService {
     public GenerationResponse determineGeneration(GenerationRequest request) {
         InsuranceGeneration gen = InsuranceGeneration.from(request.subscribedYearMonth());
         return new GenerationResponse(gen.getGeneration());
+    }
+
+    /**
+     * 보험 등록
+     *
+     * @param userId 사용자 ID
+     * @param request 보험 등록 요청
+     * @return 등록된 사용자 보험 ID
+     */
+    @Transactional
+    public InsuranceRegisterResponse register(Long userId, InsuranceRegisterRequest request) {
+        // 최대 5개 제한 검증
+        long count = userInsuranceRepository.countByUserId(userId);
+        if (count >= MAX_INSURANCE_COUNT) {
+            throw new BusinessException(ErrorCode.INSURANCE_LIMIT_EXCEEDED);
+        }
+
+        // 동일 보험 상품 중복 등록 검증
+        if (userInsuranceRepository.existsByUserIdAndInsuranceId(userId, request.insuranceId())) {
+            throw new BusinessException(ErrorCode.INSURANCE_ALREADY_REGISTERED);
+        }
+
+        // 보험 상품 존재 여부 검증
+        Insurance insurance = insuranceRepository.findById(request.insuranceId())
+                .orElseThrow(() -> new BusinessException(ErrorCode.INSURANCE_NOT_FOUND));
+
+        UserInsurance userInsurance = UserInsurance.builder()
+                .userId(userId)
+                .insurance(insurance)
+                .subscribedAt(request.subscribedAt())
+                .hasNonCoveredRider(false)
+                .build();
+
+        UserInsurance saved = userInsuranceRepository.save(userInsurance);
+        return new InsuranceRegisterResponse(saved.getId());
     }
 
     /**

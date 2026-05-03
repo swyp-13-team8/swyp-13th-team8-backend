@@ -92,7 +92,7 @@ public class InsuranceService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_INSURANCE_NOT_FOUND));
 
         // 본인 보험인지 검증
-        if (!userInsurance.getUserId().equals(userId)) {
+        if (!userInsurance.isOwnedBy(userId)) {
             throw new BusinessException(ErrorCode.USER_INSURANCE_ACCESS_DENIED);
         }
 

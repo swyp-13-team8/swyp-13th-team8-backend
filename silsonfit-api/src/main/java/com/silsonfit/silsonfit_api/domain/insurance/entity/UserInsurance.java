@@ -45,4 +45,14 @@ public class UserInsurance {
         this.subscribedAt = subscribedAt;
         this.hasNonCoveredRider = hasNonCoveredRider;
     }
+
+    /**
+     * 소유권 확인
+     *
+     * @param userId 확인할 사용자 ID
+     * @return 본인 보험 여부
+     */
+    public boolean isOwnedBy(Long userId) {
+        return this.userId.equals(userId);
+    }
 }

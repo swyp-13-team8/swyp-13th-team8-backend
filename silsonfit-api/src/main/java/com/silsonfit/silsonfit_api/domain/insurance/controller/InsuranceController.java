@@ -2,6 +2,7 @@ package com.silsonfit.silsonfit_api.domain.insurance.controller;
 
 import com.silsonfit.silsonfit_api.domain.insurance.dto.GenerationRequest;
 import com.silsonfit.silsonfit_api.domain.insurance.dto.GenerationResponse;
+import com.silsonfit.silsonfit_api.domain.insurance.dto.InsuranceCompanyResponse;
 import com.silsonfit.silsonfit_api.domain.insurance.dto.InsuranceProductResponse;
 import com.silsonfit.silsonfit_api.domain.insurance.dto.InsuranceRegisterRequest;
 import com.silsonfit.silsonfit_api.domain.insurance.dto.InsuranceRegisterResponse;
@@ -19,7 +20,7 @@ import java.util.List;
 /**
  * 보험 관련 API
  *
- * 세대 판별, 보험 등록/삭제, 내 보험 목록, 상품 목록 조회 제공
+ * 세대 판별, 보험사 목록, 보험 등록/삭제, 내 보험 목록, 상품 목록 조회 제공
  */
 @RestController
 @RequestMapping("/api/insurance")
@@ -27,6 +28,14 @@ import java.util.List;
 public class InsuranceController {
 
     private final InsuranceService insuranceService;
+
+    /**
+     * 보험사 목록 조회
+     */
+    @GetMapping("/companies")
+    public ApiResponse<List<InsuranceCompanyResponse>> getCompanies() {
+        return ApiResponse.success(insuranceService.getCompanies());
+    }
 
     /**
      * 가입 연월 기반 세대 판별

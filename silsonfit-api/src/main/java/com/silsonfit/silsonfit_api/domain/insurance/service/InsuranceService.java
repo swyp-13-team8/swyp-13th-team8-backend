@@ -2,6 +2,7 @@ package com.silsonfit.silsonfit_api.domain.insurance.service;
 
 import com.silsonfit.silsonfit_api.domain.insurance.dto.GenerationRequest;
 import com.silsonfit.silsonfit_api.domain.insurance.dto.GenerationResponse;
+import com.silsonfit.silsonfit_api.domain.insurance.dto.InsuranceCompanyResponse;
 import com.silsonfit.silsonfit_api.domain.insurance.dto.InsuranceInfoDto;
 import com.silsonfit.silsonfit_api.domain.insurance.dto.InsuranceProductResponse;
 import com.silsonfit.silsonfit_api.domain.insurance.dto.InsuranceRegisterRequest;
@@ -43,6 +44,22 @@ public class InsuranceService {
     public GenerationResponse determineGeneration(GenerationRequest request) {
         InsuranceGeneration gen = InsuranceGeneration.from(request.subscribedYearMonth());
         return new GenerationResponse(gen.getGeneration());
+    }
+
+    /**
+     * 보험사 목록 조회
+     *
+     * @return 빅5 보험사 + 기타 목록
+     */
+    public List<InsuranceCompanyResponse> getCompanies() {
+        return List.of(
+                new InsuranceCompanyResponse("samsung_fire", "삼성화재"),
+                new InsuranceCompanyResponse("hyundai_marine", "현대해상"),
+                new InsuranceCompanyResponse("db_insurance", "DB손해보험"),
+                new InsuranceCompanyResponse("kb_insurance", "KB손해보험"),
+                new InsuranceCompanyResponse("meritz_fire", "메리츠화재"),
+                new InsuranceCompanyResponse("etc", "기타")
+        );
     }
 
     /**

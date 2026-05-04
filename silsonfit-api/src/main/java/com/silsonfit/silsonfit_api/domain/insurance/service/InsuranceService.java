@@ -149,7 +149,7 @@ public class InsuranceService {
 
         return userInsurances.stream()
                 .map(ui -> new UserInsuranceResponse(
-                        ui.getId(),
+                        ui.getId(), // 보험 등록 건의 고유 번호
                         ui.getInsurance().getCompanyName(),
                         ui.getInsurance().getProductName(),
                         ui.getInsurance().getGeneration(),

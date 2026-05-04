@@ -141,12 +141,7 @@ public class InsuranceService {
             return findStandardPolicy(generation);
         }
 
-        return products.stream()
-                .map(insurance -> new InsuranceProductResponse(
-                        insurance.getId(),
-                        insurance.getProductName()
-                ))
-                .toList();
+        return toProductResponse(products);
     }
 
     /**
@@ -160,10 +155,21 @@ public class InsuranceService {
             throw new BusinessException(ErrorCode.INSURANCE_NOT_FOUND);
         }
 
-        return standardPolicies.stream()
+        return toProductResponse(standardPolicies);
+    }
+
+    /**
+     * Insurance 엔티티 → 라벨 포함 응답 DTO 변환
+     */
+    private List<InsuranceProductResponse> toProductResponse(List<Insurance> products) {
+        return products.stream()
                 .map(insurance -> new InsuranceProductResponse(
                         insurance.getId(),
-                        insurance.getProductName()
+                        insurance.getProductName(),
+                        insurance.getContractType() != null ? insurance.getContractType().getDisplayName() : null,
+                        insurance.getGeneration(),
+                        insurance.getCoverageStructure() != null ? insurance.getCoverageStructure().getDisplayName() : null,
+                        insurance.getCautionPoint() != null ? insurance.getCautionPoint().getDisplayName() : null
                 ))
                 .toList();
     }
@@ -179,13 +185,19 @@ public class InsuranceService {
         List<UserInsurance> userInsurances = userInsuranceRepository.findByUserIdWithInsurance(userId);
 
         return userInsurances.stream()
-                .map(ui -> new UserInsuranceResponse(
-                        ui.getId(), // 보험 등록 건의 고유 번호
-                        ui.getInsurance().getCompanyName(),
-                        ui.getInsurance().getProductName(),
-                        ui.getInsurance().getGeneration(),
-                        ui.getSubscribedAt()
-                ))
+                .map(ui -> {
+                    Insurance insurance = ui.getInsurance();
+                    return new UserInsuranceResponse(
+                            ui.getId(), // 보험 등록 건의 고유 번호
+                            insurance.getCompanyName(),
+                            insurance.getProductName(),
+                            insurance.getGeneration(),
+                            ui.getSubscribedAt(),
+                            insurance.getContractType() != null ? insurance.getContractType().getDisplayName() : null,
+                            insurance.getCoverageStructure() != null ? insurance.getCoverageStructure().getDisplayName() : null,
+                            insurance.getCautionPoint() != null ? insurance.getCautionPoint().getDisplayName() : null
+                    );
+                })
                 .toList();
     }
 

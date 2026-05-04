@@ -9,6 +9,7 @@ import com.silsonfit.silsonfit_api.domain.insurance.dto.InsuranceRegisterRequest
 import com.silsonfit.silsonfit_api.domain.insurance.dto.InsuranceRegisterResponse;
 import com.silsonfit.silsonfit_api.domain.insurance.dto.UserInsuranceResponse;
 import com.silsonfit.silsonfit_api.domain.insurance.entity.Insurance;
+import com.silsonfit.silsonfit_api.domain.insurance.enums.InsuranceCompany;
 import com.silsonfit.silsonfit_api.domain.insurance.enums.InsuranceGeneration;
 import com.silsonfit.silsonfit_api.domain.insurance.entity.UserInsurance;
 import com.silsonfit.silsonfit_api.domain.insurance.repository.InsuranceRepository;
@@ -19,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -38,11 +40,14 @@ public class InsuranceService {
     /**
      * 가입 연월 기반 세대 판별
      *
-     * @param request 가입 연월
-     * @return 세대 번호 및 설명
+     * @param request 보험사 ID + 가입 연월
+     * @return 세대 번호
      */
     public GenerationResponse determineGeneration(GenerationRequest request) {
-        InsuranceGeneration gen = InsuranceGeneration.from(request.subscribedYearMonth());
+        // 보험사 ID 유효성 검증
+        InsuranceCompany.fromId(request.companyId());
+
+        InsuranceGeneration gen = InsuranceGeneration.from(request.joinDate());
         return new GenerationResponse(gen.getGeneration());
     }
 
@@ -52,14 +57,9 @@ public class InsuranceService {
      * @return 빅5 보험사 + 기타 목록
      */
     public List<InsuranceCompanyResponse> getCompanies() {
-        return List.of(
-                new InsuranceCompanyResponse("samsung_fire", "삼성화재"),
-                new InsuranceCompanyResponse("hyundai_marine", "현대해상"),
-                new InsuranceCompanyResponse("db_insurance", "DB손해보험"),
-                new InsuranceCompanyResponse("kb_insurance", "KB손해보험"),
-                new InsuranceCompanyResponse("meritz_fire", "메리츠화재"),
-                new InsuranceCompanyResponse("etc", "기타")
-        );
+        return Arrays.stream(InsuranceCompany.values())
+                .map(company -> new InsuranceCompanyResponse(company.getId(), company.getDisplayName()))
+                .toList();
     }
 
     /**
@@ -119,13 +119,15 @@ public class InsuranceService {
     /**
      * 보험사별 상품 목록 조회
      *
-     * @param companyName 보험사명
+     * @param companyId 보험사 ID (예: "comp_001")
      * @param generation 세대
      * @return 상품 목록
      */
     @Transactional(readOnly = true)
-    public List<InsuranceProductResponse> getProducts(String companyName, int generation) {
-        List<Insurance> products = insuranceRepository.findByCompanyNameAndGeneration(companyName, generation);
+    public List<InsuranceProductResponse> getProducts(String companyId, int generation) {
+        InsuranceCompany company = InsuranceCompany.fromId(companyId);
+        List<Insurance> products = insuranceRepository.findByCompanyNameAndGeneration(
+                company.getDisplayName(), generation);
 
         return products.stream()
                 .map(insurance -> new InsuranceProductResponse(

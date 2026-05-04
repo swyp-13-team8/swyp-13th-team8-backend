@@ -57,7 +57,7 @@ class InsuranceServiceTest {
     void determineGeneration_thirdGen() {
         // when
         GenerationResponse response = insuranceService.determineGeneration(
-                new GenerationRequest("2020-03"));
+                new GenerationRequest("comp_001", "2020-03"));
 
         // then
         assertThat(response.generation()).isEqualTo(3);
@@ -68,10 +68,21 @@ class InsuranceServiceTest {
     void determineGeneration_fourthGen() {
         // when
         GenerationResponse response = insuranceService.determineGeneration(
-                new GenerationRequest("2023-01"));
+                new GenerationRequest("comp_001", "2023-01"));
 
         // then
         assertThat(response.generation()).isEqualTo(4);
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 보험사 ID로 세대 판별 시 INSURANCE_COMPANY_NOT_FOUND 예외")
+    void determineGeneration_invalidCompanyId() {
+        // when & then
+        assertThatThrownBy(() -> insuranceService.determineGeneration(
+                new GenerationRequest("comp_999", "2020-03")))
+                .isInstanceOf(BusinessException.class)
+                .extracting(e -> ((BusinessException) e).getErrorCode())
+                .isEqualTo(ErrorCode.INSURANCE_COMPANY_NOT_FOUND);
     }
 
     // ──────────── getInsuranceInfo ────────────
@@ -318,8 +329,8 @@ class InsuranceServiceTest {
         given(insuranceRepository.findByCompanyNameAndGeneration("삼성화재", 3))
                 .willReturn(products);
 
-        // when
-        List<InsuranceProductResponse> result = insuranceService.getProducts("삼성화재", 3);
+        // when — companyId "comp_001" → 내부적으로 "삼성화재"로 변환
+        List<InsuranceProductResponse> result = insuranceService.getProducts("comp_001", 3);
 
         // then
         assertThat(result).hasSize(2);
@@ -334,11 +345,21 @@ class InsuranceServiceTest {
         given(insuranceRepository.findByCompanyNameAndGeneration("기타", 1))
                 .willReturn(List.of());
 
-        // when
-        List<InsuranceProductResponse> result = insuranceService.getProducts("기타", 1);
+        // when — companyId "comp_006" → 내부적으로 "기타"로 변환
+        List<InsuranceProductResponse> result = insuranceService.getProducts("comp_006", 1);
 
         // then
         assertThat(result).isEmpty();
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 보험사 ID로 상품 조회 시 INSURANCE_COMPANY_NOT_FOUND 예외")
+    void getProducts_invalidCompanyId() {
+        // when & then
+        assertThatThrownBy(() -> insuranceService.getProducts("comp_999", 3))
+                .isInstanceOf(BusinessException.class)
+                .extracting(e -> ((BusinessException) e).getErrorCode())
+                .isEqualTo(ErrorCode.INSURANCE_COMPANY_NOT_FOUND);
     }
 
     // ──────────── getGenerationByInsuranceId ────────────

@@ -81,8 +81,8 @@ public class InsuranceController {
      */
     @GetMapping("/products")
     public ApiResponse<List<InsuranceProductResponse>> getProducts(
-            @RequestParam String companyName,
+            @RequestParam String companyId,
             @RequestParam int generation) {
-        return ApiResponse.success(insuranceService.getProducts(companyName, generation));
+        return ApiResponse.success(insuranceService.getProducts(companyId, generation));
     }
 }

@@ -34,13 +34,13 @@ public enum InsuranceGeneration {
     /**
      * 가입 연월로 세대 판별
      *
-     * @param subscribedYearMonth 가입 연월 (예: "2020-03")
+     * @param joinDate 가입 연월 (예: "2020-03")
      * @return 해당 세대 enum
      */
-    public static InsuranceGeneration from(String subscribedYearMonth) {
+    public static InsuranceGeneration from(String joinDate) {
         YearMonth target;
         try {
-            target = YearMonth.parse(subscribedYearMonth);
+            target = YearMonth.parse(joinDate);
         } catch (Exception e) {
             throw new BusinessException(ErrorCode.INVALID_SUBSCRIBED_DATE);
         }

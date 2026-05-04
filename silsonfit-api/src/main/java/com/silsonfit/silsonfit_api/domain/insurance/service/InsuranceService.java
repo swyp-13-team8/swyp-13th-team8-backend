@@ -112,20 +112,55 @@ public class InsuranceService {
     }
     */
 
+    private static final String STANDARD_POLICY_COMPANY = "표준약관";
+
     /**
-     * 보험사별 상품 목록 조회
+     * 보험사별 상품 매칭 조회
      *
-     * @param companyId 보험사 ID (예: "comp_001")
+     * 빅5 보험사: 해당 세대 상품 반환, 없으면 표준약관 fallback
+     * 기타 보험사: 표준약관 반환
+     *
+     * @param companyName 보험사명 (예: "삼성화재", "기타")
      * @param generation 세대
-     * @return 상품 목록
+     * @return 매칭된 상품 목록
      */
     @Transactional(readOnly = true)
-    public List<InsuranceProductResponse> getProducts(String companyId, int generation) {
-        InsuranceCompany company = InsuranceCompany.fromId(companyId);
-        List<Insurance> products = insuranceRepository.findByCompanyNameAndGeneration(
-                company.getDisplayName(), generation);
+    public List<InsuranceProductResponse> getProducts(String companyName, int generation) {
+        InsuranceCompany company = InsuranceCompany.fromDisplayName(companyName);
+
+        // 기타 보험사 → 표준약관
+        if (!company.isBigFive()) {
+            return findStandardPolicy(generation);
+        }
+
+        // 빅5 보험사 → 상품 조회
+        List<Insurance> products = insuranceRepository.findByCompanyNameAndGeneration(companyName, generation);
+
+        // 상품 없으면 표준약관 fallback
+        if (products.isEmpty()) {
+            return findStandardPolicy(generation);
+        }
 
         return products.stream()
+                .map(insurance -> new InsuranceProductResponse(
+                        insurance.getId(),
+                        insurance.getProductName()
+                ))
+                .toList();
+    }
+
+    /**
+     * 세대별 표준약관 조회
+     */
+    private List<InsuranceProductResponse> findStandardPolicy(int generation) {
+        List<Insurance> standardPolicies = insuranceRepository.findByCompanyNameAndGeneration(
+                STANDARD_POLICY_COMPANY, generation);
+
+        if (standardPolicies.isEmpty()) {
+            throw new BusinessException(ErrorCode.INSURANCE_NOT_FOUND);
+        }
+
+        return standardPolicies.stream()
                 .map(insurance -> new InsuranceProductResponse(
                         insurance.getId(),
                         insurance.getProductName()

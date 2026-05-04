@@ -77,12 +77,12 @@ public class InsuranceController {
     }
 
     /**
-     * 보험사별 상품 목록 조회
+     * 보험사별 상품 매칭 조회
      */
     @GetMapping("/products")
     public ApiResponse<List<InsuranceProductResponse>> getProducts(
-            @RequestParam String companyId,
+            @RequestParam String companyName,
             @RequestParam int generation) {
-        return ApiResponse.success(insuranceService.getProducts(companyId, generation));
+        return ApiResponse.success(insuranceService.getProducts(companyName, generation));
     }
 }

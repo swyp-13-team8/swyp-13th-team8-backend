@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * 보험 관련 API
  *
- * 세대 판별, 보험사 목록, 보험 등록/삭제, 내 보험 목록, 상품 목록 조회 제공
+ * 세대 판별, 보험사 목록, 보험 등록, 내 보험 목록, 상품 목록 조회 제공
  */
 @RestController
 @RequestMapping("/api/insurance")
@@ -56,9 +56,8 @@ public class InsuranceController {
         return ApiResponse.success(insuranceService.register(userDetails.getUserId(), request));
     }
 
-    /**
-     * 보험 삭제
-     */
+    // NOTE: 기능 명세에 보험 삭제 기능이 없어 주석 처리. 추후 필요 시 해제.
+    /*
     @DeleteMapping("/{id}")
     public ApiResponse<Void> delete(
             @AuthenticationPrincipal CustomUserDetails userDetails,
@@ -66,6 +65,7 @@ public class InsuranceController {
         insuranceService.delete(userDetails.getUserId(), userInsuranceId);
         return ApiResponse.success();
     }
+    */
 
     /**
      * 내 보험 목록 조회

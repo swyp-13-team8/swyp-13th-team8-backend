@@ -211,12 +211,11 @@ class InsuranceServiceTest {
                 .isEqualTo(ErrorCode.INSURANCE_NOT_FOUND);
     }
 
-    // ──────────── delete ────────────
-
+    // NOTE: 기능 명세에 보험 삭제 기능이 없어 주석 처리. 추후 필요 시 해제.
+    /*
     @Test
     @DisplayName("보험 삭제 성공")
     void delete_success() {
-        // given
         Insurance insurance = createInsurance(1L, "삼성화재", "삼성화재 실손의료비보험", 3);
         UserInsurance userInsurance = UserInsurance.builder()
                 .userId(1L)
@@ -228,20 +227,16 @@ class InsuranceServiceTest {
 
         given(userInsuranceRepository.findById(10L)).willReturn(Optional.of(userInsurance));
 
-        // when
         insuranceService.delete(1L, 10L);
 
-        // then
         verify(userInsuranceRepository).delete(userInsurance);
     }
 
     @Test
     @DisplayName("존재하지 않는 보험 삭제 시 USER_INSURANCE_NOT_FOUND 예외")
     void delete_notFound() {
-        // given
         given(userInsuranceRepository.findById(999L)).willReturn(Optional.empty());
 
-        // when & then
         assertThatThrownBy(() -> insuranceService.delete(1L, 999L))
                 .isInstanceOf(BusinessException.class)
                 .extracting(e -> ((BusinessException) e).getErrorCode())
@@ -251,7 +246,6 @@ class InsuranceServiceTest {
     @Test
     @DisplayName("다른 사용자의 보험 삭제 시 USER_INSURANCE_ACCESS_DENIED 예외")
     void delete_accessDenied() {
-        // given
         Insurance insurance = createInsurance(1L, "삼성화재", "삼성화재 실손의료비보험", 3);
         UserInsurance userInsurance = UserInsurance.builder()
                 .userId(1L)
@@ -263,12 +257,12 @@ class InsuranceServiceTest {
 
         given(userInsuranceRepository.findById(10L)).willReturn(Optional.of(userInsurance));
 
-        // when & then
         assertThatThrownBy(() -> insuranceService.delete(2L, 10L))
                 .isInstanceOf(BusinessException.class)
                 .extracting(e -> ((BusinessException) e).getErrorCode())
                 .isEqualTo(ErrorCode.USER_INSURANCE_ACCESS_DENIED);
     }
+    */
 
     // ──────────── getMyInsurances ────────────
 

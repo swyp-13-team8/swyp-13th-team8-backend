@@ -97,24 +97,20 @@ public class InsuranceService {
         return new InsuranceRegisterResponse(saved.getId());
     }
 
-    /**
-     * 보험 삭제
-     *
-     * @param userId 사용자 ID
-     * @param userInsuranceId 사용자 보험 등록 ID
-     */
+    // NOTE: 기능 명세에 보험 삭제 기능이 없어 주석 처리. 추후 필요 시 해제.
+    /*
     @Transactional
     public void delete(Long userId, Long userInsuranceId) {
         UserInsurance userInsurance = userInsuranceRepository.findById(userInsuranceId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_INSURANCE_NOT_FOUND));
 
-        // 본인 보험인지 검증
         if (!userInsurance.isOwnedBy(userId)) {
             throw new BusinessException(ErrorCode.USER_INSURANCE_ACCESS_DENIED);
         }
 
         userInsuranceRepository.delete(userInsurance);
     }
+    */
 
     /**
      * 보험사별 상품 목록 조회

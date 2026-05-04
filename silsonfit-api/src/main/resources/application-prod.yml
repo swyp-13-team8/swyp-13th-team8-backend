@@ -32,6 +32,10 @@ aws:
     region: ap-northeast-2
     bucket: silsonfit-bucket-594754931983-ap-northeast-2-an
 
+edi:
+  public-api:
+    service-key: ${EDI_PUBLIC_API_SERVICE_KEY}
+
 management:
   endpoint:
     health:

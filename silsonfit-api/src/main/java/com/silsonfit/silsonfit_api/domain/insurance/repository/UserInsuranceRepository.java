@@ -22,4 +22,9 @@ public interface UserInsuranceRepository extends JpaRepository<UserInsurance, Lo
      * 사용자의 등록 보험 개수 조회
      */
     long countByUserId(Long userId);
+
+    /**
+     * 사용자의 동일 보험 상품 등록 여부 확인
+     */
+    boolean existsByUserIdAndInsuranceId(Long userId, Long insuranceId);
 }

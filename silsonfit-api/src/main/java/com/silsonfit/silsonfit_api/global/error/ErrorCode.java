@@ -56,6 +56,8 @@ public enum ErrorCode {
     COVERAGE_RULE_NOT_FOUND(404, "보장 룰을 찾을 수 없습니다."),
     EDI_CODE_NOT_FOUND(404, "EDI 코드를 찾을 수 없습니다."),
     EDI_API_SERVER_ERROR(502, "공공 EDI API 통신에 실패했습니다."),
+    CALCULATION_HISTORY_NOT_FOUND(404, "계산 이력을 찾을 수 없습니다."),
+    CALCULATION_HISTORY_ACCESS_DENIED(403, "해당 계산 이력에 대한 접근 권한이 없습니다."),
 
     ;
 

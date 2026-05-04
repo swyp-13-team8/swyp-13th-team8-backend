@@ -1,13 +1,17 @@
 package com.silsonfit.silsonfit_api.domain.calculation.entity;
 
+import com.silsonfit.silsonfit_api.domain.calculation.enums.InsuranceGeneration;
 import com.silsonfit.silsonfit_api.domain.calculation.enums.PurposeType;
 import com.silsonfit.silsonfit_api.domain.calculation.enums.TreatmentCategory;
 import com.silsonfit.silsonfit_api.domain.calculation.enums.VisitType;
+import com.silsonfit.silsonfit_api.global.common.converter.StringListConverter;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 /**
- * 보험별 보장 계산 룰 엔티티
+ * 보장 계산 룰 엔티티
  *
  */
 @Entity
@@ -24,8 +28,13 @@ public class CoverageRule {
     private Long id;
 
     /** 보험 ID */
-    @Column(name = "insurance_id", nullable = false)
+    @Column(name = "insurance_id")
     private Long insuranceId;
+
+    /** 보험 세대 */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "generation", nullable = false)
+    private InsuranceGeneration generation;
 
     /** EDI 코드 */
     @Column(name = "edi_code")
@@ -62,9 +71,10 @@ public class CoverageRule {
     @Column(name = "limit_amount")
     private Integer limitAmount;
 
-    /** 계산 근거 설명 */
+    /** 계산 근거 목록 */
+    @Convert(converter = StringListConverter.class)
     @Column(name = "basis", nullable = false)
-    private String basis;
+    private List<String> basis;
 
     /** 면책 또는 주의사항 */
     @Column(name = "disclaimer")
@@ -75,6 +85,7 @@ public class CoverageRule {
      */
     public static CoverageRule create(
             Long insuranceId,
+            InsuranceGeneration generation,
             String ediCode,
             VisitType visitType,
             TreatmentCategory treatmentCategory,
@@ -83,11 +94,12 @@ public class CoverageRule {
             Integer coverageRate,
             Integer deductibleAmount,
             Integer limitAmount,
-            String basis,
+            List<String> basis,
             String disclaimer
     ) {
         return CoverageRule.builder()
                 .insuranceId(insuranceId)
+                .generation(generation)
                 .ediCode(ediCode)
                 .visitType(visitType)
                 .treatmentCategory(treatmentCategory)

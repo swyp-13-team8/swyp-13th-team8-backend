@@ -16,7 +16,7 @@ import java.util.List;
  */
 @Component
 @RequiredArgsConstructor
-public class CoverageRuleGenerationPolicyResolver {
+public class CoverageRulePolicyResolver {
 
     private final List<CoverageRuleGenerationPolicy> policies;
 

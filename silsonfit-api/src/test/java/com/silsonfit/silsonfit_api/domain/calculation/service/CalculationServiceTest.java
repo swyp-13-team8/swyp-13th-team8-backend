@@ -4,6 +4,7 @@ import com.silsonfit.silsonfit_api.domain.calculation.dto.CalculationRequest;
 import com.silsonfit.silsonfit_api.domain.calculation.dto.CalculationResponse;
 import com.silsonfit.silsonfit_api.domain.calculation.entity.CalculationHistory;
 import com.silsonfit.silsonfit_api.domain.calculation.entity.CoverageRule;
+import com.silsonfit.silsonfit_api.domain.calculation.enums.InsuranceGeneration;
 import com.silsonfit.silsonfit_api.domain.calculation.enums.PurposeType;
 import com.silsonfit.silsonfit_api.domain.calculation.enums.TreatmentCategory;
 import com.silsonfit.silsonfit_api.domain.calculation.enums.VisitType;
@@ -15,11 +16,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @Transactional
 class CalculationServiceTest {
+
+    private static final Long TEST_INSURANCE_ID = 100L;
 
     @Autowired
     CalculationService calculationService;
@@ -48,9 +53,9 @@ class CalculationServiceTest {
 
         CalculationHistory history = calculationHistoryRepository.findAll().get(0);
         assertThat(history.getUserId()).isEqualTo(1L);
-        assertThat(history.getInsuranceId()).isEqualTo(1L);
+        assertThat(history.getInsuranceId()).isEqualTo(TEST_INSURANCE_ID);
         assertThat(history.getMedicalCost()).isEqualTo(100000);
-        assertThat(history.getTreatmentCategory()).isEqualTo(TreatmentCategory.MRI);
+        assertThat(history.getTreatmentCategory()).isEqualTo(TreatmentCategory.CT);
         assertThat(history.getRefundAmount()).isEqualTo(70000);
         assertThat(history.getDeductibleAmount()).isEqualTo(30000);
     }
@@ -96,27 +101,28 @@ class CalculationServiceTest {
             Integer limitAmount
     ) {
         return CoverageRule.create(
-                1L,
+                null,
+                InsuranceGeneration.FOURTH,
                 null,
                 VisitType.OUTPATIENT,
-                TreatmentCategory.MRI,
-                PurposeType.TREATMENT,
+                TreatmentCategory.CT,
+                PurposeType.UNKNOWN,
                 isCovered,
                 coverageRate,
                 deductibleAmount,
                 limitAmount,
-                "계산 테스트 룰",
+                List.of("계산 테스트 룰"),
                 null
         );
     }
 
     private CalculationRequest createCalculationRequest(Integer medicalCost) {
         CalculationRequest request = new CalculationRequest();
-        ReflectionTestUtils.setField(request, "insuranceId", 1L);
+        ReflectionTestUtils.setField(request, "insuranceId", TEST_INSURANCE_ID);
         ReflectionTestUtils.setField(request, "medicalCost", medicalCost);
         ReflectionTestUtils.setField(request, "visitType", VisitType.OUTPATIENT);
-        ReflectionTestUtils.setField(request, "treatmentCategory", TreatmentCategory.MRI);
-        ReflectionTestUtils.setField(request, "purposeType", PurposeType.TREATMENT);
+        ReflectionTestUtils.setField(request, "treatmentCategory", TreatmentCategory.CT);
+        ReflectionTestUtils.setField(request, "purposeType", PurposeType.UNKNOWN);
         ReflectionTestUtils.setField(request, "ediCode", null);
         return request;
     }

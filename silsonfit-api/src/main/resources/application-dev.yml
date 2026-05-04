@@ -14,7 +14,12 @@ spring:
     serialization:
       indent-output: true
 
+  sql:
+    init:
+      mode: always
+
   jpa:
+    defer-datasource-initialization: true
     hibernate:
       ddl-auto: create
     show-sql: true

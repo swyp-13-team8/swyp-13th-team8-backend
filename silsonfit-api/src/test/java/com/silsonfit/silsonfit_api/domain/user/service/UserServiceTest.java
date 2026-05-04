@@ -54,6 +54,7 @@ class UserServiceTest {
         assertThat(response.userId()).isEqualTo(1L);
         assertThat(response.name()).isEqualTo("홍길동");
         assertThat(response.email()).isEqualTo("hong@test.com");
+        assertThat(response.profileImageUrl()).isEqualTo("https://k.kakaocdn.net/test.jpg");
     }
 
     @Test
@@ -119,6 +120,7 @@ class UserServiceTest {
                 .socialId(socialId)
                 .name(name)
                 .email(email)
+                .profileImageUrl("https://k.kakaocdn.net/test.jpg")
                 .build();
         ReflectionTestUtils.setField(user, "id", id);
         return user;

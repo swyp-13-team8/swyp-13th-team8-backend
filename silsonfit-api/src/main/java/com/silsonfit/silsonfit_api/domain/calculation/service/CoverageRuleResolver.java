@@ -19,7 +19,7 @@ import org.springframework.util.StringUtils;
  *
  * - EDI 코드가 있으면 보험 ID + EDI 코드 기반 룰을 우선 조회한다.
  * - EDI 기반 룰이 없으면 EDI 코드 정보와 보험 정책으로 보장 룰을 생성한다.
- * - EDI 코드가 없으면 진료 유형/항목/목적 기반 룰로 대체 조회한다.
+ * - EDI 코드가 없으면 보험 세대 + 진료 유형/항목/목적 기반 룰로 대체 조회한다.
  */
 @Service
 @RequiredArgsConstructor
@@ -47,17 +47,15 @@ public class CoverageRuleResolver {
             TreatmentCategory treatmentCategory,
             PurposeType purposeType
     ) {
-        Long insuranceId = context.insuranceId();
-
         if (StringUtils.hasText(ediCode)) {
             String normalizedEdiCode = ediCode.trim();
 
-            return coverageRuleRepository.findByInsuranceIdAndEdiCode(insuranceId, normalizedEdiCode)
+            return coverageRuleRepository.findByInsuranceIdAndEdiCode(context.insuranceId(), normalizedEdiCode)
                     .orElseGet(() -> generateAndSaveByEdiCode(context, normalizedEdiCode));
         }
 
         return resolveByTreatmentInfo(
-                insuranceId,
+                context,
                 visitType,
                 treatmentCategory,
                 purposeType
@@ -81,13 +79,13 @@ public class CoverageRuleResolver {
      * 진료 유형/항목/목적 기반 보장 룰 조회
      */
     private CoverageRule resolveByTreatmentInfo(
-            Long insuranceId,
+            CoverageRuleContext context,
             VisitType visitType,
             TreatmentCategory treatmentCategory,
             PurposeType purposeType
     ) {
-        return coverageRuleRepository.findByInsuranceIdAndVisitTypeAndTreatmentCategoryAndPurposeType(
-                        insuranceId,
+        return coverageRuleRepository.findByGenerationAndVisitTypeAndTreatmentCategoryAndPurposeType(
+                        context.generation(),
                         visitType,
                         treatmentCategory,
                         purposeType

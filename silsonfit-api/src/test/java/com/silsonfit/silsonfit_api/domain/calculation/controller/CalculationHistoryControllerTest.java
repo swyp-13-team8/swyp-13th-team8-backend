@@ -49,7 +49,7 @@ class CalculationHistoryControllerTest {
         when(calculationHistoryService.getHistories(eq(1L), eq(PageRequest.of(0, 20))))
                 .thenReturn(response);
 
-        mockMvc.perform(get("/api/insurance/calculations")
+        mockMvc.perform(get("/api/calculations")
                         .param("page", "0")
                         .param("size", "20")
                         .with(user(new CustomUserDetails(1L))))

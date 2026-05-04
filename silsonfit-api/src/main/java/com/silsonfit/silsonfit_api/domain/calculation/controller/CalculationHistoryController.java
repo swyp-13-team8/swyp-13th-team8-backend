@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/insurance/calculations")
+@RequestMapping("/api/calculations")
 public class CalculationHistoryController {
 
     private final CalculationHistoryService calculationHistoryService;

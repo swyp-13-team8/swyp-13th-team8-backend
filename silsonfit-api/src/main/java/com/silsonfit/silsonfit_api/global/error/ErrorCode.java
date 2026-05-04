@@ -44,9 +44,13 @@ public enum ErrorCode {
     FILE_DELETE_FAILED(500, "파일을 삭제하는 중 오류가 발생했습니다."),
 
     // ── Insurance ──
+    INSURANCE_COMPANY_NOT_FOUND(400, "존재하지 않는 보험사입니다."),
     INSURANCE_NOT_FOUND(404, "보험 상품을 찾을 수 없습니다."),
     USER_INSURANCE_NOT_FOUND(404, "등록된 보험을 찾을 수 없습니다."),
     INVALID_SUBSCRIBED_DATE(400, "세대를 판별할 수 없는 가입 연월입니다."),
+    INSURANCE_LIMIT_EXCEEDED(400, "보험은 최대 5개까지 등록할 수 있습니다."),
+    INSURANCE_ALREADY_REGISTERED(409, "이미 등록된 보험 상품입니다."),
+    USER_INSURANCE_ACCESS_DENIED(403, "해당 보험에 대한 접근 권한이 없습니다."),
 
     // ── Calculator ──
     COVERAGE_RULE_NOT_FOUND(404, "보장 룰을 찾을 수 없습니다."),

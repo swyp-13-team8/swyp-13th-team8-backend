@@ -6,6 +6,8 @@ import com.silsonfit.silsonfit_api.domain.analysis.dto.AnalysisTaskDTO;
 import com.silsonfit.silsonfit_api.domain.analysis.entity.AnalysisHistory;
 import com.silsonfit.silsonfit_api.domain.analysis.repository.AnalysisHistoryRepository;
 import com.silsonfit.silsonfit_api.domain.analysis.vo.AnalysisResult;
+import com.silsonfit.silsonfit_api.domain.insurance.dto.InsuranceInfoDto;
+import com.silsonfit.silsonfit_api.domain.insurance.service.InsuranceService;
 import com.silsonfit.silsonfit_api.global.aws.S3Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +25,7 @@ public class AnalysisService {
     private final PdfService pdfService;
     private final AiAnalysisService aiAnalysisService;
     private final S3Service s3UploadService;
+    private final InsuranceService insuranceService;
 
     /**
      * 사용자가 요청한 보험 약관 PDF 파일을 비동기 스레드에서 분석 (@Async)
@@ -33,7 +36,7 @@ public class AnalysisService {
     public void analysis(AnalysisTaskDTO dto) {
         log.info("약관 분석 Service start - userId={}", dto.userId());
 
-        // UserInsurance userInsurance = null;
+        InsuranceInfoDto insuranceInfo = null;
         String pdfFileUrl;
         String originalFileName;
         String extractedText;
@@ -43,16 +46,10 @@ public class AnalysisService {
             if (dto.userInsuranceId() != null) {
                 log.info("내 보험 선택 후 약관 분석 - userInsuranceId={}", dto.userInsuranceId());
 
-                // TODO: 보험 관련 도메인 추가되면 주석 해제 예정
-                // 1. 내 보험 DB 에서 내 보험 엔티티를 조회, S3 URL 을 가져온다.
-            /*
-                userInsurance = UserInsuranceService.getUserInsurance(userInsuranceId);
-                Insurance insurance = userInsurance.getInsurance();
-                originalFileName = insurance.getOriginalFileName();
-                pdfFileUrl = insurance.getPdfFileUrl();
-             */
-                originalFileName = "";
-                pdfFileUrl = "";
+                // 1. 내 보험 ID로 InsuranceInfoDto 객체를 가져온다.
+                insuranceInfo = insuranceService.getInsuranceInfo(dto.userInsuranceId());
+                originalFileName = insuranceInfo.pdfFileName();
+                pdfFileUrl = insuranceInfo.pdfFileUrl();
 
                 // 2. PDF 텍스트 추출
                 extractedText = pdfService.extractText(pdfFileUrl);
@@ -75,15 +72,23 @@ public class AnalysisService {
             // 4. 회원이면 DB에 저장
             if (dto.userId() != null) {
                 // 스냅샷 정보를 보험 엔티티에서 꺼내어 넣어준다.
-                AnalysisHistoryCreateCommand command = null;
+                AnalysisHistoryCreateCommand command;
                 if (dto.userInsuranceId() != null) {
-                    // TODO: 보험 관련 도메인 추가되면 주석 해제 예정
-                    // Insurance insurance = userInsurance.getInsurance();
-                /*
-                    command = new AnalysisHistoryCreateCommand(userId, originalFileName, pdfFileUrl,
-                        insurance.getCompanyName(), insurance.getProductName(), insurance.getContractType(),
-                        insurance.getGeneration(), insurance.getCoverageStructure(), insurance.getCautionPoint(), result);
-                 */
+
+                    // insuranceInfo 의 generation 이 int 타입이기 때문에 String 으로 변환
+                    String generation;
+                    switch (insuranceInfo.generation()) {
+                        case 1 -> generation = "1세대";
+                        case 2 -> generation = "2세대";
+                        case 3 -> generation = "3세대";
+                        case 4 -> generation = "4세대";
+                        case 5 -> generation = "5세대";
+                        default -> generation = "세대확인필요";
+                    }
+                            command = new AnalysisHistoryCreateCommand(dto.userId(), originalFileName, pdfFileUrl,
+                            insuranceInfo.companyName(), insuranceInfo.productName(), insuranceInfo.contractType().getDisplayName(),
+                            generation, insuranceInfo.coverageStructure().getDisplayName(),
+                            insuranceInfo.cautionPoint().getDisplayName(), result);
                 }
                 // 스냅샷 정보를 AI 분석결과에서 꺼내어 넣어준다.
                 else {

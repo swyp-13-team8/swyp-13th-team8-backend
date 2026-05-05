@@ -6,6 +6,7 @@ package com.silsonfit.silsonfit_api.domain.user.dto;
 public record UserResponse(
         Long userId,
         String name,
-        String email
+        String email,
+        String profileImageUrl
 ) {
 }

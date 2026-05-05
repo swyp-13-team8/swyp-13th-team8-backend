@@ -1,0 +1,3 @@
+edi:
+  public-api:
+    service-key: ${EDI_PUBLIC_API_SERVICE_KEY}

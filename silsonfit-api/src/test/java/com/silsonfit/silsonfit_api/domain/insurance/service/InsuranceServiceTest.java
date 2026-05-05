@@ -291,6 +291,9 @@ class InsuranceServiceTest {
         assertThat(result).hasSize(2);
         assertThat(result.get(0).companyName()).isEqualTo("삼성화재");
         assertThat(result.get(0).joinDate()).isEqualTo("2020-03");
+        assertThat(result.get(0).contractType()).isEqualTo("개인실손");
+        assertThat(result.get(0).coverageStructure()).isEqualTo("급여+비급여");
+        assertThat(result.get(0).cautionPoint()).isEqualTo("갱신형");
         assertThat(result.get(1).companyName()).isEqualTo("현대해상");
         assertThat(result.get(1).generation()).isEqualTo(4);
     }
@@ -329,7 +332,10 @@ class InsuranceServiceTest {
         // then
         assertThat(result).hasSize(2);
         assertThat(result.get(0).productName()).isEqualTo("무배당 삼성화재 실손의료비보험 3세대");
-        assertThat(result.get(1).productName()).isEqualTo("무배당 삼성화재 유병력자 실손의료비보험 3세대");
+        assertThat(result.get(0).contractType()).isEqualTo("개인실손");
+        assertThat(result.get(0).generation()).isEqualTo(3);
+        assertThat(result.get(0).coverageStructure()).isEqualTo("급여+비급여");
+        assertThat(result.get(0).cautionPoint()).isEqualTo("갱신형");
     }
 
     @Test

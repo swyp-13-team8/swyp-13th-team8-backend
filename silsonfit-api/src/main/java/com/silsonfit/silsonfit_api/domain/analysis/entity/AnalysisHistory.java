@@ -21,7 +21,7 @@ import java.time.LocalDateTime;
 @Builder(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@SQLDelete(sql = "update analysis_history set is_deleted = true, deleted_at = NOW() where id = ?")
+@SQLDelete(sql = "update analysis_history set is_deleted = true, deleted_at = CURRENT_TIMESTAMP where analysis_history_id = ?")
 @SQLRestriction(value = "is_deleted = false")
 public class AnalysisHistory extends BaseCreatedTimeEntity {
 

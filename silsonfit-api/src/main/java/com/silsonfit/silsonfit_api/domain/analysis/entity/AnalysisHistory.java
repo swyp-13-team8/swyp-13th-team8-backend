@@ -70,9 +70,9 @@ public class AnalysisHistory extends BaseCreatedTimeEntity {
     @Builder.Default
     private Boolean isFavorite = false; // 즐겨찾기
 
-    @Column(name = "is_delete", nullable = false)
+    @Column(name = "is_deleted", nullable = false)
     @Builder.Default
-    private Boolean isDelete = false; // 삭제 여부
+    private Boolean isDeleted = false; // 삭제 여부
 
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt; // 삭제 일자

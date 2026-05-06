@@ -68,6 +68,16 @@ public class InsuranceController {
     */
 
     /**
+     * 등록 보험 상세 조회
+     */
+    @GetMapping("/{id}")
+    public ApiResponse<UserInsuranceResponse> getInsuranceDetail(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable("id") Long userInsuranceId) {
+        return ApiResponse.success(insuranceService.getInsuranceDetail(userDetails.getUserId(), userInsuranceId));
+    }
+
+    /**
      * 내 보험 목록 조회
      */
     @GetMapping("/list")

@@ -155,6 +155,33 @@ public class InsuranceService {
     }
 
     /**
+     * 등록 보험 상세 조회
+     *
+     * @param userId 사용자 ID
+     * @param userInsuranceId 보험 등록 건의 고유 번호
+     * @return 등록 보험 상세 정보
+     */
+    @Transactional(readOnly = true)
+    public UserInsuranceResponse getInsuranceDetail(Long userId, Long userInsuranceId) {
+        UserInsurance userInsurance = userInsuranceRepository.findById(userInsuranceId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_INSURANCE_NOT_FOUND));
+
+        if (!userInsurance.isOwnedBy(userId)) {
+            throw new BusinessException(ErrorCode.USER_INSURANCE_ACCESS_DENIED);
+        }
+
+        Insurance insurance = userInsurance.getInsurance();
+
+        return new UserInsuranceResponse(
+                userInsurance.getId(),
+                insurance.getCompanyName(),
+                insurance.getProductName(),
+                insurance.getGeneration(),
+                userInsurance.getSubscribedAt()
+        );
+    }
+
+    /**
      * 타 도메인(계산/분석)에서 사용할 보험 정보 조회
      *
      * @param userInsuranceId 사용자 보험 등록 ID

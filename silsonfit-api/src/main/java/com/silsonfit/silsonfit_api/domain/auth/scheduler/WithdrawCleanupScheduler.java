@@ -2,6 +2,7 @@ package com.silsonfit.silsonfit_api.domain.auth.scheduler;
 
 import com.silsonfit.silsonfit_api.domain.auth.repository.RefreshTokenRepository;
 import com.silsonfit.silsonfit_api.domain.auth.service.AuthService;
+import com.silsonfit.silsonfit_api.domain.insurance.repository.UserInsuranceRepository;
 import com.silsonfit.silsonfit_api.domain.user.entity.User;
 import com.silsonfit.silsonfit_api.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,10 +28,7 @@ public class WithdrawCleanupScheduler {
 
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
-    // TODO: 각 도메인 삭제 서비스 주입
-    // private final AnalysisHistoryService analysisHistoryService;  // 분석 도메인 (C 담당)
-    // private final CalcHistoryService calcHistoryService;          // 계산 도메인 (C 담당)
-    // private final UserInsuranceRepository userInsuranceRepository; // 보험 도메인 (내 담당)
+    private final UserInsuranceRepository userInsuranceRepository;
 
     /**
      * 매일 자정에 탈퇴 유예 만료 사용자 정리
@@ -48,12 +46,10 @@ public class WithdrawCleanupScheduler {
         log.info("탈퇴 유예 만료 사용자 {}명 삭제 시작", expiredUsers.size());
 
         for (User user : expiredUsers) {
-            // TODO: 각 도메인 데이터 삭제 (메서드 준비되면 연결)
-            // analysisHistoryService.deleteByUserId(user.getId());  // 분석 도메인
-            // calcHistoryService.deleteByUserId(user.getId());      // 계산 도메인
-            // userInsuranceRepository.deleteByUserId(user.getId()); // 보험 도메인
+            // 등록 보험 삭제
+            userInsuranceRepository.deleteAllByUserId(user.getId());
 
-            // Auth 도메인 데이터 삭제
+            // Refresh Token 삭제
             refreshTokenRepository.findByUser(user)
                     .ifPresent(refreshTokenRepository::delete);
 

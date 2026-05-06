@@ -44,6 +44,10 @@ public class User extends BaseTimeEntity {
     @Column
     private LocalDateTime termsAgreedAt;
 
+    // 탈퇴 요청 시각 (null이면 활성, non-null이면 탈퇴 유예 중)
+    @Column
+    private LocalDateTime deactivatedAt;
+
     @Builder
     public User(Long socialId, String name, String email, String profileImageUrl) {
         this.socialId = socialId;
@@ -64,5 +68,26 @@ public class User extends BaseTimeEntity {
      */
     public void updateName(String name) {
         this.name = name;
+    }
+
+    /**
+     * 회원 탈퇴 처리 (비활성화)
+     */
+    public void deactivate() {
+        this.deactivatedAt = LocalDateTime.now();
+    }
+
+    /**
+     * 탈퇴 유예 사용자 복구
+     */
+    public void reactivate() {
+        this.deactivatedAt = null;
+    }
+
+    /**
+     * 탈퇴 상태 여부 확인
+     */
+    public boolean isDeactivated() {
+        return this.deactivatedAt != null;
     }
 }

@@ -2,6 +2,7 @@ package com.silsonfit.silsonfit_api.domain.insurance.service;
 
 import com.silsonfit.silsonfit_api.domain.insurance.dto.GenerationRequest;
 import com.silsonfit.silsonfit_api.domain.insurance.dto.GenerationResponse;
+import com.silsonfit.silsonfit_api.domain.insurance.dto.InsuranceDetailResponse;
 import com.silsonfit.silsonfit_api.domain.insurance.dto.InsuranceInfoDto;
 import com.silsonfit.silsonfit_api.domain.insurance.dto.InsuranceProductResponse;
 import com.silsonfit.silsonfit_api.domain.insurance.dto.InsuranceRegisterRequest;
@@ -374,7 +375,7 @@ class InsuranceServiceTest {
         given(userInsuranceRepository.findById(10L)).willReturn(Optional.of(userInsurance));
 
         // when
-        UserInsuranceResponse result = insuranceService.getInsuranceDetail(1L, 10L);
+        InsuranceDetailResponse result = insuranceService.getInsuranceDetail(1L, 10L);
 
         // then
         assertThat(result.userInsuranceId()).isEqualTo(10L);
@@ -382,6 +383,7 @@ class InsuranceServiceTest {
         assertThat(result.productName()).isEqualTo("삼성화재 실손의료비보험");
         assertThat(result.generation()).isEqualTo(3);
         assertThat(result.joinDate()).isEqualTo("2020-03");
+        assertThat(result.coreSummary()).isNull();
     }
 
     @Test

@@ -2,6 +2,7 @@ package com.silsonfit.silsonfit_api.domain.insurance.service;
 
 import com.silsonfit.silsonfit_api.domain.insurance.dto.GenerationRequest;
 import com.silsonfit.silsonfit_api.domain.insurance.dto.GenerationResponse;
+import com.silsonfit.silsonfit_api.domain.insurance.dto.InsuranceDetailResponse;
 import com.silsonfit.silsonfit_api.domain.insurance.dto.InsuranceCompanyResponse;
 import com.silsonfit.silsonfit_api.domain.insurance.dto.InsuranceInfoDto;
 import com.silsonfit.silsonfit_api.domain.insurance.dto.InsuranceProductResponse;
@@ -162,7 +163,7 @@ public class InsuranceService {
      * @return 등록 보험 상세 정보
      */
     @Transactional(readOnly = true)
-    public UserInsuranceResponse getInsuranceDetail(Long userId, Long userInsuranceId) {
+    public InsuranceDetailResponse getInsuranceDetail(Long userId, Long userInsuranceId) {
         UserInsurance userInsurance = userInsuranceRepository.findById(userInsuranceId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_INSURANCE_NOT_FOUND));
 
@@ -172,12 +173,13 @@ public class InsuranceService {
 
         Insurance insurance = userInsurance.getInsurance();
 
-        return new UserInsuranceResponse(
+        return new InsuranceDetailResponse(
                 userInsurance.getId(),
                 insurance.getCompanyName(),
                 insurance.getProductName(),
                 insurance.getGeneration(),
-                userInsurance.getSubscribedAt()
+                userInsurance.getSubscribedAt(),
+                null // AI 핵심 요약 — 분석 연동 후 채워짐
         );
     }
 

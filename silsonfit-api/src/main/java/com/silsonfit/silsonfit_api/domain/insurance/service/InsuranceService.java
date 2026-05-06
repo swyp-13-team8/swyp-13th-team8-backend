@@ -226,7 +226,10 @@ public class InsuranceService {
                 insurance.getProductName(),
                 insurance.getGeneration(),
                 userInsurance.getSubscribedAt(),
-                null // AI 핵심 요약 — 분석 연동 후 채워짐
+                insurance.getContractType() != null ? insurance.getContractType().getDisplayName() : null,
+                insurance.getCoverageStructure() != null ? insurance.getCoverageStructure().getDisplayName() : null,
+                insurance.getCautionPoint() != null ? insurance.getCautionPoint().getDisplayName() : null,
+                insurance.getCoreSummary()
         );
     }
 

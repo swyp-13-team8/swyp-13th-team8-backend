@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 public interface AnalysisHistoryRepository extends JpaRepository<AnalysisHistory, Long> {
 
     /**
-     * 특정 유저의 분석 이력 목록을 조회 (즐겨찾기 우선, 최신순 정렬)
+     * 특정 유저의 분석 이력 목록을 조회 (최신순 정렬)
      *
      * @param userId    조회할 유저 ID
      * @param pageable  페이징 정보
@@ -19,7 +19,7 @@ public interface AnalysisHistoryRepository extends JpaRepository<AnalysisHistory
     @Query("""
             select a from AnalysisHistory a
             where a.userId = :userId
-            order by a.isFavorite desc, a.createdAt desc
+            order by a.createdAt desc
             """)
     Page<AnalysisHistory> findHistoriesByUserId(@Param("userId") Long userId, Pageable pageable);
 }

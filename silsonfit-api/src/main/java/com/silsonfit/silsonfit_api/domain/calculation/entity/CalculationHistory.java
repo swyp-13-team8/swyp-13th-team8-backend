@@ -5,6 +5,8 @@ import com.silsonfit.silsonfit_api.global.common.BaseCreatedTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 /**
  * 실손 보험 계산 이력 엔티티
  */
@@ -65,6 +67,15 @@ public class CalculationHistory extends BaseCreatedTimeEntity {
     @Builder.Default
     private Boolean isFavorite = false;
 
+    /** 삭제 여부 */
+    @Column(name = "is_deleted", nullable = false)
+    @Builder.Default
+    private Boolean isDeleted = false;
+
+    /** 삭제 일시 */
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
+
     public static CalculationHistory create(
             Long userId,
             Long insuranceId,
@@ -90,5 +101,12 @@ public class CalculationHistory extends BaseCreatedTimeEntity {
     /** 즐겨찾기 토글 */
     public void toggleFavorite() {
         this.isFavorite = !this.isFavorite;
+    }
+
+    /** 계산 이력 삭제 */
+    public void delete() {
+        this.isDeleted = true;
+        this.isFavorite = false;
+        this.deletedAt = LocalDateTime.now();
     }
 }

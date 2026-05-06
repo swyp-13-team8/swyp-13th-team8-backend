@@ -9,7 +9,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -41,5 +43,22 @@ public class CalculationHistoryController {
         );
 
         return ApiResponse.success(calculationHistoryService.getHistories(userId, pageable));
+    }
+
+    /**
+     * 실손 보험 계산 이력 삭제
+     */
+    @DeleteMapping("/{calculationHistoryId}")
+    public ApiResponse<Void> deleteHistory(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @PathVariable Long calculationHistoryId
+    ) {
+        Long userId = userDetails.getUserId();
+
+        log.info("실손 보험 계산 이력 삭제 요청 - userId={}, calculationHistoryId={}", userId, calculationHistoryId);
+
+        calculationHistoryService.deleteHistory(userId, calculationHistoryId);
+
+        return ApiResponse.success();
     }
 }

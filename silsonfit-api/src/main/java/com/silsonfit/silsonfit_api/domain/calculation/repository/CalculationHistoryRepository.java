@@ -17,8 +17,11 @@ public interface CalculationHistoryRepository extends JpaRepository<CalculationH
     /**
      * 사용자별 계산 이력 최신순 조회
      */
-    Page<CalculationHistory> findByUserIdOrderByCreatedAtDescIdDesc(Long userId, Pageable pageable);
-
+    Page<CalculationHistory> findByUserIdAndIsDeletedFalseOrderByCreatedAtDescIdDesc(
+            Long userId,
+            Pageable pageable
+    );
+    
     /**
      * 사용자 계산 이력 즐겨찾기 목록 조회
      */
@@ -27,6 +30,7 @@ public interface CalculationHistoryRepository extends JpaRepository<CalculationH
             from CalculationHistory history
             where history.userId = :userId
               and history.isFavorite = true
+              and history.isDeleted = false
             order by history.createdAt desc, history.id desc
             """)
     List<CalculationHistory> findFavoritesByUserId(@Param("userId") Long userId);

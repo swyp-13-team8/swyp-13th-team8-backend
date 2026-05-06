@@ -1,8 +1,12 @@
 package com.silsonfit.silsonfit_api.domain.calculation.service;
 
 import com.silsonfit.silsonfit_api.domain.calculation.dto.CalculationHistoryListResponse;
+import com.silsonfit.silsonfit_api.domain.calculation.entity.CalculationHistory;
 import com.silsonfit.silsonfit_api.domain.calculation.repository.CalculationHistoryRepository;
+import com.silsonfit.silsonfit_api.global.error.BusinessException;
+import com.silsonfit.silsonfit_api.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Slf4j
 public class CalculationHistoryService {
 
     private final CalculationHistoryRepository calculationHistoryRepository;
@@ -22,7 +27,23 @@ public class CalculationHistoryService {
      */
     public CalculationHistoryListResponse getHistories(Long userId, Pageable pageable) {
         return CalculationHistoryListResponse.from(
-                calculationHistoryRepository.findByUserIdOrderByCreatedAtDescIdDesc(userId, pageable)
+                calculationHistoryRepository.findByUserIdAndIsDeletedFalseOrderByCreatedAtDescIdDesc(userId, pageable)
         );
+    }
+
+    /**
+     * 사용자 계산 이력 삭제
+     */
+    @Transactional
+    public void deleteHistory(Long userId, Long calculationHistoryId) {
+        CalculationHistory history = calculationHistoryRepository.findById(calculationHistoryId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.CALCULATION_HISTORY_NOT_FOUND));
+
+        if (!history.getUserId().equals(userId)) {
+            log.warn("계산 이력 삭제 권한이 없습니다. - userId={}, calculationHistoryId={}", userId, calculationHistoryId);
+            throw new BusinessException(ErrorCode.CALCULATION_HISTORY_ACCESS_DENIED);
+        }
+
+        history.delete();
     }
 }

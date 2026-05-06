@@ -12,6 +12,11 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 @Configuration
 @RequiredArgsConstructor
@@ -22,6 +27,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                // CORS 설정
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+
                 // CSRF 비활성화 (JWT 사용)
                 .csrf(AbstractHttpConfigurer::disable)
 
@@ -71,5 +79,37 @@ public class SecurityConfig {
                 );
 
         return http.build();
+    }
+    /**
+     * CORS 설정
+     * 프론트엔드에서 백엔드로의 요청 허용
+     */
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        // 허용할 Origin (프론트엔드 주소)
+        configuration.setAllowedOrigins(Arrays.asList(
+                "http://localhost:5173",
+                "http://52.78.103.179:5173"
+        ));
+
+        // 허용할 HTTP 메서드
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+
+        // 허용할 헤더
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+
+        // 인증 정보(쿠키) 포함 허용
+        configuration.setAllowCredentials(true);
+
+        // Preflight 요청 캐시 시간 (1시간)
+        configuration.setMaxAge(3600L);
+
+        // 모든 경로에 적용
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+
+        return source;
     }
 }

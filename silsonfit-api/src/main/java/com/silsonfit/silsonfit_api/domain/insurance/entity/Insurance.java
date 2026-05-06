@@ -64,7 +64,7 @@ public class Insurance {
 
     // AI 핵심 요약
     @Convert(converter = StringListConverter.class)
-    @Column
+    @Column(length = 1000)
     private List<String> coreSummary;
 
     @Builder
@@ -80,5 +80,26 @@ public class Insurance {
         this.pdfFileUrl = pdfFileUrl;
         this.pdfFileName = pdfFileName;
         this.coreSummary = coreSummary;
+    }
+
+    /**
+     * 계약 유형 라벨 (예: "개인실손")
+     */
+    public String getContractTypeLabel() {
+        return contractType != null ? contractType.getDisplayName() : null;
+    }
+
+    /**
+     * 보장 구조 라벨 (예: "3대비급여")
+     */
+    public String getCoverageStructureLabel() {
+        return coverageStructure != null ? coverageStructure.getDisplayName() : null;
+    }
+
+    /**
+     * 주의 포인트 라벨 (예: "갱신형")
+     */
+    public String getCautionPointLabel() {
+        return cautionPoint != null ? cautionPoint.getDisplayName() : null;
     }
 }

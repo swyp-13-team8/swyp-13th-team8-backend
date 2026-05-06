@@ -167,10 +167,10 @@ public class InsuranceService {
                 .map(insurance -> new InsuranceProductResponse(
                         insurance.getId(),
                         insurance.getProductName(),
-                        insurance.getContractType() != null ? insurance.getContractType().getDisplayName() : null,
+                        insurance.getContractTypeLabel(),
                         insurance.getGeneration(),
-                        insurance.getCoverageStructure() != null ? insurance.getCoverageStructure().getDisplayName() : null,
-                        insurance.getCautionPoint() != null ? insurance.getCautionPoint().getDisplayName() : null
+                        insurance.getCoverageStructureLabel(),
+                        insurance.getCautionPointLabel()
                 ))
                 .toList();
     }
@@ -194,9 +194,9 @@ public class InsuranceService {
                             insurance.getProductName(),
                             insurance.getGeneration(),
                             ui.getSubscribedAt(),
-                            insurance.getContractType() != null ? insurance.getContractType().getDisplayName() : null,
-                            insurance.getCoverageStructure() != null ? insurance.getCoverageStructure().getDisplayName() : null,
-                            insurance.getCautionPoint() != null ? insurance.getCautionPoint().getDisplayName() : null
+                            insurance.getContractTypeLabel(),
+                            insurance.getCoverageStructureLabel(),
+                            insurance.getCautionPointLabel()
                     );
                 })
                 .toList();

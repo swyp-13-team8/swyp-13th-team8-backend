@@ -13,6 +13,11 @@ java {
 	}
 }
 
+// Windows 환경에서 data.sql 한글 인코딩 깨짐 방지
+tasks.withType(JavaExec) {
+	jvmArgs '-Dfile.encoding=UTF-8'
+}
+
 repositories {
 	mavenCentral()
 }

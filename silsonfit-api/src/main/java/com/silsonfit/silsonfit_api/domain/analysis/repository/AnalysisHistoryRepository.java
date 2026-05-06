@@ -22,4 +22,19 @@ public interface AnalysisHistoryRepository extends JpaRepository<AnalysisHistory
             order by a.createdAt desc
             """)
     Page<AnalysisHistory> findHistoriesByUserId(@Param("userId") Long userId, Pageable pageable);
+
+    /**
+     * 특정 유저의 저장(즐겨찾기)된 분석 이력 목록을 조회
+     *
+     * @param userId 조회할 유저 ID
+     * @param pageable 페이징 정보
+     * @return          분석 이력 페이징 결과
+     */
+    @Query("""
+            select a from AnalysisHistory a
+            where a.userId = :userId
+            and a.isFavorite = true
+            order by a.createdAt desc
+            """)
+    Page<AnalysisHistory> findFavoriteHistories(@Param("userId") Long userId, Pageable pageable);
 }

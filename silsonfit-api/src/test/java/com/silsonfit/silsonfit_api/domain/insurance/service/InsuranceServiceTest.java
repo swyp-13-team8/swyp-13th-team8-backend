@@ -356,6 +356,69 @@ class InsuranceServiceTest {
                 .isEqualTo(ErrorCode.INSURANCE_COMPANY_NOT_FOUND);
     }
 
+    // ──────────── getInsuranceDetail ────────────
+
+    @Test
+    @DisplayName("등록 보험 상세 조회 성공")
+    void getInsuranceDetail_success() {
+        // given
+        Insurance insurance = createInsurance(1L, "삼성화재", "삼성화재 실손의료비보험", 3);
+        UserInsurance userInsurance = UserInsurance.builder()
+                .userId(1L)
+                .insurance(insurance)
+                .subscribedAt("2020-03")
+                .hasNonCoveredRider(false)
+                .build();
+        ReflectionTestUtils.setField(userInsurance, "id", 10L);
+
+        given(userInsuranceRepository.findById(10L)).willReturn(Optional.of(userInsurance));
+
+        // when
+        UserInsuranceResponse result = insuranceService.getInsuranceDetail(1L, 10L);
+
+        // then
+        assertThat(result.userInsuranceId()).isEqualTo(10L);
+        assertThat(result.companyName()).isEqualTo("삼성화재");
+        assertThat(result.productName()).isEqualTo("삼성화재 실손의료비보험");
+        assertThat(result.generation()).isEqualTo(3);
+        assertThat(result.joinDate()).isEqualTo("2020-03");
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 보험 상세 조회 시 USER_INSURANCE_NOT_FOUND 예외")
+    void getInsuranceDetail_notFound() {
+        // given
+        given(userInsuranceRepository.findById(999L)).willReturn(Optional.empty());
+
+        // when & then
+        assertThatThrownBy(() -> insuranceService.getInsuranceDetail(1L, 999L))
+                .isInstanceOf(BusinessException.class)
+                .extracting(e -> ((BusinessException) e).getErrorCode())
+                .isEqualTo(ErrorCode.USER_INSURANCE_NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("다른 사용자의 보험 상세 조회 시 USER_INSURANCE_ACCESS_DENIED 예외")
+    void getInsuranceDetail_accessDenied() {
+        // given
+        Insurance insurance = createInsurance(1L, "삼성화재", "삼성화재 실손의료비보험", 3);
+        UserInsurance userInsurance = UserInsurance.builder()
+                .userId(1L)
+                .insurance(insurance)
+                .subscribedAt("2020-03")
+                .hasNonCoveredRider(false)
+                .build();
+        ReflectionTestUtils.setField(userInsurance, "id", 10L);
+
+        given(userInsuranceRepository.findById(10L)).willReturn(Optional.of(userInsurance));
+
+        // when & then
+        assertThatThrownBy(() -> insuranceService.getInsuranceDetail(2L, 10L))
+                .isInstanceOf(BusinessException.class)
+                .extracting(e -> ((BusinessException) e).getErrorCode())
+                .isEqualTo(ErrorCode.USER_INSURANCE_ACCESS_DENIED);
+    }
+
     // ──────────── getGenerationByInsuranceId ────────────
 
     @Test

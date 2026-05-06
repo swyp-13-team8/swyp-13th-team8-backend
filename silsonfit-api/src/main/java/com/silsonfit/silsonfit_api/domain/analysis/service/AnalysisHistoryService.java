@@ -4,7 +4,6 @@ import com.silsonfit.silsonfit_api.domain.analysis.dto.AnalysisHistoryDetailResp
 import com.silsonfit.silsonfit_api.domain.analysis.dto.AnalysisHistoryListResponse;
 import com.silsonfit.silsonfit_api.domain.analysis.entity.AnalysisHistory;
 import com.silsonfit.silsonfit_api.domain.analysis.repository.AnalysisHistoryRepository;
-import com.silsonfit.silsonfit_api.global.aws.S3Service;
 import com.silsonfit.silsonfit_api.global.error.BusinessException;
 import com.silsonfit.silsonfit_api.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class AnalysisHistoryService {
 
     private final AnalysisHistoryRepository analysisHistoryRepository;
-    private final S3Service s3Service;
 
     /**
      * 분석 이력 리스트 조회
@@ -69,8 +67,6 @@ public class AnalysisHistoryService {
             log.warn("이력 삭제 권한이 없습니다. - userId={}, historyId={}", userId, historyId);
             throw new BusinessException(ErrorCode.HISTORY_ACCESS_DENIED);
         }
-
-        s3Service.delete(history.getPdfFileUrl());
 
         analysisHistoryRepository.delete(history);
     }

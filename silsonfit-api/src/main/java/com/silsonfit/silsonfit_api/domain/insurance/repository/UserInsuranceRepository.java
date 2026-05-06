@@ -27,4 +27,9 @@ public interface UserInsuranceRepository extends JpaRepository<UserInsurance, Lo
      * 사용자의 동일 보험 상품 등록 여부 확인
      */
     boolean existsByUserIdAndInsuranceId(Long userId, Long insuranceId);
+
+    /**
+     * 사용자의 등록 보험 전체 삭제 (회원 탈퇴 시)
+     */
+    void deleteAllByUserId(Long userId);
 }

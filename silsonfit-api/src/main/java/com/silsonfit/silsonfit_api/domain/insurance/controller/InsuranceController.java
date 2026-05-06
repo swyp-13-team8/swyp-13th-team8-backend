@@ -17,6 +17,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 보험 관련 API
@@ -34,8 +35,8 @@ public class InsuranceController {
      * 보험사 목록 조회
      */
     @GetMapping("/companies")
-    public ApiResponse<List<InsuranceCompanyResponse>> getCompanies() {
-        return ApiResponse.success(insuranceService.getCompanies());
+    public ApiResponse<Map<String, List<InsuranceCompanyResponse>>> getCompanies() {
+        return ApiResponse.success(Map.of("companies", insuranceService.getCompanies()));
     }
 
     /**
@@ -82,18 +83,18 @@ public class InsuranceController {
      * 내 보험 목록 조회
      */
     @GetMapping("/list")
-    public ApiResponse<List<UserInsuranceResponse>> getMyInsurances(
+    public ApiResponse<Map<String, List<UserInsuranceResponse>>> getMyInsurances(
             @AuthenticationPrincipal CustomUserDetails userDetails) {
-        return ApiResponse.success(insuranceService.getMyInsurances(userDetails.getUserId()));
+        return ApiResponse.success(Map.of("insurances", insuranceService.getMyInsurances(userDetails.getUserId())));
     }
 
     /**
-     * 보험사별 상품 목록 조회
+     * 보험사별 상품 매칭 조회
      */
     @GetMapping("/products")
-    public ApiResponse<List<InsuranceProductResponse>> getProducts(
-            @RequestParam String companyId,
+    public ApiResponse<Map<String, List<InsuranceProductResponse>>> getProducts(
+            @RequestParam String companyName,
             @RequestParam int generation) {
-        return ApiResponse.success(insuranceService.getProducts(companyId, generation));
+        return ApiResponse.success(Map.of("products", insuranceService.getProducts(companyName, generation)));
     }
 }

@@ -4,6 +4,8 @@ import com.silsonfit.silsonfit_api.domain.calculation.dto.CalculationHistoryList
 import com.silsonfit.silsonfit_api.domain.calculation.entity.CalculationHistory;
 import com.silsonfit.silsonfit_api.domain.calculation.enums.TreatmentCategory;
 import com.silsonfit.silsonfit_api.domain.calculation.repository.CalculationHistoryRepository;
+import com.silsonfit.silsonfit_api.global.error.BusinessException;
+import com.silsonfit.silsonfit_api.global.error.ErrorCode;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,6 +13,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @Transactional
@@ -45,6 +48,14 @@ class CalculationHistoryServiceTest {
                 70000,
                 true
         ));
+        CalculationHistory deletedHistory = calculationHistoryRepository.save(createHistory(
+                1L,
+                TreatmentCategory.CT,
+                500000,
+                300000,
+                true
+        ));
+        deletedHistory.delete();
         calculationHistoryRepository.flush();
 
         CalculationHistoryListResponse response = calculationHistoryService.getHistories(
@@ -61,9 +72,47 @@ class CalculationHistoryServiceTest {
         assertThat(response.calculations().get(1).id()).isEqualTo("calc_" + firstHistory.getId());
         assertThat(response.calculations())
                 .noneSatisfy(calculation -> assertThat(calculation.id()).isEqualTo("calc_" + otherUserHistory.getId()));
+        assertThat(response.calculations())
+                .noneSatisfy(calculation -> assertThat(calculation.id()).isEqualTo("calc_" + deletedHistory.getId()));
         assertThat(response.pageInfo().page()).isZero();
         assertThat(response.pageInfo().size()).isEqualTo(20);
         assertThat(response.pageInfo().totalElements()).isEqualTo(2);
+    }
+
+    @Test
+    void 사용자_계산_이력을_soft_delete한다() {
+        CalculationHistory history = calculationHistoryRepository.save(createHistory(
+                1L,
+                TreatmentCategory.MRI,
+                300000,
+                250000,
+                true
+        ));
+        history.toggleFavorite();
+        calculationHistoryRepository.flush();
+
+        calculationHistoryService.deleteHistory(1L, history.getId());
+
+        assertThat(history.getIsDeleted()).isTrue();
+        assertThat(history.getIsFavorite()).isFalse();
+        assertThat(history.getDeletedAt()).isNotNull();
+    }
+
+    @Test
+    void 다른_사용자의_계산_이력은_삭제할_수_없다() {
+        CalculationHistory history = calculationHistoryRepository.save(createHistory(
+                2L,
+                TreatmentCategory.MRI,
+                300000,
+                250000,
+                true
+        ));
+        calculationHistoryRepository.flush();
+
+        assertThatThrownBy(() -> calculationHistoryService.deleteHistory(1L, history.getId()))
+                .isInstanceOf(BusinessException.class)
+                .extracting(e -> ((BusinessException) e).getErrorCode())
+                .isEqualTo(ErrorCode.CALCULATION_HISTORY_ACCESS_DENIED);
     }
 
     private CalculationHistory createHistory(

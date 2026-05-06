@@ -265,6 +265,91 @@ class AuthServiceTest {
                 .isEqualTo(ErrorCode.INVALID_REFRESH_TOKEN);
     }
 
+    // ──────────── withdraw ────────────
+
+    @Test
+    @DisplayName("회원 탈퇴 성공 시 계정이 비활성화되고 Refresh Token이 삭제된다")
+    void withdraw_success() {
+        // given
+        User user = userWithId(1L, 111L);
+        given(userRepository.findById(1L)).willReturn(Optional.of(user));
+
+        RefreshToken stored = RefreshToken.builder()
+                .user(user)
+                .token("refresh")
+                .expiresAt(LocalDateTime.now().plusDays(7))
+                .build();
+        given(refreshTokenRepository.findByUser(user)).willReturn(Optional.of(stored));
+
+        // when
+        authService.withdraw(1L);
+
+        // then
+        assertThat(user.isDeactivated()).isTrue();
+        assertThat(user.getDeactivatedAt()).isNotNull();
+        verify(refreshTokenRepository).delete(stored);
+    }
+
+    @Test
+    @DisplayName("이미 탈퇴한 사용자가 다시 탈퇴 요청 시 DEACTIVATED_USER 예외")
+    void withdraw_alreadyDeactivated() {
+        // given
+        User user = userWithId(1L, 111L);
+        user.deactivate();
+        given(userRepository.findById(1L)).willReturn(Optional.of(user));
+
+        // when & then
+        assertThatThrownBy(() -> authService.withdraw(1L))
+                .isInstanceOf(BusinessException.class)
+                .extracting(e -> ((BusinessException) e).getErrorCode())
+                .isEqualTo(ErrorCode.DEACTIVATED_USER);
+    }
+
+    @Test
+    @DisplayName("탈퇴 유예 사용자가 30일 내 재로그인 시 계정이 복구된다")
+    void login_reactivateWithinGracePeriod() {
+        // given
+        User user = userWithId(1L, 444L);
+        user.deactivate(); // 방금 탈퇴
+
+        given(kakaoClient.getUserInfo("kakao-access")).willReturn(
+                new KakaoClient.KakaoUserInfo(444L, "홍길동", null, null));
+        given(userRepository.findBySocialId(444L)).willReturn(Optional.of(user));
+        given(jwtTokenProvider.createAccessToken(1L)).willReturn("access-token");
+        given(jwtTokenProvider.createRefreshToken()).willReturn("refresh-token");
+        given(jwtTokenProvider.getRefreshTokenExpiration()).willReturn(REFRESH_TTL_MS);
+        given(refreshTokenRepository.findByUser(user)).willReturn(Optional.empty());
+
+        // when
+        LoginResponse response = authService.login(new LoginRequest("kakao-access"));
+
+        // then
+        assertThat(user.isDeactivated()).isFalse();
+        assertThat(user.getDeactivatedAt()).isNull();
+        assertThat(response.accessToken()).isEqualTo("access-token");
+    }
+
+    @Test
+    @DisplayName("탈퇴 후 30일 경과한 사용자가 재로그인 시 WITHDRAW_GRACE_PERIOD_EXPIRED 예외")
+    void login_gracePeriodExpired() {
+        // given
+        User user = userWithId(1L, 555L);
+        user.deactivate();
+        // 31일 전으로 설정
+        ReflectionTestUtils.setField(user, "deactivatedAt",
+                LocalDateTime.now().minusDays(31));
+
+        given(kakaoClient.getUserInfo("kakao-access")).willReturn(
+                new KakaoClient.KakaoUserInfo(555L, "홍길동", null, null));
+        given(userRepository.findBySocialId(555L)).willReturn(Optional.of(user));
+
+        // when & then
+        assertThatThrownBy(() -> authService.login(new LoginRequest("kakao-access")))
+                .isInstanceOf(BusinessException.class)
+                .extracting(e -> ((BusinessException) e).getErrorCode())
+                .isEqualTo(ErrorCode.WITHDRAW_GRACE_PERIOD_EXPIRED);
+    }
+
     // ──────────── helper ────────────
 
     private User userWithId(Long id, Long socialId) {

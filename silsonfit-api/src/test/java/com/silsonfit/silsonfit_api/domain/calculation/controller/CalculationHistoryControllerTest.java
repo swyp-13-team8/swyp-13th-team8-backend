@@ -18,6 +18,8 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -68,5 +70,19 @@ class CalculationHistoryControllerTest {
                 .andExpect(jsonPath("$.data.pageInfo.totalElements").value(45));
 
         verify(calculationHistoryService).getHistories(eq(1L), eq(PageRequest.of(0, 20)));
+    }
+
+    @Test
+    @DisplayName("계산 이력을 삭제한다")
+    void deleteHistory_success() throws Exception {
+        mockMvc.perform(delete("/api/calculations/{calculationHistoryId}", 1L)
+                        .with(user(new CustomUserDetails(1L)))
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.code").value(200))
+                .andExpect(jsonPath("$.message").value("success"))
+                .andExpect(jsonPath("$.data").isEmpty());
+
+        verify(calculationHistoryService).deleteHistory(1L, 1L);
     }
 }

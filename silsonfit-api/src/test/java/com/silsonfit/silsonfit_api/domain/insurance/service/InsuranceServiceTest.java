@@ -292,6 +292,9 @@ class InsuranceServiceTest {
         assertThat(result).hasSize(2);
         assertThat(result.get(0).companyName()).isEqualTo("삼성화재");
         assertThat(result.get(0).joinDate()).isEqualTo("2020-03");
+        assertThat(result.get(0).contractType()).isEqualTo("개인실손");
+        assertThat(result.get(0).coverageStructure()).isEqualTo("급여+비급여");
+        assertThat(result.get(0).cautionPoint()).isEqualTo("갱신형");
         assertThat(result.get(1).companyName()).isEqualTo("현대해상");
         assertThat(result.get(1).generation()).isEqualTo(4);
     }
@@ -324,37 +327,75 @@ class InsuranceServiceTest {
         given(insuranceRepository.findByCompanyNameAndGeneration("삼성화재", 3))
                 .willReturn(products);
 
-        // when — companyId "comp_001" → 내부적으로 "삼성화재"로 변환
-        List<InsuranceProductResponse> result = insuranceService.getProducts("comp_001", 3);
+        // when
+        List<InsuranceProductResponse> result = insuranceService.getProducts("삼성화재", 3);
 
         // then
         assertThat(result).hasSize(2);
         assertThat(result.get(0).productName()).isEqualTo("무배당 삼성화재 실손의료비보험 3세대");
-        assertThat(result.get(1).productName()).isEqualTo("무배당 삼성화재 유병력자 실손의료비보험 3세대");
+        assertThat(result.get(0).contractType()).isEqualTo("개인실손");
+        assertThat(result.get(0).generation()).isEqualTo(3);
+        assertThat(result.get(0).coverageStructure()).isEqualTo("급여+비급여");
+        assertThat(result.get(0).cautionPoint()).isEqualTo("갱신형");
     }
 
     @Test
-    @DisplayName("상품이 없는 보험사/세대 조회 시 빈 목록 반환")
-    void getProducts_empty() {
+    @DisplayName("기타 보험사 선택 시 표준약관 반환")
+    void getProducts_etc_standardPolicy() {
         // given
-        given(insuranceRepository.findByCompanyNameAndGeneration("기타", 1))
-                .willReturn(List.of());
+        Insurance standardPolicy = createInsurance(100L, "표준약관", "1세대 표준약관", 1);
+        given(insuranceRepository.findByCompanyNameAndGeneration("표준약관", 1))
+                .willReturn(List.of(standardPolicy));
 
-        // when — companyId "comp_006" → 내부적으로 "기타"로 변환
-        List<InsuranceProductResponse> result = insuranceService.getProducts("comp_006", 1);
+        // when
+        List<InsuranceProductResponse> result = insuranceService.getProducts("기타", 1);
 
         // then
-        assertThat(result).isEmpty();
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).productName()).isEqualTo("1세대 표준약관");
     }
 
     @Test
-    @DisplayName("존재하지 않는 보험사 ID로 상품 조회 시 INSURANCE_COMPANY_NOT_FOUND 예외")
-    void getProducts_invalidCompanyId() {
+    @DisplayName("존재하지 않는 보험사명으로 조회 시 INSURANCE_COMPANY_NOT_FOUND 예외")
+    void getProducts_invalidCompanyName() {
         // when & then
-        assertThatThrownBy(() -> insuranceService.getProducts("comp_999", 3))
+        assertThatThrownBy(() -> insuranceService.getProducts("없는보험사", 3))
                 .isInstanceOf(BusinessException.class)
                 .extracting(e -> ((BusinessException) e).getErrorCode())
                 .isEqualTo(ErrorCode.INSURANCE_COMPANY_NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("빅5 보험사 상품 없으면 표준약관 fallback")
+    void getProducts_bigFive_fallbackToStandard() {
+        // given — 메리츠 2세대 상품 없음
+        given(insuranceRepository.findByCompanyNameAndGeneration("메리츠화재", 2))
+                .willReturn(List.of());
+
+        Insurance standardPolicy = createInsurance(100L, "표준약관", "2세대 표준약관", 2);
+        given(insuranceRepository.findByCompanyNameAndGeneration("표준약관", 2))
+                .willReturn(List.of(standardPolicy));
+
+        // when
+        List<InsuranceProductResponse> result = insuranceService.getProducts("메리츠화재", 2);
+
+        // then
+        assertThat(result).hasSize(1);
+        assertThat(result.get(0).productName()).isEqualTo("2세대 표준약관");
+    }
+
+    @Test
+    @DisplayName("표준약관도 없으면 INSURANCE_NOT_FOUND 예외")
+    void getProducts_noStandardPolicy() {
+        // given
+        given(insuranceRepository.findByCompanyNameAndGeneration("표준약관", 1))
+                .willReturn(List.of());
+
+        // when & then
+        assertThatThrownBy(() -> insuranceService.getProducts("기타", 1))
+                .isInstanceOf(BusinessException.class)
+                .extracting(e -> ((BusinessException) e).getErrorCode())
+                .isEqualTo(ErrorCode.INSURANCE_NOT_FOUND);
     }
 
     // ──────────── getInsuranceDetail ────────────
@@ -383,7 +424,6 @@ class InsuranceServiceTest {
         assertThat(result.productName()).isEqualTo("삼성화재 실손의료비보험");
         assertThat(result.generation()).isEqualTo(3);
         assertThat(result.joinDate()).isEqualTo("2020-03");
-        assertThat(result.coreSummary()).isNull();
     }
 
     @Test

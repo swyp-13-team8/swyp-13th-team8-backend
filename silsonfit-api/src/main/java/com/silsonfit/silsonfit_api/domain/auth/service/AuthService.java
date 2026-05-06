@@ -23,11 +23,13 @@ import java.util.Optional;
 /**
  * 인증 관련 비즈니스 로직
  *
- * 카카오 로그인, 토큰 재발급, 약관 동의, 로그아웃 처리
+ * 카카오 로그인, 토큰 재발급, 약관 동의, 로그아웃, 회원 탈퇴 처리
  */
 @Service
 @RequiredArgsConstructor
 public class AuthService {
+
+    public static final long WITHDRAW_GRACE_DAYS = 30;
 
     private final KakaoClient kakaoClient;
     private final UserRepository userRepository;
@@ -57,6 +59,14 @@ public class AuthService {
                         .profileImageUrl(kakaoUser.profileImageUrl())
                         .build()
         ));
+
+        // 2-1) 탈퇴 유예 사용자 복구 처리
+        if (user.isDeactivated()) {
+            if (user.getDeactivatedAt().plusDays(WITHDRAW_GRACE_DAYS).isBefore(LocalDateTime.now())) {
+                throw new BusinessException(ErrorCode.WITHDRAW_GRACE_PERIOD_EXPIRED);
+            }
+            user.reactivate();
+        }
 
         // 3) 토큰 발급 및 Refresh Token 저장/갱신
         String accessToken = jwtTokenProvider.createAccessToken(user.getId());
@@ -125,6 +135,29 @@ public class AuthService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_REFRESH_TOKEN));
 
         refreshTokenRepository.delete(token);
+    }
+
+    /**
+     * 회원 탈퇴 처리
+     *
+     * 계정을 즉시 비활성화하고 Refresh Token을 삭제한다.
+     * 30일 내 재로그인 시 복구 가능, 30일 경과 시 스케줄러가 데이터 삭제
+     */
+    @Transactional
+    public void withdraw(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+
+        if (user.isDeactivated()) {
+            throw new BusinessException(ErrorCode.DEACTIVATED_USER);
+        }
+
+        // 계정 비활성화
+        user.deactivate();
+
+        // Refresh Token 삭제
+        refreshTokenRepository.findByUser(user)
+                .ifPresent(refreshTokenRepository::delete);
     }
 
     /**

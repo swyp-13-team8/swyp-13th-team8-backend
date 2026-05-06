@@ -40,6 +40,21 @@ public enum InsuranceCompany {
     }
 
     /**
+     * 보험사명으로 enum 조회
+     *
+     * @param displayName 보험사명 (예: "삼성화재")
+     * @return 해당 보험사 enum
+     */
+    public static InsuranceCompany fromDisplayName(String displayName) {
+        for (InsuranceCompany company : values()) {
+            if (company.displayName.equals(displayName)) {
+                return company;
+            }
+        }
+        throw new BusinessException(ErrorCode.INSURANCE_COMPANY_NOT_FOUND);
+    }
+
+    /**
      * 빅5 보험사 여부
      */
     public boolean isBigFive() {

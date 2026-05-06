@@ -13,6 +13,7 @@ import com.silsonfit.silsonfit_api.global.common.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * 인증 관련 API
  *
- * 카카오 로그인, 토큰 재발급, 약관 동의, 로그아웃 제공
+ * 카카오 로그인, 토큰 재발급, 약관 동의, 로그아웃, 회원 탈퇴 제공
  */
 @RestController
 @RequestMapping("/api/auth")
@@ -69,5 +70,15 @@ public class AuthController {
             @Valid @RequestBody LogoutRequest request) {
         authService.logout(request.refreshToken());
         return ApiResponse.success(new LogoutResponse(true));
+    }
+
+    /**
+     * 회원 탈퇴 (30일 유예, 재로그인 시 복구)
+     */
+    @DeleteMapping("/withdraw")
+    public ApiResponse<Void> withdraw(
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        authService.withdraw(userDetails.getUserId());
+        return ApiResponse.success();
     }
 }

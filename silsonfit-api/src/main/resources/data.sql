@@ -160,3 +160,54 @@ insert into coverage_rule (
     '["개발용 MRI 검진 목적 비보장 fallback 룰","건강검진 목적은 보장 제외 임시 기준"]',
     '개발용 임시 보장 룰입니다.'
 );
+
+-- 개발용 보험 상품 seed
+-- 운영 환경에서는 Flyway 또는 관리자 API로 관리한다.
+-- cautionPoint: 2~3세대 RENEWAL_TYPE (자동갱신), 4세대 RE_ENROLLMENT (5년 재가입) — 금감원 규정 기준
+
+INSERT INTO insurances (company_name, product_name, contract_type, generation, coverage_structure, caution_point, pdf_file_url, pdf_file_name) VALUES
+-- DB손해보험
+('DB손해보험', '무배당 프로미라이프 실손의료비보험1701', 'INDIVIDUAL', 2, 'COVERED_AND_UNCOVERED', 'RENEWAL_TYPE', null, '무배당 프로미라이프 실손의료비보험1701_약관.pdf'),
+('DB손해보험', '무배당 동부화재 다이렉트 실손의료비보험1701', 'INDIVIDUAL', 2, 'COVERED_AND_UNCOVERED', 'RENEWAL_TYPE', null, '무배당 동부화재 다이렉트 실손의료비보험1701_약관.pdf'),
+('DB손해보험', '무배당 프로미라이프 실손의료비보험2101', 'INDIVIDUAL', 3, 'THREE_UNCOVERED', 'RENEWAL_TYPE', null, '무배당 프로미라이프 실손의료비보험2101_20210401_약관.pdf'),
+('DB손해보험', '무배당 프로미라이프 다이렉트 실손의료비보험2101(CM)', 'INDIVIDUAL', 3, 'THREE_UNCOVERED', 'RENEWAL_TYPE', null, '무배당 프로미라이프 다이렉트 실손의료비보험2101(CM)_20210401_약관.pdf'),
+('DB손해보험', '무배당 프로미라이프 간편실손의료비보험(유병력자용)2101', 'PRE_EXISTING', 3, 'THREE_UNCOVERED', 'RENEWAL_TYPE', null, '무배당 프로미라이프 간편실손의료비보험(유병력자용)2101_20210101_약관.pdf'),
+('DB손해보험', '무배당 프로미라이프 실손의료비보험2604', 'INDIVIDUAL', 4, 'THREE_UNCOVERED', 'RE_ENROLLMENT', null, '무배당 프로미라이프 실손의료비보험2604_20260401_약관.pdf'),
+('DB손해보험', '무배당 프로미라이프 다이렉트 실손의료비보험2604(CM)', 'INDIVIDUAL', 4, 'THREE_UNCOVERED', 'RE_ENROLLMENT', null, '무배당 프로미라이프 다이렉트 실손의료비보험2604(CM)_20260401_약관.pdf'),
+('DB손해보험', '무배당 프로미라이프 간편실손의료비보험(유병력자용)2604', 'PRE_EXISTING', 4, 'THREE_UNCOVERED', 'RE_ENROLLMENT', null, '무배당 프로미라이프 간편실손의료비보험(유병력자용)2604_약관.pdf'),
+
+-- KB손해보험
+('KB손해보험', '무배당 KB손보실손의료비보장보험(16.09)', 'INDIVIDUAL', 2, 'COVERED_AND_UNCOVERED', 'RENEWAL_TYPE', null, '무배당 KB손보실손의료비보장보험(16.09)_약관.pdf'),
+('KB손해보험', '무배당 KB손보다이렉트실손의료비보장보험(16.10)', 'INDIVIDUAL', 2, 'COVERED_AND_UNCOVERED', 'RENEWAL_TYPE', null, '무배당 KB손보다이렉트실손의료비보장보험(16.10)_약관.pdf'),
+('KB손해보험', '무배당 KB손보 실손의료비보장보험(21.01)', 'INDIVIDUAL', 3, 'THREE_UNCOVERED', 'RENEWAL_TYPE', null, '무배당 KB손보 실손의료비보장보험(21.01)_약관.pdf'),
+('KB손해보험', '무배당 KB손보 다이렉트실손의료비보장보험(21.01)', 'INDIVIDUAL', 3, 'THREE_UNCOVERED', 'RENEWAL_TYPE', null, '무배당 KB손보 다이렉트실손의료비보장보험(21.01)_약관.pdf'),
+('KB손해보험', '무배당 KB손보 간편가입 실손의료비보장보험(21.01)', 'PRE_EXISTING', 3, 'THREE_UNCOVERED', 'RENEWAL_TYPE', null, '무배당 KB손보 간편가입 실손의료비보장보험(21.01)_약관.pdf'),
+('KB손해보험', 'KB손보 실손의료비보장보험(무배당)(26.02)', 'INDIVIDUAL', 4, 'THREE_UNCOVERED', 'RE_ENROLLMENT', null, 'KB손보 실손의료비보장보험(무배당)(26.02)_약관.pdf'),
+('KB손해보험', 'KB손보 다이렉트실손의료비보장보험(무배당)(26.02)', 'INDIVIDUAL', 4, 'THREE_UNCOVERED', 'RE_ENROLLMENT', null, 'KB손보 다이렉트실손의료비보장보험(무배당)(26.02)_약관.pdf'),
+('KB손해보험', 'KB손보 간편가입 실손의료비보장보험(무배당)(26.01)', 'PRE_EXISTING', 4, 'THREE_UNCOVERED', 'RE_ENROLLMENT', null, 'KB손보 간편가입 실손의료비보장보험(무배당)(26.01)_약관.pdf'),
+
+-- 삼성화재
+('삼성화재', '무배당 삼성화재 실손의료비보험(1611.7)', 'INDIVIDUAL', 2, 'COVERED_AND_UNCOVERED', 'RENEWAL_TYPE', null, '무배당 삼성화재 실손의료비보험 (1611.7)_20170101_약관.pdf'),
+('삼성화재', '무배당 삼성화재 다이렉트 실손의료비보험(1611.6)', 'INDIVIDUAL', 2, 'COVERED_AND_UNCOVERED', 'RENEWAL_TYPE', null, '무배당 삼성화재 다이렉트 실손의료비보험 (1611.6)_20170101_약관.pdf'),
+('삼성화재', '무배당 삼성화재 실손의료비보험(1704.1)', 'INDIVIDUAL', 3, 'THREE_UNCOVERED', 'RENEWAL_TYPE', null, '무배당 삼성화재 실손의료비보험(1704.1)_20170401_약관.pdf'),
+('삼성화재', '무배당 삼성화재 다이렉트 실손의료비보험(1704.1)', 'INDIVIDUAL', 3, 'THREE_UNCOVERED', 'RENEWAL_TYPE', null, '무배당 삼성화재 다이렉트 실손의료비보험(1704.1)_20170401_약관.pdf'),
+('삼성화재', '무배당 삼성화재 다이렉트 유병력자 실손의료비보험(2101.3)', 'PRE_EXISTING', 3, 'THREE_UNCOVERED', 'RENEWAL_TYPE', null, '무배당 삼성화재 다이렉트 유병력자실손의료비보험(2101.3)_20210401_약관.pdf'),
+('삼성화재', '무배당 삼성화재 실손의료비보험(2601.6)', 'INDIVIDUAL', 4, 'THREE_UNCOVERED', 'RE_ENROLLMENT', null, '무배당 삼성화재 실손의료비보험(2601.6)_20260101_약관.pdf'),
+('삼성화재', '무배당 삼성화재 다이렉트 실손의료비보험(2601.6)', 'INDIVIDUAL', 4, 'THREE_UNCOVERED', 'RE_ENROLLMENT', null, '무배당 삼성화재 다이렉트 실손의료비보험(2601.6)_20260101_약관.pdf'),
+('삼성화재', '무배당 삼성화재 유병력자 실손의료비보험(2601.13)', 'PRE_EXISTING', 4, 'THREE_UNCOVERED', 'RE_ENROLLMENT', null, '무배당 삼성화재 유병력자 실손의료비보험(2601.13)_20260101_약관.pdf'),
+
+-- 현대해상
+('현대해상', '(무)실손의료비보장보험(갱신형)(Hi1904)', 'INDIVIDUAL', 3, 'THREE_UNCOVERED', 'RENEWAL_TYPE', null, '(무)실손의료비보장보험(갱신형)(Hi1904)_약관.pdf'),
+('현대해상', '현대해상 실손의료비보장보험(Hi2307)', 'INDIVIDUAL', 4, 'THREE_UNCOVERED', 'RE_ENROLLMENT', null, '현대해상 실손의료비보장보험(Hi2307)_약관.pdf'),
+('현대해상', '현대해상 다이렉트 실손의료비보험(4세대D)', 'INDIVIDUAL', 4, 'THREE_UNCOVERED', 'RE_ENROLLMENT', null, '현대해상 다이렉트 실손의료비보험(4세대D)_20250701_약관.pdf'),
+('현대해상', '현대해상 유병력자 실손의료비보장보험(Hi2504)', 'PRE_EXISTING', 4, 'THREE_UNCOVERED', 'RE_ENROLLMENT', null, '현대해상 유병력자 실손의료비보장보험(Hi2504)_약관.pdf'),
+
+-- 메리츠화재
+('메리츠화재', '무배당 메리츠 다이렉트 실손의료비보험(~2021.03)', 'INDIVIDUAL', 3, 'THREE_UNCOVERED', 'RENEWAL_TYPE', null, '무배당 메리츠 다이렉트 실손의료비보험(~2021.03)_20210101_약관.pdf'),
+('메리츠화재', '무배당 메리츠 다이렉트 실손의료비보험(현재)', 'INDIVIDUAL', 4, 'THREE_UNCOVERED', 'RE_ENROLLMENT', null, '무배당 메리츠 다이렉트 실손의료비보험(현재)_20241001_약관.pdf'),
+
+-- 표준약관 (세대별)
+('표준약관', '1세대 표준약관', null, 1, 'COVERED_AND_UNCOVERED', null, null, null),
+('표준약관', '2세대 표준약관', null, 2, 'COVERED_AND_UNCOVERED', 'RENEWAL_TYPE', null, null),
+('표준약관', '3세대 표준약관', null, 3, 'THREE_UNCOVERED', 'RENEWAL_TYPE', null, '실손의료보험 표준약관(2018.11.06 개정)_3세대.pdf'),
+('표준약관', '4세대 표준약관', null, 4, 'THREE_UNCOVERED', 'RE_ENROLLMENT', null, '실손의료보험 표준약관(2024.12.20 시행)_4세대최신.pdf');

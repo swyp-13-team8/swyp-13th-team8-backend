@@ -1,0 +1,11 @@
+  dev[m
+  feat/auth-login-jwt/#12[m
+  feat/auth-logout/#23[m
+  feat/auth-terms-agreement/#18[m
+  feat/auth-withdraw/#27[m
+  feat/global-response-error/#7[m
+  feat/insurance-entity-generation/#35[m
+* [32mfeat/insurance-register-api/#39[m
+  feat/security-jwt-filter/#16[m
+  feat/user-profile/#25[m
+  main[m

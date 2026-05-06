@@ -424,6 +424,9 @@ class InsuranceServiceTest {
         assertThat(result.productName()).isEqualTo("삼성화재 실손의료비보험");
         assertThat(result.generation()).isEqualTo(3);
         assertThat(result.joinDate()).isEqualTo("2020-03");
+        assertThat(result.contractType()).isEqualTo("개인실손");
+        assertThat(result.coverageStructure()).isEqualTo("급여+비급여");
+        assertThat(result.cautionPoint()).isEqualTo("갱신형");
     }
 
     @Test

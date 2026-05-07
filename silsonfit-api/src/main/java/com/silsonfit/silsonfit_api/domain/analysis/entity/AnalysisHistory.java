@@ -6,16 +6,23 @@ import com.silsonfit.silsonfit_api.global.common.BaseCreatedTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.type.SqlTypes;
+
+import java.time.LocalDateTime;
 
 /**
  * AI의 약관 분석 결과 이력을 저장하는 엔티티
  */
 @Entity
+@Table(name = "analysis_history")
 @Getter
 @Builder(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLDelete(sql = "update analysis_history set is_deleted = true, deleted_at = CURRENT_TIMESTAMP where analysis_history_id = ?")
+@SQLRestriction(value = "is_deleted = false")
 public class AnalysisHistory extends BaseCreatedTimeEntity {
 
     @Id
@@ -62,6 +69,13 @@ public class AnalysisHistory extends BaseCreatedTimeEntity {
     @Column(name = "is_favorite", nullable = false)
     @Builder.Default
     private Boolean isFavorite = false; // 즐겨찾기
+
+    @Column(name = "is_deleted", nullable = false)
+    @Builder.Default
+    private Boolean isDeleted = false; // 삭제 여부
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt; // 삭제 일자
 
     // 생성자 - 정적 팩토리 메서드 패턴 + 빌더 사용
     public static AnalysisHistory create(AnalysisHistoryCreateCommand command) {

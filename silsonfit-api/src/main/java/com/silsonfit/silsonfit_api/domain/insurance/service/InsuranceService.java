@@ -2,6 +2,7 @@ package com.silsonfit.silsonfit_api.domain.insurance.service;
 
 import com.silsonfit.silsonfit_api.domain.insurance.dto.GenerationRequest;
 import com.silsonfit.silsonfit_api.domain.insurance.dto.GenerationResponse;
+import com.silsonfit.silsonfit_api.domain.insurance.dto.InsuranceDetailResponse;
 import com.silsonfit.silsonfit_api.domain.insurance.dto.InsuranceCompanyResponse;
 import com.silsonfit.silsonfit_api.domain.insurance.dto.InsuranceInfoDto;
 import com.silsonfit.silsonfit_api.domain.insurance.dto.InsuranceProductResponse;
@@ -166,10 +167,10 @@ public class InsuranceService {
                 .map(insurance -> new InsuranceProductResponse(
                         insurance.getId(),
                         insurance.getProductName(),
-                        insurance.getContractType() != null ? insurance.getContractType().getDisplayName() : null,
+                        insurance.getContractTypeLabel(),
                         insurance.getGeneration(),
-                        insurance.getCoverageStructure() != null ? insurance.getCoverageStructure().getDisplayName() : null,
-                        insurance.getCautionPoint() != null ? insurance.getCautionPoint().getDisplayName() : null
+                        insurance.getCoverageStructureLabel(),
+                        insurance.getCautionPointLabel()
                 ))
                 .toList();
     }
@@ -193,12 +194,43 @@ public class InsuranceService {
                             insurance.getProductName(),
                             insurance.getGeneration(),
                             ui.getSubscribedAt(),
-                            insurance.getContractType() != null ? insurance.getContractType().getDisplayName() : null,
-                            insurance.getCoverageStructure() != null ? insurance.getCoverageStructure().getDisplayName() : null,
-                            insurance.getCautionPoint() != null ? insurance.getCautionPoint().getDisplayName() : null
+                            insurance.getContractTypeLabel(),
+                            insurance.getCoverageStructureLabel(),
+                            insurance.getCautionPointLabel()
                     );
                 })
                 .toList();
+    }
+
+    /**
+     * 등록 보험 상세 조회
+     *
+     * @param userId 사용자 ID
+     * @param userInsuranceId 보험 등록 건의 고유 번호
+     * @return 등록 보험 상세 정보
+     */
+    @Transactional(readOnly = true)
+    public InsuranceDetailResponse getInsuranceDetail(Long userId, Long userInsuranceId) {
+        UserInsurance userInsurance = userInsuranceRepository.findById(userInsuranceId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_INSURANCE_NOT_FOUND));
+
+        if (!userInsurance.isOwnedBy(userId)) {
+            throw new BusinessException(ErrorCode.USER_INSURANCE_ACCESS_DENIED);
+        }
+
+        Insurance insurance = userInsurance.getInsurance();
+
+        return new InsuranceDetailResponse(
+                userInsurance.getId(),
+                insurance.getCompanyName(),
+                insurance.getProductName(),
+                insurance.getGeneration(),
+                userInsurance.getSubscribedAt(),
+                insurance.getContractType() != null ? insurance.getContractType().getDisplayName() : null,
+                insurance.getCoverageStructure() != null ? insurance.getCoverageStructure().getDisplayName() : null,
+                insurance.getCautionPoint() != null ? insurance.getCautionPoint().getDisplayName() : null,
+                insurance.getCoreSummary()
+        );
     }
 
     /**

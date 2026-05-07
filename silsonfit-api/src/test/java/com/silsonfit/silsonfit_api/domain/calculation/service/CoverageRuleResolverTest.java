@@ -111,7 +111,7 @@ class CoverageRuleResolverTest {
 
     @ParameterizedTest
     @CsvSource({
-            "FIRST, 100, 0",
+            "FIRST, 90, 10000",
             "SECOND, 80, 20000",
             "THIRD, 70, 30000",
             "FOURTH, 70, 30000"

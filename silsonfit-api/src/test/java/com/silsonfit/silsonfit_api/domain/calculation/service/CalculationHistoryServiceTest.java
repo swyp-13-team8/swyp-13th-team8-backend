@@ -43,7 +43,7 @@ class CalculationHistoryServiceTest {
         ));
         CalculationHistory secondHistory = calculationHistoryRepository.save(createHistory(
                 1L,
-                TreatmentCategory.GENERAL_TREATMENT,
+                TreatmentCategory.GENERAL,
                 100000,
                 70000,
                 true

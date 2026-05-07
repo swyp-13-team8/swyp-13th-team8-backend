@@ -11,7 +11,7 @@ import lombok.RequiredArgsConstructor;
 public enum PurposeType {
 
     TREATMENT("치료 목적"),
-    CHECKUP("단순 검사"),
+    EXAMINATION("검사 목적"),
     UNKNOWN("잘 모름");
 
     private final String description;

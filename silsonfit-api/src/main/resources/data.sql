@@ -1,6 +1,5 @@
 -- 개발용 EDI 미입력 fallback CoverageRule seed
 -- 운영 환경에서는 Flyway 또는 관리자 API로 관리한다.
-
 insert into coverage_rule (
     insurance_id,
     generation,
@@ -15,150 +14,134 @@ insert into coverage_rule (
     basis,
     disclaimer
 ) values
--- 1세대: 자기부담이 거의 없는 한도 중심 러프 룰
-(
-    null, 'FIRST', null, 'OUTPATIENT', 'MRI', 'TREATMENT',
-    true, 100, 0, null,
-    '["개발용 1세대 외래 MRI fallback 보장 룰","1세대는 자기부담이 거의 없는 구조로 러프 계산"]',
-    '개발용 임시 보장 룰입니다.'
+-- 1세대: 보장 범위가 넓은 편이나 상품별 차이가 커서 보수적 fallback
+(null, 'FIRST', null, 'OUTPATIENT', 'GENERAL', 'TREATMENT',
+ true, 90, 5000, null,
+ '["1세대 실손 외래 일반진료 기본 보장 추정","상품별 약관 차이가 있어 보수적 fallback 기준 적용"]',
+ '실제 보험금은 가입 상품 약관, 병원 구분, 급여/비급여 여부, 면책 조항에 따라 달라질 수 있습니다.'
 ),
-(
-    null, 'FIRST', null, 'OUTPATIENT', 'CT', 'TREATMENT',
-    true, 100, 0, null,
-    '["개발용 1세대 외래 CT fallback 보장 룰","1세대는 자기부담이 거의 없는 구조로 러프 계산"]',
-    '개발용 임시 보장 룰입니다.'
+(null, 'FIRST', null, 'OUTPATIENT', 'CT', 'TREATMENT',
+ true, 90, 10000, null,
+ '["1세대 실손 외래 CT 치료 목적 보장 추정","고액 검사 항목은 상품별 한도 차이가 있어 보수적 fallback 기준 적용"]',
+ '실제 보험금은 가입 상품 약관, 병원 구분, 급여/비급여 여부, 면책 조항에 따라 달라질 수 있습니다.'
 ),
-(
-    null, 'FIRST', null, 'OUTPATIENT', 'GENERAL_TREATMENT', 'TREATMENT',
-    true, 100, 0, null,
-    '["개발용 1세대 외래 일반진료 fallback 보장 룰","1세대는 급여/비급여 대부분을 넓게 보장하는 구조로 러프 계산"]',
-    '개발용 임시 보장 룰입니다.'
+(null, 'FIRST', null, 'OUTPATIENT', 'MRI', 'TREATMENT',
+ true, 90, 10000, null,
+ '["1세대 실손 외래 MRI 치료 목적 보장 추정","고액 검사 항목은 상품별 한도 차이가 있어 보수적 fallback 기준 적용"]',
+ '실제 보험금은 가입 상품 약관, 병원 구분, 급여/비급여 여부, 면책 조항에 따라 달라질 수 있습니다.'
 ),
-(
-    null, 'FIRST', null, 'MEDICATION', 'GENERAL_TREATMENT', 'TREATMENT',
-    true, 100, 0, null,
-    '["개발용 1세대 약제 fallback 보장 룰","1세대는 자기부담이 거의 없는 구조로 러프 계산"]',
-    '개발용 임시 보장 룰입니다.'
+(null, 'FIRST', null, 'MEDICATION', 'GENERAL', 'TREATMENT',
+ true, 90, 5000, null,
+ '["1세대 실손 약제비 보장 추정","상품별 약제비 공제 기준 차이가 있어 보수적 fallback 기준 적용"]',
+ '실제 보험금은 가입 상품 약관, 처방 여부, 약제 구분, 면책 조항에 따라 달라질 수 있습니다.'
 ),
 
--- 2세대: 자기부담 도입을 반영한 러프 룰
-(
-    null, 'SECOND', null, 'OUTPATIENT', 'MRI', 'TREATMENT',
-    true, 80, 20000, null,
-    '["개발용 2세대 외래 MRI fallback 보장 룰","2세대는 자기부담 도입 구조를 반영한 러프 계산"]',
-    '개발용 임시 보장 룰입니다.'
+-- 2세대: 자기부담 구조를 반영한 fallback
+(null, 'SECOND', null, 'OUTPATIENT', 'GENERAL', 'TREATMENT',
+ true, 90, 10000, null,
+ '["2세대 실손 외래 일반진료 보장 추정","외래 자기부담금 구조를 반영한 fallback 기준 적용"]',
+ '실제 보험금은 가입 상품 약관, 병원 구분, 급여/비급여 여부, 면책 조항에 따라 달라질 수 있습니다.'
 ),
-(
-    null, 'SECOND', null, 'OUTPATIENT', 'CT', 'TREATMENT',
-    true, 80, 20000, null,
-    '["개발용 2세대 외래 CT fallback 보장 룰","2세대는 자기부담 도입 구조를 반영한 러프 계산"]',
-    '개발용 임시 보장 룰입니다.'
+(null, 'SECOND', null, 'OUTPATIENT', 'CT', 'TREATMENT',
+ true, 80, 20000, null,
+ '["2세대 실손 외래 CT 치료 목적 보장 추정","고액 검사 항목은 자기부담금을 높게 반영한 fallback 기준 적용"]',
+ '실제 보험금은 가입 상품 약관, 병원 구분, 급여/비급여 여부, 면책 조항에 따라 달라질 수 있습니다.'
 ),
-(
-    null, 'SECOND', null, 'OUTPATIENT', 'GENERAL_TREATMENT', 'TREATMENT',
-    true, 90, 10000, null,
-    '["개발용 2세대 외래 일반진료 fallback 보장 룰","2세대 급여성 진료는 낮은 자기부담 기준으로 러프 계산"]',
-    '개발용 임시 보장 룰입니다.'
+(null, 'SECOND', null, 'OUTPATIENT', 'MRI', 'TREATMENT',
+ true, 80, 20000, null,
+ '["2세대 실손 외래 MRI 치료 목적 보장 추정","고액 검사 항목은 자기부담금을 높게 반영한 fallback 기준 적용"]',
+ '실제 보험금은 가입 상품 약관, 병원 구분, 급여/비급여 여부, 면책 조항에 따라 달라질 수 있습니다.'
 ),
-(
-    null, 'SECOND', null, 'MEDICATION', 'GENERAL_TREATMENT', 'TREATMENT',
-    true, 90, 8000, null,
-    '["개발용 2세대 약제 fallback 보장 룰","2세대 약제비는 낮은 자기부담 기준으로 러프 계산"]',
-    '개발용 임시 보장 룰입니다.'
+(null, 'SECOND', null, 'MEDICATION', 'GENERAL', 'TREATMENT',
+ true, 90, 8000, null,
+ '["2세대 실손 약제비 보장 추정","약제비 자기부담금 구조를 반영한 fallback 기준 적용"]',
+ '실제 보험금은 가입 상품 약관, 처방 여부, 약제 구분, 면책 조항에 따라 달라질 수 있습니다.'
 ),
 
--- 3세대: 기본계약 급여 영역 + 비급여 특약 분리 러프 룰
-(
-    null, 'THIRD', null, 'OUTPATIENT', 'GENERAL_TREATMENT', 'TREATMENT',
-    true, 80, 10000, null,
-    '["개발용 3세대 외래 일반진료 fallback 보장 룰","3세대 기본계약 급여 영역 기준 러프 계산"]',
-    '개발용 임시 보장 룰입니다.'
+-- 3세대: 급여 기본계약 + 3대 비급여 특약 분리 구조 반영
+(null, 'THIRD', null, 'OUTPATIENT', 'GENERAL', 'TREATMENT',
+ true, 80, 10000, null,
+ '["3세대 실손 외래 일반진료 보장 추정","급여성 기본계약 영역 기준 fallback 적용"]',
+ '실제 보험금은 가입 상품 약관, 급여/비급여 여부, 특약 가입 여부에 따라 달라질 수 있습니다.'
 ),
-(
-    null, 'THIRD', null, 'MEDICATION', 'GENERAL_TREATMENT', 'TREATMENT',
-    true, 80, 10000, null,
-    '["개발용 3세대 약제 fallback 보장 룰","3세대 기본계약 급여 영역 기준 러프 계산"]',
-    '개발용 임시 보장 룰입니다.'
+(null, 'THIRD', null, 'MEDICATION', 'GENERAL', 'TREATMENT',
+ true, 80, 10000, null,
+ '["3세대 실손 약제비 보장 추정","급여성 기본계약 영역 기준 fallback 적용"]',
+ '실제 보험금은 가입 상품 약관, 처방 여부, 약제 구분, 면책 조항에 따라 달라질 수 있습니다.'
 ),
-(
-    null, 'THIRD', null, 'OUTPATIENT', 'MRI', 'TREATMENT',
-    true, 70, 30000, null,
-    '["개발용 3세대 외래 MRI 비급여 특약 fallback 보장 룰","3세대는 비급여를 특약으로 분리하는 구조를 반영"]',
-    '개발용 임시 보장 룰입니다.'
+(null, 'THIRD', null, 'OUTPATIENT', 'MRI', 'TREATMENT',
+ true, 70, 30000, null,
+ '["3세대 실손 MRI 비급여 특약 보장 추정","3대 비급여 특약 항목은 높은 자기부담 기준 fallback 적용"]',
+ 'MRI 특약 미가입, 건강검진 목적, 예방 목적, 미용 목적 진료는 보장되지 않을 수 있습니다.'
 ),
-(
-    null, 'THIRD', null, 'OUTPATIENT', 'CT', 'TREATMENT',
-    true, 70, 30000, null,
-    '["개발용 3세대 외래 CT fallback 보장 룰","3세대 고액 검사 항목은 높은 자기부담 기준으로 러프 계산"]',
-    '개발용 임시 보장 룰입니다.'
+(null, 'THIRD', null, 'OUTPATIENT', 'CHIROPRACTIC', 'TREATMENT',
+ true, 70, 30000, null,
+ '["3세대 실손 도수치료 비급여 특약 보장 추정","3대 비급여 특약 항목은 높은 자기부담 기준 fallback 적용"]',
+ '도수치료 특약 미가입, 횟수 제한 초과, 의학적 필요성 부족 시 보장되지 않을 수 있습니다.'
 ),
-(
-    null, 'THIRD', null, 'OUTPATIENT', 'MANUAL_THERAPY', 'TREATMENT',
-    true, 70, 30000, null,
-    '["개발용 3세대 외래 도수치료 비급여 특약 fallback 보장 룰","3세대 비급여 특약 분리 항목 기준 러프 계산"]',
-    '개발용 임시 보장 룰입니다.'
+(null, 'THIRD', null, 'OUTPATIENT', 'PHYSICAL_THERAPY', 'TREATMENT',
+ true, 70, 30000, null,
+ '["3세대 실손 체외충격파 비급여 특약 보장 추정","3대 비급여 특약 항목은 높은 자기부담 기준 fallback 적용"]',
+ '체외충격파 특약 미가입, 횟수 제한 초과, 의학적 필요성 부족 시 보장되지 않을 수 있습니다.'
 ),
-(
-    null, 'THIRD', null, 'OUTPATIENT', 'SHOCKWAVE_THERAPY', 'TREATMENT',
-    true, 70, 30000, null,
-    '["개발용 3세대 외래 체외충격파 비급여 특약 fallback 보장 룰","3세대 비급여 특약 분리 항목 기준 러프 계산"]',
-    '개발용 임시 보장 룰입니다.'
-),
-(
-    null, 'THIRD', null, 'OUTPATIENT', 'INJECTION', 'TREATMENT',
-    true, 70, 30000, null,
-    '["개발용 3세대 외래 주사치료 비급여 특약 fallback 보장 룰","3세대 비급여 특약 분리 항목 기준 러프 계산"]',
-    '개발용 임시 보장 룰입니다.'
+(null, 'THIRD', null, 'OUTPATIENT', 'INJECTION', 'TREATMENT',
+ true, 70, 30000, null,
+ '["3세대 실손 비급여 주사치료 특약 보장 추정","3대 비급여 특약 항목은 높은 자기부담 기준 fallback 적용"]',
+ '비급여 주사 특약 미가입, 예방·영양·미용 목적 주사는 보장되지 않을 수 있습니다.'
 ),
 
--- 4세대: 급여/비급여 분리와 높은 비급여 자기부담을 반영한 러프 룰
-(
-    null, 'FOURTH', null, 'OUTPATIENT', 'GENERAL_TREATMENT', 'TREATMENT',
-    true, 80, 10000, null,
-    '["개발용 4세대 외래 일반진료 fallback 보장 룰","4세대 급여 영역 기준 러프 계산"]',
-    '개발용 임시 보장 룰입니다.'
+-- 4세대: 급여/비급여 분리 및 비급여 자기부담 강화 구조 반영
+(null, 'FOURTH', null, 'OUTPATIENT', 'GENERAL', 'TREATMENT',
+ true, 80, 10000, null,
+ '["4세대 실손 외래 일반진료 보장 추정","급여 영역 기준 fallback 적용"]',
+ '실제 보험금은 급여/비급여 여부, 병원 구분, 가입 약관에 따라 달라질 수 있습니다.'
 ),
-(
-    null, 'FOURTH', null, 'MEDICATION', 'GENERAL_TREATMENT', 'TREATMENT',
-    true, 80, 10000, null,
-    '["개발용 4세대 약제 fallback 보장 룰","4세대 급여 영역 기준 러프 계산"]',
-    '개발용 임시 보장 룰입니다.'
+(null, 'FOURTH', null, 'MEDICATION', 'GENERAL', 'TREATMENT',
+ true, 80, 10000, null,
+ '["4세대 실손 약제비 보장 추정","급여 영역 기준 fallback 적용"]',
+ '실제 보험금은 처방 여부, 약제 구분, 가입 약관에 따라 달라질 수 있습니다.'
 ),
-(
-    null, 'FOURTH', null, 'OUTPATIENT', 'MRI', 'TREATMENT',
-    true, 70, 30000, null,
-    '["개발용 4세대 외래 MRI 비급여 fallback 보장 룰","4세대 비급여 자기부담 기준 러프 계산"]',
-    '개발용 임시 보장 룰입니다.'
+(null, 'FOURTH', null, 'OUTPATIENT', 'MRI', 'TREATMENT',
+ true, 70, 30000, null,
+ '["4세대 실손 MRI 비급여 보장 추정","비급여 항목은 높은 자기부담 기준 fallback 적용"]',
+ 'MRI 특약 미가입, 건강검진 목적, 예방 목적, 미용 목적 진료는 보장되지 않을 수 있습니다.'
 ),
-(
-    null, 'FOURTH', null, 'OUTPATIENT', 'CT', 'TREATMENT',
-    true, 70, 30000, null,
-    '["개발용 4세대 외래 CT fallback 보장 룰","4세대 고액 검사 항목 기준 러프 계산"]',
-    '개발용 임시 보장 룰입니다.'
+(null, 'FOURTH', null, 'OUTPATIENT', 'CHIROPRACTIC', 'TREATMENT',
+ true, 70, 30000, null,
+ '["4세대 실손 도수치료 비급여 보장 추정","비급여 항목은 높은 자기부담 기준 fallback 적용"]',
+ '도수치료는 횟수 제한, 증상 개선 여부, 의학적 필요성에 따라 보장 여부가 달라질 수 있습니다.'
 ),
-(
-    null, 'FOURTH', null, 'OUTPATIENT', 'MANUAL_THERAPY', 'TREATMENT',
-    true, 70, 30000, null,
-    '["개발용 4세대 외래 도수치료 비급여 fallback 보장 룰","4세대 비급여 자기부담 기준 러프 계산"]',
-    '개발용 임시 보장 룰입니다.'
+(null, 'FOURTH', null, 'OUTPATIENT', 'PHYSICAL_THERAPY', 'TREATMENT',
+ true, 70, 30000, null,
+ '["4세대 실손 체외충격파 비급여 보장 추정","비급여 항목은 높은 자기부담 기준 fallback 적용"]',
+ '체외충격파 치료는 횟수 제한, 의학적 필요성에 따라 보장 여부가 달라질 수 있습니다.'
 ),
-(
-    null, 'FOURTH', null, 'OUTPATIENT', 'SHOCKWAVE_THERAPY', 'TREATMENT',
-    true, 70, 30000, null,
-    '["개발용 4세대 외래 체외충격파 비급여 fallback 보장 룰","4세대 비급여 자기부담 기준 러프 계산"]',
-    '개발용 임시 보장 룰입니다.'
+(null, 'FOURTH', null, 'OUTPATIENT', 'INJECTION', 'TREATMENT',
+ true, 70, 30000, null,
+ '["4세대 실손 비급여 주사치료 보장 추정","비급여 항목은 높은 자기부담 기준 fallback 적용"]',
+ '영양제, 예방, 미용 목적 주사는 보장되지 않을 수 있습니다.'
 ),
-(
-    null, 'FOURTH', null, 'OUTPATIENT', 'INJECTION', 'TREATMENT',
-    true, 70, 30000, null,
-    '["개발용 4세대 외래 주사치료 비급여 fallback 보장 룰","4세대 비급여 자기부담 기준 러프 계산"]',
-    '개발용 임시 보장 룰입니다.'
+
+-- 공통 비보장 fallback
+(null, 'FIRST', null, 'OUTPATIENT', 'GENERAL', 'EXAMINATION',
+ false, 0, 0, null,
+ '["건강검진 목적 진료는 실손 보장 대상에서 제외될 수 있음","치료 목적이 아닌 예방·검진 목적 기준 비보장 처리"]',
+ '치료 목적이 확인되는 경우 실제 보장 여부는 약관 기준으로 재검토가 필요합니다.'
 ),
-(
-    null, 'FOURTH', null, 'OUTPATIENT', 'MRI', 'CHECKUP',
-    false, 0, 0, null,
-    '["개발용 MRI 검진 목적 비보장 fallback 룰","건강검진 목적은 보장 제외 임시 기준"]',
-    '개발용 임시 보장 룰입니다.'
+(null, 'SECOND', null, 'OUTPATIENT', 'GENERAL', 'EXAMINATION',
+ false, 0, 0, null,
+ '["건강검진 목적 진료는 실손 보장 대상에서 제외될 수 있음","치료 목적이 아닌 예방·검진 목적 기준 비보장 처리"]',
+ '치료 목적이 확인되는 경우 실제 보장 여부는 약관 기준으로 재검토가 필요합니다.'
+),
+(null, 'THIRD', null, 'OUTPATIENT', 'GENERAL', 'EXAMINATION',
+ false, 0, 0, null,
+ '["건강검진 목적 진료는 실손 보장 대상에서 제외될 수 있음","치료 목적이 아닌 예방·검진 목적 기준 비보장 처리"]',
+ '치료 목적이 확인되는 경우 실제 보장 여부는 약관 기준으로 재검토가 필요합니다.'
+),
+(null, 'FOURTH', null, 'OUTPATIENT', 'GENERAL', 'EXAMINATION',
+ false, 0, 0, null,
+ '["건강검진 목적 진료는 실손 보장 대상에서 제외될 수 있음","치료 목적이 아닌 예방·검진 목적 기준 비보장 처리"]',
+ '치료 목적이 확인되는 경우 실제 보장 여부는 약관 기준으로 재검토가 필요합니다.'
 );
 
 -- 개발용 보험 상품 seed

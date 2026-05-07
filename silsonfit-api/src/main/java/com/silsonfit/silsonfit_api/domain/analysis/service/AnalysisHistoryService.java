@@ -33,6 +33,11 @@ public class AnalysisHistoryService {
                 .map(AnalysisHistoryListResponse::from);
     }
 
+    public Page<AnalysisHistoryListResponse> getFavoriteHistories(Long userId, Pageable pageable) {
+        return analysisHistoryRepository.findFavoriteHistories(userId, pageable)
+                .map(AnalysisHistoryListResponse::from);
+    }
+
     /**
      * 분석 이력 단건 조회
      *

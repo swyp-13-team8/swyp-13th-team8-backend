@@ -39,6 +39,23 @@ public class AnalysisHistoryController {
     }
 
     /**
+     * 저장된 분석 이력 리스트 조회
+     *
+     * @param userDetails 로그인한 사용자 정보
+     * @param pageable 페이징 정보
+     * @return 저장된 분석 이력 리스트
+     */
+    @GetMapping("/favorite")
+    public ApiResponse<Page<AnalysisHistoryListResponse>> getFavoriteHistories(@AuthenticationPrincipal CustomUserDetails userDetails,
+                                                                               @PageableDefault(size = 5) Pageable pageable) {
+        Long userId = userDetails.getUserId();
+
+        log.info("저장(즐겨찾기)된 분석 이력 리스트 조회 요청 - userId={}", userId);
+
+        return ApiResponse.success(analysisHistoryService.getFavoriteHistories(userId, pageable));
+    }
+
+    /**
      * 분석 이력 단건 조회
      *
      * @param userDetails 로그인한 사용자 정보

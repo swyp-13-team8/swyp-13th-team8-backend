@@ -9,6 +9,7 @@ import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -89,6 +90,24 @@ class AnalysisHistoryServiceTest {
                 .getSingleResult();
 
         assertThat(isDeleted).isTrue();
+    }
+
+    @Test
+    void 즐겨찾기_리스트_조회_테스트() {
+        Long userId = 1L;
+
+        dummy2.toggleFavorite();
+
+        PageRequest pageRequest = PageRequest.of(0, 5);
+
+        Page<AnalysisHistory> favoriteHistories =
+                analysisHistoryRepository.findFavoriteHistories(userId, pageRequest);
+
+        List<AnalysisHistory> content = favoriteHistories.getContent();
+
+        assertThat(content.size()).isEqualTo(1);
+        assertThat(content.get(0).getId()).isEqualTo(dummy2.getId());
+        assertThat(content.get(0).getIsFavorite()).isTrue();
     }
 
 }

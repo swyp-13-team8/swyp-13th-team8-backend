@@ -5,6 +5,7 @@ import com.silsonfit.silsonfit_api.domain.analysis.dto.AnalysisHistoryListRespon
 import com.silsonfit.silsonfit_api.domain.analysis.entity.AnalysisHistory;
 import com.silsonfit.silsonfit_api.domain.analysis.repository.AnalysisHistoryRepository;
 import com.silsonfit.silsonfit_api.global.error.BusinessException;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -23,6 +24,8 @@ class AnalysisHistoryServiceTest {
     AnalysisHistoryService analysisHistoryService;
     @Autowired
     AnalysisHistoryRepository analysisHistoryRepository;
+    @Autowired
+    EntityManager em; // 네이티브 쿼리로 DB 상태 확인을 위해 추가
 
     AnalysisHistory dummy1;
     AnalysisHistory dummy2;
@@ -49,14 +52,6 @@ class AnalysisHistoryServiceTest {
     }
 
     @Test
-    void 분석이력_삭제_테스트() {
-        analysisHistoryService.deleteHistory(1L, dummy2.getId());
-
-        assertThat(analysisHistoryRepository.findById(dummy2.getId()).isPresent())
-                .isFalse();
-    }
-
-    @Test
     void 다른유저가_다른이력을_조회하려고하면_예외발생() {
         assertThatThrownBy(() -> {
             analysisHistoryService.getHistoryDetail(2L, dummy1.getId());
@@ -70,6 +65,30 @@ class AnalysisHistoryServiceTest {
             analysisHistoryService.deleteHistory(2L,dummy1.getId());
         }).isInstanceOf(BusinessException.class)
                 .hasMessageContaining("해당 분석 이력에 대한 접근 권한이 없습니다.");
+    }
+
+    @Test
+    void 분석이력_소프트삭제_테스트() {
+        Long userId = 1L;
+        Long historyId = dummy2.getId();
+
+        analysisHistoryService.deleteHistory(userId, historyId);
+
+        // 영속성 컨텍스트를 비워야 다음 조회 시 DB에 쿼리를 날린다.
+        em.flush();
+        em.clear();
+
+        // DB 에는 있지만 @SQLRestriction 애노테이션 때문에 조회가 안되어야한다.
+        assertThat(analysisHistoryRepository.findById(historyId))
+                .isEmpty();
+
+        // DB 에는 있기 때문에 직접 쿼리문을 날려 is_deleted 가 true 인지 확인
+        Boolean isDeleted = (Boolean) em.createNativeQuery(
+                        "select is_deleted from analysis_history where analysis_history_id = :id")
+                .setParameter("id", historyId)
+                .getSingleResult();
+
+        assertThat(isDeleted).isTrue();
     }
 
 }

@@ -91,7 +91,9 @@ public class SecurityConfig {
         // 허용할 Origin (프론트엔드 주소)
         configuration.setAllowedOrigins(Arrays.asList(
                 "http://localhost:5173",
-                "http://52.78.103.179:5173"
+                "http://localhost:5174",
+                "http://127.0.0.1:5173",
+                "http://127.0.0.1:5174"
         ));
 
         // 허용할 HTTP 메서드

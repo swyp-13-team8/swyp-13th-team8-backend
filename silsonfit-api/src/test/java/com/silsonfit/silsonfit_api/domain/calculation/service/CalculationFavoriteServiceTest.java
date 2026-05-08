@@ -4,6 +4,7 @@ import com.silsonfit.silsonfit_api.domain.calculation.dto.CalculationFavoriteRes
 import com.silsonfit.silsonfit_api.domain.calculation.entity.CalculationHistory;
 import com.silsonfit.silsonfit_api.domain.calculation.enums.TreatmentCategory;
 import com.silsonfit.silsonfit_api.domain.calculation.repository.CalculationHistoryRepository;
+import com.silsonfit.silsonfit_api.domain.insurance.service.InsuranceService;
 import com.silsonfit.silsonfit_api.global.error.BusinessException;
 import com.silsonfit.silsonfit_api.global.error.ErrorCode;
 import org.junit.jupiter.api.DisplayName;
@@ -27,6 +28,9 @@ class CalculationFavoriteServiceTest {
 
     @Mock
     CalculationHistoryRepository calculationHistoryRepository;
+
+    @Mock
+    InsuranceService insuranceService;
 
     @InjectMocks
     CalculationFavoriteService calculationFavoriteService;
@@ -64,12 +68,14 @@ class CalculationFavoriteServiceTest {
         List<CalculationFavoriteResponse> responses = calculationFavoriteService.getFavorites(10L);
 
         assertThat(responses).hasSize(1);
-        assertThat(responses.get(0).id()).isEqualTo("calc_1");
+        assertThat(responses.get(0).id()).isEqualTo(1L);
+        assertThat(responses.get(0).calculationHistoryId()).isEqualTo("1");
         assertThat(responses.get(0).insuranceCoverage()).isEqualTo("MRI");
         assertThat(responses.get(0).medicalCost()).isEqualTo(100000);
         assertThat(responses.get(0).refundAmount()).isEqualTo(70000);
         assertThat(responses.get(0).isCovered()).isTrue();
         assertThat(responses.get(0).isFavorite()).isTrue();
+        assertThat(responses.get(0).isSaved()).isTrue();
     }
 
     @Test

@@ -38,12 +38,21 @@ class CalculationHistoryControllerTest {
     void getHistories_success() throws Exception {
         CalculationHistoryListResponse response = new CalculationHistoryListResponse(
                 List.of(new CalculationHistoryListResponse.CalculationSummary(
-                        "calc_123",
+                        123L,
+                        "123",
                         OffsetDateTime.parse("2024-06-01T10:00:00Z"),
                         "MRI",
+                        List.of("MRI"),
+                        "1",
+                        "테스트 보험",
+                        "테스트 보험사",
+                        "4",
+                        "2026-05",
+                        null,
                         3000000,
                         2500000,
-                        true
+                        true,
+                        false
                 )),
                 new CalculationHistoryListResponse.PageInfo(0, 20, 3, 45)
         );
@@ -58,12 +67,17 @@ class CalculationHistoryControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(200))
                 .andExpect(jsonPath("$.message").value("success"))
-                .andExpect(jsonPath("$.data.calculations[0].id").value("calc_123"))
+                .andExpect(jsonPath("$.data.calculations[0].id").value(123))
+                .andExpect(jsonPath("$.data.calculations[0].calculationHistoryId").value("123"))
                 .andExpect(jsonPath("$.data.calculations[0].calculatedDate").value("2024-06-01T10:00:00Z"))
                 .andExpect(jsonPath("$.data.calculations[0].insuranceCoverage").value("MRI"))
+                .andExpect(jsonPath("$.data.calculations[0].basis[0]").value("MRI"))
+                .andExpect(jsonPath("$.data.calculations[0].productName").value("테스트 보험"))
+                .andExpect(jsonPath("$.data.content[0].calculationHistoryId").value("123"))
                 .andExpect(jsonPath("$.data.calculations[0].medicalCost").value(3000000))
                 .andExpect(jsonPath("$.data.calculations[0].refundAmount").value(2500000))
                 .andExpect(jsonPath("$.data.calculations[0].isCovered").value(true))
+                .andExpect(jsonPath("$.data.calculations[0].isSaved").value(false))
                 .andExpect(jsonPath("$.data.pageInfo.page").value(0))
                 .andExpect(jsonPath("$.data.pageInfo.size").value(20))
                 .andExpect(jsonPath("$.data.pageInfo.totalPages").value(3))

@@ -212,8 +212,6 @@ class InsuranceServiceTest {
                 .isEqualTo(ErrorCode.INSURANCE_NOT_FOUND);
     }
 
-    // NOTE: 기능 명세에 보험 삭제 기능이 없어 주석 처리. 추후 필요 시 해제.
-    /*
     @Test
     @DisplayName("보험 삭제 성공")
     void delete_success() {
@@ -263,7 +261,6 @@ class InsuranceServiceTest {
                 .extracting(e -> ((BusinessException) e).getErrorCode())
                 .isEqualTo(ErrorCode.USER_INSURANCE_ACCESS_DENIED);
     }
-    */
 
     // ──────────── getMyInsurances ────────────
 

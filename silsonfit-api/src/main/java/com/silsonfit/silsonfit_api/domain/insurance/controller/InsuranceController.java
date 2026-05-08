@@ -58,8 +58,9 @@ public class InsuranceController {
         return ApiResponse.success(insuranceService.register(userDetails.getUserId(), request));
     }
 
-    // NOTE: 기능 명세에 보험 삭제 기능이 없어 주석 처리. 추후 필요 시 해제.
-    /*
+    /**
+     * 보험 삭제
+     */
     @DeleteMapping("/{id}")
     public ApiResponse<Void> delete(
             @AuthenticationPrincipal CustomUserDetails userDetails,
@@ -67,7 +68,6 @@ public class InsuranceController {
         insuranceService.delete(userDetails.getUserId(), userInsuranceId);
         return ApiResponse.success();
     }
-    */
 
     /**
      * 등록 보험 상세 조회

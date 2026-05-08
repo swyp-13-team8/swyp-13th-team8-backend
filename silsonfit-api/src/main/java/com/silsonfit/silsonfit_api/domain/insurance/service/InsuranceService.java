@@ -98,8 +98,12 @@ public class InsuranceService {
         return new InsuranceRegisterResponse(saved.getId());
     }
 
-    // NOTE: 기능 명세에 보험 삭제 기능이 없어 주석 처리. 추후 필요 시 해제.
-    /*
+    /**
+     * 보험 삭제
+     *
+     * @param userId 사용자 ID
+     * @param userInsuranceId 사용자 보험 등록 ID
+     */
     @Transactional
     public void delete(Long userId, Long userInsuranceId) {
         UserInsurance userInsurance = userInsuranceRepository.findById(userInsuranceId)
@@ -111,7 +115,6 @@ public class InsuranceService {
 
         userInsuranceRepository.delete(userInsurance);
     }
-    */
 
     private static final String STANDARD_POLICY_COMPANY = "표준약관";
 

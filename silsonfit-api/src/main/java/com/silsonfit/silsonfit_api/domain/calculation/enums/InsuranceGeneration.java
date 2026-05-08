@@ -17,4 +17,15 @@ public enum InsuranceGeneration {
     FIFTH("5세대");
 
     private final String description;
+
+    public static InsuranceGeneration from(int generation) {
+        return switch (generation) {
+            case 1 -> FIRST;
+            case 2 -> SECOND;
+            case 3 -> THIRD;
+            case 4 -> FOURTH;
+            case 5 -> FIFTH;
+            default -> FOURTH;
+        };
+    }
 }

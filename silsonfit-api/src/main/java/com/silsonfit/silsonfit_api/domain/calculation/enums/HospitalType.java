@@ -4,15 +4,16 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 /**
- * 진료 목적
+ * 병원 유형
  */
 @Getter
 @RequiredArgsConstructor
-public enum PurposeType {
+public enum HospitalType {
 
-    TREATMENT("치료 목적"),
-    EXAMINATION("검사 목적"),
-    UNKNOWN("잘 모름");
+    CLINIC("의원"),
+    GENERAL_HOSPITAL("종합병원"),
+    TERTIARY_HOSPITAL("상급종합병원"),
+    UNKNOWN("병원 유형 모름");
 
     private final String description;
 }

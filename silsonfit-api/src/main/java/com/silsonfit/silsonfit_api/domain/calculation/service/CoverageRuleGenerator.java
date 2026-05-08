@@ -78,10 +78,10 @@ public class CoverageRuleGenerator {
             return TreatmentCategory.CT;
         }
         if (ediCode.containsKeyword("도수")) {
-            return TreatmentCategory.MANUAL_THERAPY;
+            return TreatmentCategory.CHIROPRACTIC;
         }
         if (ediCode.containsKeyword("충격파")) {
-            return TreatmentCategory.SHOCKWAVE_THERAPY;
+            return TreatmentCategory.PHYSICAL_THERAPY;
         }
         if (ediCode.containsKeyword("주사")) {
             return TreatmentCategory.INJECTION;
@@ -90,7 +90,7 @@ public class CoverageRuleGenerator {
             return TreatmentCategory.PHYSICAL_THERAPY;
         }
 
-        return TreatmentCategory.GENERAL_TREATMENT;
+        return TreatmentCategory.GENERAL;
     }
 
     /**
@@ -98,7 +98,7 @@ public class CoverageRuleGenerator {
      */
     private PurposeType resolvePurposeType(EdiCode ediCode) {
         if (ediCode.containsKeyword("검진") || ediCode.containsKeyword("건강검진")) {
-            return PurposeType.CHECKUP;
+            return PurposeType.EXAMINATION;
         }
 
         return PurposeType.TREATMENT;

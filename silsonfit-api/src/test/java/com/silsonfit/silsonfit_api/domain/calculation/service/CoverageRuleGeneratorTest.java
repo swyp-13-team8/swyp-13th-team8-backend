@@ -66,7 +66,7 @@ class CoverageRuleGeneratorTest {
         );
 
         assertThat(coverageRule.getEdiCode()).isEqualTo("EDI002");
-        assertThat(coverageRule.getTreatmentCategory()).isEqualTo(TreatmentCategory.MANUAL_THERAPY);
+        assertThat(coverageRule.getTreatmentCategory()).isEqualTo(TreatmentCategory.CHIROPRACTIC);
         assertThat(coverageRule.getCoverageRate()).isEqualTo(70);
         assertThat(coverageRule.getDeductibleAmount()).isEqualTo(30000);
         assertThat(coverageRule.getLimitAmount()).isEqualTo(100000);
@@ -84,7 +84,7 @@ class CoverageRuleGeneratorTest {
         );
 
         assertThat(coverageRule.getVisitType()).isEqualTo(VisitType.MEDICATION);
-        assertThat(coverageRule.getTreatmentCategory()).isEqualTo(TreatmentCategory.GENERAL_TREATMENT);
+        assertThat(coverageRule.getTreatmentCategory()).isEqualTo(TreatmentCategory.GENERAL);
     }
 
     @Test

@@ -1,8 +1,11 @@
 package com.silsonfit.silsonfit_api.domain.calculation.dto;
 
+import com.silsonfit.silsonfit_api.domain.calculation.enums.HospitalType;
+import com.silsonfit.silsonfit_api.domain.calculation.enums.PayType;
 import com.silsonfit.silsonfit_api.domain.calculation.enums.PurposeType;
 import com.silsonfit.silsonfit_api.domain.calculation.enums.TreatmentCategory;
 import com.silsonfit.silsonfit_api.domain.calculation.enums.VisitType;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.Getter;
@@ -16,8 +19,8 @@ import lombok.NoArgsConstructor;
 public class CalculationRequest {
 
     /** 보험 ID */
-    @NotNull
-    private Long insuranceId;
+    @NotBlank
+    private String insuranceId;
 
     /** 의료비 */
     @NotNull
@@ -38,4 +41,12 @@ public class CalculationRequest {
 
     /** EDI 코드 (선택) */
     private String ediCode;
+
+    /** 병원 유형 */
+    @NotNull
+    private HospitalType hospitalType;
+
+    /** 급여 여부 */
+    @NotNull
+    private PayType payType;
 }

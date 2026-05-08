@@ -8,11 +8,13 @@ import com.silsonfit.silsonfit_api.domain.calculation.enums.InsuranceGeneration;
 import com.silsonfit.silsonfit_api.domain.calculation.repository.CalculationHistoryRepository;
 import com.silsonfit.silsonfit_api.domain.calculation.vo.CalculationResult;
 import com.silsonfit.silsonfit_api.domain.calculation.vo.CoverageRuleContext;
+import com.silsonfit.silsonfit_api.domain.insurance.dto.InsuranceInfoDto;
+import com.silsonfit.silsonfit_api.domain.insurance.service.InsuranceService;
+import com.silsonfit.silsonfit_api.global.error.BusinessException;
+import com.silsonfit.silsonfit_api.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 /**
  * 실손 보험 계산 Service
@@ -27,6 +29,7 @@ public class CalculationService {
 
     private final CoverageRuleResolver coverageRuleResolver;
     private final CalculationHistoryRepository calculationHistoryRepository;
+    private final InsuranceService insuranceService;
 
     /**
      * 실손 보험 예상 환급액 계산
@@ -37,10 +40,12 @@ public class CalculationService {
      */
     @Transactional
     public CalculationResponse calculate(Long userId, CalculationRequest request) {
-        // TODO(calculation): 보험 도메인 연동 후 insuranceId 기반 보험 세대/약관 조회로 대체한다.
+        Long userInsuranceId = parseUserInsuranceId(request.getInsuranceId());
+        InsuranceInfoDto insuranceInfo = insuranceService.getInsuranceInfo(userInsuranceId);
+
         CoverageRuleContext context = new CoverageRuleContext(
-                request.getInsuranceId(),
-                InsuranceGeneration.FOURTH
+                insuranceInfo.insuranceId(),
+                InsuranceGeneration.from(insuranceInfo.generation())
         );
 
         CoverageRule coverageRule = coverageRuleResolver.resolve(
@@ -52,8 +57,8 @@ public class CalculationService {
         );
 
         CalculationResult result = calculateByRule(request.getMedicalCost(), coverageRule);
-        saveHistory(userId, request, result);
-        return CalculationResponse.from(result);
+        saveHistory(userId, userInsuranceId, request, result);
+        return CalculationResponse.from(request, coverageRule, result, insuranceInfo);
     }
 
     /**
@@ -61,12 +66,13 @@ public class CalculationService {
      */
     private void saveHistory(
             Long userId,
+            Long userInsuranceId,
             CalculationRequest request,
             CalculationResult result
     ) {
         CalculationHistory history = CalculationHistory.create(
                 userId,
-                request.getInsuranceId(),
+                userInsuranceId,
                 request.getMedicalCost(),
                 request.getTreatmentCategory(),
                 request.getEdiCode(),
@@ -76,6 +82,26 @@ public class CalculationService {
         );
 
         calculationHistoryRepository.save(history);
+    }
+
+    /**
+     * 클라이언트 표시용 보험 ID(ins_123)와 숫자 ID를 모두 사용자 보험 등록 ID로 해석한다.
+     */
+    private Long parseUserInsuranceId(String insuranceId) {
+        if (insuranceId == null || insuranceId.isBlank()) {
+            throw new BusinessException(ErrorCode.INVALID_INPUT);
+        }
+
+        String normalizedInsuranceId = insuranceId.trim();
+        if (normalizedInsuranceId.startsWith("ins_")) {
+            normalizedInsuranceId = normalizedInsuranceId.substring("ins_".length());
+        }
+
+        try {
+            return Long.parseLong(normalizedInsuranceId);
+        } catch (NumberFormatException e) {
+            throw new BusinessException(ErrorCode.INVALID_INPUT);
+        }
     }
 
     /**

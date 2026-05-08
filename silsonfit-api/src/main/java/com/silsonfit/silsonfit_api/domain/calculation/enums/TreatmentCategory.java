@@ -10,13 +10,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum TreatmentCategory {
 
+    GENERAL("일반진료"),
     MRI("MRI"),
     CT("CT"),
-    MANUAL_THERAPY("도수치료"),
-    SHOCKWAVE_THERAPY("체외충격파"),
+    CHIROPRACTIC("도수치료"),
+    EMERGENCY("응급"),
     INJECTION("주사"),
-    PHYSICAL_THERAPY("물리치료"),
-    GENERAL_TREATMENT("일반진료");
+    PHYSICAL_THERAPY("물리치료");
 
     private final String description;
 }

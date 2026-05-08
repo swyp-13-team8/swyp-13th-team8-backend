@@ -81,7 +81,7 @@ public class CoverageRuleGenerator {
             return TreatmentCategory.CHIROPRACTIC;
         }
         if (ediCode.containsKeyword("충격파")) {
-            return TreatmentCategory.PHYSICAL_THERAPY;
+            return TreatmentCategory.SHOCKWAVE_THERAPY;
         }
         if (ediCode.containsKeyword("주사")) {
             return TreatmentCategory.INJECTION;

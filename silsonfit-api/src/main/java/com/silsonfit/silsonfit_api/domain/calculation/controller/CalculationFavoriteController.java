@@ -25,7 +25,7 @@ public class CalculationFavoriteController {
     /**
      * 계산 이력 즐겨찾기 목록 조회
      */
-    @GetMapping("/favorites")
+    @GetMapping({"/favorites", "/save"})
     public ApiResponse<List<CalculationFavoriteResponse>> getFavorites(
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {

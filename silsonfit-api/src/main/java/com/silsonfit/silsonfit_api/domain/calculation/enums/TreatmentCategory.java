@@ -14,7 +14,7 @@ public enum TreatmentCategory {
     MRI("MRI"),
     CT("CT"),
     CHIROPRACTIC("도수치료"),
-    EMERGENCY("응급"),
+    SHOCKWAVE_THERAPY("체외충격파"),
     INJECTION("주사"),
     PHYSICAL_THERAPY("물리치료");
 

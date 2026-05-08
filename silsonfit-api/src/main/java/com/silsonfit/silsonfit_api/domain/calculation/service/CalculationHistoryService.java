@@ -3,10 +3,13 @@ package com.silsonfit.silsonfit_api.domain.calculation.service;
 import com.silsonfit.silsonfit_api.domain.calculation.dto.CalculationHistoryListResponse;
 import com.silsonfit.silsonfit_api.domain.calculation.entity.CalculationHistory;
 import com.silsonfit.silsonfit_api.domain.calculation.repository.CalculationHistoryRepository;
+import com.silsonfit.silsonfit_api.domain.insurance.dto.InsuranceInfoDto;
+import com.silsonfit.silsonfit_api.domain.insurance.service.InsuranceService;
 import com.silsonfit.silsonfit_api.global.error.BusinessException;
 import com.silsonfit.silsonfit_api.global.error.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,14 +24,27 @@ import org.springframework.transaction.annotation.Transactional;
 public class CalculationHistoryService {
 
     private final CalculationHistoryRepository calculationHistoryRepository;
+    private final InsuranceService insuranceService;
 
     /**
      * 사용자별 계산 이력 목록 조회
      */
     public CalculationHistoryListResponse getHistories(Long userId, Pageable pageable) {
+        Pageable fixedSortPageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize());
+
         return CalculationHistoryListResponse.from(
-                calculationHistoryRepository.findByUserIdAndIsDeletedFalseOrderByCreatedAtDescIdDesc(userId, pageable)
+                calculationHistoryRepository.findByUserIdAndIsDeletedFalseOrderByCreatedAtDescIdDesc(userId, fixedSortPageable),
+                this::resolveInsuranceInfo
         );
+    }
+
+    private InsuranceInfoDto resolveInsuranceInfo(Long userInsuranceId) {
+        try {
+            return insuranceService.getInsuranceInfo(userInsuranceId);
+        } catch (BusinessException e) {
+            log.warn("계산 이력의 보험 정보를 찾을 수 없습니다. - userInsuranceId={}", userInsuranceId);
+            return null;
+        }
     }
 
     /**

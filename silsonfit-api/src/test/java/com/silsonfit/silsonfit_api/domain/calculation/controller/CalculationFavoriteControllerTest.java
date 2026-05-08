@@ -50,11 +50,20 @@ class CalculationFavoriteControllerTest {
     void getFavorites_success() throws Exception {
         when(calculationFavoriteService.getFavorites(10L)).thenReturn(List.of(
                 new CalculationFavoriteResponse(
-                        "calc_1",
+                        1L,
+                        "1",
                         OffsetDateTime.parse("2026-05-04T10:00:00Z"),
                         "MRI",
+                        List.of("MRI"),
+                        "1",
+                        "테스트 보험",
+                        "테스트 보험사",
+                        "4",
+                        "2026-05",
+                        null,
                         100000,
                         70000,
+                        true,
                         true,
                         true
                 )
@@ -65,13 +74,17 @@ class CalculationFavoriteControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.code").value(200))
                 .andExpect(jsonPath("$.message").value("success"))
-                .andExpect(jsonPath("$.data[0].id").value("calc_1"))
+                .andExpect(jsonPath("$.data[0].id").value(1))
+                .andExpect(jsonPath("$.data[0].calculationHistoryId").value("1"))
                 .andExpect(jsonPath("$.data[0].calculatedDate").value("2026-05-04T10:00:00Z"))
                 .andExpect(jsonPath("$.data[0].insuranceCoverage").value("MRI"))
+                .andExpect(jsonPath("$.data[0].basis[0]").value("MRI"))
+                .andExpect(jsonPath("$.data[0].productName").value("테스트 보험"))
                 .andExpect(jsonPath("$.data[0].medicalCost").value(100000))
                 .andExpect(jsonPath("$.data[0].refundAmount").value(70000))
                 .andExpect(jsonPath("$.data[0].isCovered").value(true))
-                .andExpect(jsonPath("$.data[0].isFavorite").value(true));
+                .andExpect(jsonPath("$.data[0].isFavorite").value(true))
+                .andExpect(jsonPath("$.data[0].isSaved").value(true));
     }
 
 }

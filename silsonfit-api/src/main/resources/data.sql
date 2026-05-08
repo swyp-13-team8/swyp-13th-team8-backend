@@ -79,7 +79,7 @@ insert into coverage_rule (
  '["3세대 실손 도수치료 비급여 특약 보장 추정","3대 비급여 특약 항목은 높은 자기부담 기준 fallback 적용"]',
  '도수치료 특약 미가입, 횟수 제한 초과, 의학적 필요성 부족 시 보장되지 않을 수 있습니다.'
 ),
-(null, 'THIRD', null, 'OUTPATIENT', 'PHYSICAL_THERAPY', 'TREATMENT',
+(null, 'THIRD', null, 'OUTPATIENT', 'SHOCKWAVE_THERAPY', 'TREATMENT',
  true, 70, 30000, null,
  '["3세대 실손 체외충격파 비급여 특약 보장 추정","3대 비급여 특약 항목은 높은 자기부담 기준 fallback 적용"]',
  '체외충격파 특약 미가입, 횟수 제한 초과, 의학적 필요성 부족 시 보장되지 않을 수 있습니다.'
@@ -111,7 +111,7 @@ insert into coverage_rule (
  '["4세대 실손 도수치료 비급여 보장 추정","비급여 항목은 높은 자기부담 기준 fallback 적용"]',
  '도수치료는 횟수 제한, 증상 개선 여부, 의학적 필요성에 따라 보장 여부가 달라질 수 있습니다.'
 ),
-(null, 'FOURTH', null, 'OUTPATIENT', 'PHYSICAL_THERAPY', 'TREATMENT',
+(null, 'FOURTH', null, 'OUTPATIENT', 'SHOCKWAVE_THERAPY', 'TREATMENT',
  true, 70, 30000, null,
  '["4세대 실손 체외충격파 비급여 보장 추정","비급여 항목은 높은 자기부담 기준 fallback 적용"]',
  '체외충격파 치료는 횟수 제한, 의학적 필요성에 따라 보장 여부가 달라질 수 있습니다.'

@@ -64,16 +64,18 @@ class CalculationHistoryServiceTest {
         );
 
         assertThat(response.calculations()).hasSize(2);
-        assertThat(response.calculations().get(0).id()).isEqualTo("calc_" + secondHistory.getId());
+        assertThat(response.calculations().get(0).id()).isEqualTo(secondHistory.getId());
+        assertThat(response.calculations().get(0).calculationHistoryId()).isEqualTo(String.valueOf(secondHistory.getId()));
         assertThat(response.calculations().get(0).insuranceCoverage()).isEqualTo("일반진료");
         assertThat(response.calculations().get(0).medicalCost()).isEqualTo(100000);
         assertThat(response.calculations().get(0).refundAmount()).isEqualTo(70000);
         assertThat(response.calculations().get(0).isCovered()).isTrue();
-        assertThat(response.calculations().get(1).id()).isEqualTo("calc_" + firstHistory.getId());
+        assertThat(response.calculations().get(0).isSaved()).isFalse();
+        assertThat(response.calculations().get(1).id()).isEqualTo(firstHistory.getId());
         assertThat(response.calculations())
-                .noneSatisfy(calculation -> assertThat(calculation.id()).isEqualTo("calc_" + otherUserHistory.getId()));
+                .noneSatisfy(calculation -> assertThat(calculation.id()).isEqualTo(otherUserHistory.getId()));
         assertThat(response.calculations())
-                .noneSatisfy(calculation -> assertThat(calculation.id()).isEqualTo("calc_" + deletedHistory.getId()));
+                .noneSatisfy(calculation -> assertThat(calculation.id()).isEqualTo(deletedHistory.getId()));
         assertThat(response.pageInfo().page()).isZero();
         assertThat(response.pageInfo().size()).isEqualTo(20);
         assertThat(response.pageInfo().totalElements()).isEqualTo(2);

@@ -9,10 +9,14 @@ import com.silsonfit.silsonfit_api.domain.calculation.repository.CoverageRuleRep
 import com.silsonfit.silsonfit_api.domain.calculation.vo.CoverageRuleContext;
 import com.silsonfit.silsonfit_api.global.error.BusinessException;
 import com.silsonfit.silsonfit_api.global.error.ErrorCode;
+import lombok.extern.slf4j.Slf4j;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
  * 보장 룰 조회 Resolver
@@ -22,6 +26,7 @@ import org.springframework.util.StringUtils;
  * - EDI 코드가 없으면 보험 세대 + 진료 유형/항목/목적 기반 룰로 대체 조회한다.
  */
 @Service
+@Slf4j
 @RequiredArgsConstructor
 @Transactional
 public class CoverageRuleResolver {
@@ -50,7 +55,7 @@ public class CoverageRuleResolver {
         if (StringUtils.hasText(ediCode)) {
             String normalizedEdiCode = ediCode.trim();
 
-            return coverageRuleRepository.findByInsuranceIdAndEdiCode(context.insuranceId(), normalizedEdiCode)
+            return coverageRuleRepository.findFirstByInsuranceIdAndEdiCodeOrderByIdDesc(context.insuranceId(), normalizedEdiCode)
                     .orElseGet(() -> generateAndSaveByEdiCode(context, normalizedEdiCode));
         }
 
@@ -84,12 +89,38 @@ public class CoverageRuleResolver {
             TreatmentCategory treatmentCategory,
             PurposeType purposeType
     ) {
-        return coverageRuleRepository.findByGenerationAndVisitTypeAndTreatmentCategoryAndPurposeType(
-                        context.generation(),
-                        visitType,
-                        treatmentCategory,
-                        purposeType
-                )
+        return findRule(context, visitType, treatmentCategory, purposeType)
+                .or(() -> findRule(context, visitType, TreatmentCategory.GENERAL, purposeType))
+                .or(() -> findRule(context, VisitType.OUTPATIENT, treatmentCategory, purposeType))
+                .or(() -> findRule(context, VisitType.OUTPATIENT, TreatmentCategory.GENERAL, purposeType))
+                .or(() -> findRule(context, VisitType.OUTPATIENT, TreatmentCategory.GENERAL, PurposeType.TREATMENT))
                 .orElseThrow(() -> new BusinessException(ErrorCode.COVERAGE_RULE_NOT_FOUND));
+    }
+
+    private Optional<CoverageRule> findRule(
+            CoverageRuleContext context,
+            VisitType visitType,
+            TreatmentCategory treatmentCategory,
+            PurposeType purposeType
+    ) {
+        List<CoverageRule> rules = coverageRuleRepository.findByInsuranceIdIsNullAndEdiCodeIsNullAndGenerationAndVisitTypeAndTreatmentCategoryAndPurposeTypeOrderByIdAsc(
+                context.generation(),
+                visitType,
+                treatmentCategory,
+                purposeType
+        );
+
+        if (rules.size() > 1) {
+            log.warn(
+                    "중복 fallback 보장 룰이 존재합니다. 첫 번째 룰을 사용합니다. generation={}, visitType={}, treatmentCategory={}, purposeType={}, count={}",
+                    context.generation(),
+                    visitType,
+                    treatmentCategory,
+                    purposeType,
+                    rules.size()
+            );
+        }
+
+        return rules.stream().findFirst();
     }
 }

@@ -24,6 +24,7 @@ services:
       AWS_S3_BUCKET: ${AWS_S3_BUCKET:-silsonfit-storage}
       EDI_PUBLIC_API_SERVICE_KEY: ${EDI_PUBLIC_API_SERVICE_KEY:-}
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/silsonfit
+      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS:-}
 
   nginx:
     image: nginx:alpine

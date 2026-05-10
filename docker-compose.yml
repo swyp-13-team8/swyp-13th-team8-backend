@@ -21,6 +21,7 @@ services:
       GEMINI_API_KEY: ${GEMINI_API_KEY:-dummy}
       AWS_S3_ACCESS_KEY: ${AWS_S3_ACCESS_KEY:-dummy}
       AWS_S3_SECRET_KEY: ${AWS_S3_SECRET_KEY:-dummy}
+      AWS_S3_BUCKET: ${AWS_S3_BUCKET:-silsonfit-storage}
       EDI_PUBLIC_API_SERVICE_KEY: ${EDI_PUBLIC_API_SERVICE_KEY:-}
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/silsonfit
 

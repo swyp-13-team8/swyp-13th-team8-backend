@@ -118,13 +118,12 @@ public class CalculationService {
             );
         }
 
-        int refundAmountByRate = medicalCost * coverageRule.getCoverageRate() / 100;
+        int fixedDeductibleAmount = Math.min(medicalCost, coverageRule.getDeductibleAmount());
+        int coveredBaseAmount = medicalCost - fixedDeductibleAmount;
+        int refundAmountByRate = coveredBaseAmount * coverageRule.getCoverageRate() / 100;
         int limitedRefundAmount = applyLimit(refundAmountByRate, coverageRule.getLimitAmount());
-        int deductibleAmount = Math.max(
-                coverageRule.getDeductibleAmount(),
-                medicalCost - limitedRefundAmount
-        );
-        int refundAmount = Math.max(medicalCost - deductibleAmount, 0);
+        int refundAmount = Math.max(limitedRefundAmount, 0);
+        int deductibleAmount = medicalCost - refundAmount;
 
         return CalculationResult.of(
                 true,

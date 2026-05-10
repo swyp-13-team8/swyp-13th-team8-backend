@@ -65,30 +65,32 @@ class CalculationServiceTest {
         CalculationResponse response = calculationService.calculate(TEST_USER_ID, request);
 
         assertThat(response.getIsCovered()).isEqualTo(CoverageStatus.PARTIAL_COVERED);
-        assertThat(response.getRefundAmount()).isEqualTo(70000);
-        assertThat(response.getDeductibleAmount()).isEqualTo(30000);
+        assertThat(response.getRefundAmount()).isEqualTo(63000);
+        assertThat(response.getDeductibleAmount()).isEqualTo(37000);
         assertThat(response.getBasis()).isEqualTo("계산 테스트 룰");
-        assertThat(response.getDeductibleBasis()).isEqualTo("10,000원 또는 진료비의 30% 중 큰 금액");
+        assertThat(response.getDeductibleBasis()).isEqualTo("10,000원 공제 후 잔여 진료비의 70% 보장(잔여 자기부담 30%)");
+        assertThat(response.getFixedDeductibleAmount()).isEqualTo(10000);
+        assertThat(response.getFixedDeductibleRate()).isEqualTo(10);
         assertThat(response.getTreatmentInfos()).containsExactly("외래", "CT", "급여 여부 모름");
         assertThat(response.getTotalMedicalCost()).isEqualTo(100000);
         assertThat(response.getProductName()).isEqualTo("테스트 실손보험");
         assertThat(response.getCompanyName()).isEqualTo("삼성화재");
         assertThat(response.getInsuranceInfos()).containsExactly("4세대", "3대비급여", "비급여특약");
         assertThat(response.getJoinDate()).isEqualTo("2025-04");
-        assertThat(response.getDeductibleRate()).isEqualTo(30);
-        assertThat(response.getRefundRate()).isEqualTo(70);
+        assertThat(response.getDeductibleRate()).isEqualTo(37);
+        assertThat(response.getRefundRate()).isEqualTo(63);
 
         CalculationHistory history = calculationHistoryRepository.findAll().get(0);
         assertThat(history.getUserId()).isEqualTo(TEST_USER_ID);
         assertThat(history.getInsuranceId()).isEqualTo(userInsuranceId);
         assertThat(history.getMedicalCost()).isEqualTo(100000);
         assertThat(history.getTreatmentCategory()).isEqualTo(TreatmentCategory.CT);
-        assertThat(history.getRefundAmount()).isEqualTo(70000);
-        assertThat(history.getDeductibleAmount()).isEqualTo(30000);
+        assertThat(history.getRefundAmount()).isEqualTo(63000);
+        assertThat(history.getDeductibleAmount()).isEqualTo(37000);
     }
 
     @Test
-    void 고정_자기부담금이_더_크면_고정_자기부담금을_적용한다() {
+    void 정액_공제_후_잔여_진료비에_보장률을_적용한다() {
         Long userInsuranceId = saveUserInsurance();
         coverageRuleRepository.save(createCoverageRule(
                 true,
@@ -101,8 +103,30 @@ class CalculationServiceTest {
         CalculationResponse response = calculationService.calculate(TEST_USER_ID, request);
 
         assertThat(response.getIsCovered()).isEqualTo(CoverageStatus.PARTIAL_COVERED);
-        assertThat(response.getRefundAmount()).isEqualTo(90000);
-        assertThat(response.getDeductibleAmount()).isEqualTo(10000);
+        assertThat(response.getRefundAmount()).isEqualTo(85500);
+        assertThat(response.getDeductibleAmount()).isEqualTo(14500);
+    }
+
+    @Test
+    void 진료비가_정액_공제액_이하이면_진료비_전액을_자기부담으로_계산한다() {
+        Long userInsuranceId = saveUserInsurance();
+        coverageRuleRepository.save(createCoverageRule(
+                true,
+                70,
+                30000,
+                null
+        ));
+        CalculationRequest request = createCalculationRequest(userInsuranceId, 20000);
+
+        CalculationResponse response = calculationService.calculate(TEST_USER_ID, request);
+
+        assertThat(response.getIsCovered()).isEqualTo(CoverageStatus.PARTIAL_COVERED);
+        assertThat(response.getRefundAmount()).isZero();
+        assertThat(response.getDeductibleAmount()).isEqualTo(20000);
+        assertThat(response.getFixedDeductibleAmount()).isEqualTo(20000);
+        assertThat(response.getFixedDeductibleRate()).isEqualTo(100);
+        assertThat(response.getDeductibleRate()).isEqualTo(100);
+        assertThat(response.getRefundRate()).isZero();
     }
 
     @Test
@@ -122,6 +146,8 @@ class CalculationServiceTest {
         assertThat(response.getRefundAmount()).isZero();
         assertThat(response.getDeductibleAmount()).isEqualTo(100000);
         assertThat(response.getDeductibleBasis()).isEqualTo("보장 제외로 진료비 전액 자기부담");
+        assertThat(response.getFixedDeductibleAmount()).isZero();
+        assertThat(response.getFixedDeductibleRate()).isZero();
     }
 
     private CoverageRule createCoverageRule(

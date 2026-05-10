@@ -3,6 +3,7 @@ package com.silsonfit.silsonfit_api.global.config;
 import com.silsonfit.silsonfit_api.global.auth.JwtAuthenticationFilter;
 import com.silsonfit.silsonfit_api.global.auth.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -17,12 +18,15 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @RequiredArgsConstructor
+@EnableConfigurationProperties(CorsProperties.class)
 public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final CorsProperties corsProperties;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -88,13 +92,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // 허용할 Origin (프론트엔드 주소)
-        configuration.setAllowedOrigins(Arrays.asList(
-                "http://localhost:5173",
-                "http://localhost:5174",
-                "http://127.0.0.1:5173",
-                "http://127.0.0.1:5174"
-        ));
+        configuration.setAllowedOrigins(resolveAllowedOrigins());
 
         // 허용할 HTTP 메서드
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
@@ -113,5 +111,16 @@ public class SecurityConfig {
         source.registerCorsConfiguration("/**", configuration);
 
         return source;
+    }
+
+    private List<String> resolveAllowedOrigins() {
+        if (corsProperties.allowedOrigins() == null) {
+            return List.of();
+        }
+
+        return corsProperties.allowedOrigins().stream()
+                .map(String::trim)
+                .filter(origin -> !origin.isBlank())
+                .toList();
     }
 }

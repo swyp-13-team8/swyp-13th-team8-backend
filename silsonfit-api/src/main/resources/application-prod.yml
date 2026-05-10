@@ -36,7 +36,7 @@ aws:
       access-key: ${AWS_S3_ACCESS_KEY}
       secret-key: ${AWS_S3_SECRET_KEY}
     region: ap-northeast-2
-    bucket: silsonfit-bucket-594754931983-ap-northeast-2-an
+    bucket: silsonfit-storage
 
 edi:
   public-api:

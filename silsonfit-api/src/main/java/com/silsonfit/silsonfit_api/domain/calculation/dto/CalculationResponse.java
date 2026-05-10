@@ -40,6 +40,12 @@ public class CalculationResponse {
     /** 공제 기준 */
     private String deductibleBasis;
 
+    /** 정액 공제 금액 */
+    private Integer fixedDeductibleAmount;
+
+    /** 정액 공제 금액 비율 */
+    private Integer fixedDeductibleRate;
+
     /** 면책/주의사항 */
     private String disclaimer;
 
@@ -83,6 +89,11 @@ public class CalculationResponse {
                 .deductibleAmount(result.getDeductibleAmount())
                 .basis(joinBasis(result.getBasis()))
                 .deductibleBasis(createDeductibleBasis(coverageRule, result))
+                .fixedDeductibleAmount(createFixedDeductibleAmount(request, coverageRule, result))
+                .fixedDeductibleRate(calculateRate(
+                        createFixedDeductibleAmount(request, coverageRule, result),
+                        request.getMedicalCost()
+                ))
                 .disclaimer(resolveDisclaimer(result.getDisclaimer()))
                 .treatmentInfos(createTreatmentInfos(request))
                 .totalMedicalCost(request.getMedicalCost())
@@ -123,10 +134,23 @@ public class CalculationResponse {
 
         int deductibleRate = 100 - coverageRule.getCoverageRate();
         return String.format(
-                "%,d원 또는 진료비의 %d%% 중 큰 금액",
+                "%,d원 공제 후 잔여 진료비의 %d%% 보장(잔여 자기부담 %d%%)",
                 coverageRule.getDeductibleAmount(),
+                coverageRule.getCoverageRate(),
                 deductibleRate
         );
+    }
+
+    private static Integer createFixedDeductibleAmount(
+            CalculationRequest request,
+            CoverageRule coverageRule,
+            CalculationResult result
+    ) {
+        if (!result.getIsCovered()) {
+            return 0;
+        }
+
+        return Math.min(request.getMedicalCost(), coverageRule.getDeductibleAmount());
     }
 
     private static String resolveDisclaimer(String disclaimer) {

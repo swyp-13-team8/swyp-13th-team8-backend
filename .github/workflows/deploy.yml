@@ -1,0 +1,59 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create .env on EC2
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            mkdir -p ~/silsonfit
+            cd ~/silsonfit
+
+            cat > .env <<EOF
+            DB_PASSWORD=${{ secrets.DB_PASSWORD }}
+            JWT_SECRET=${{ secrets.JWT_SECRET }}
+            GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}
+            AWS_S3_ACCESS_KEY=${{ secrets.AWS_S3_ACCESS_KEY }}
+            AWS_S3_SECRET_KEY=${{ secrets.AWS_S3_SECRET_KEY }}
+            AWS_S3_BUCKET=${{ secrets.AWS_S3_BUCKET }}
+            EDI_PUBLIC_API_SERVICE_KEY=${{ secrets.EDI_PUBLIC_API_SERVICE_KEY }}
+            EOF
+
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd ~/silsonfit
+
+            docker compose down || true
+
+            if [ -d ".git" ]; then
+              git pull origin main
+            else
+              git init
+              git remote add origin ${{ secrets.EC2_REPO_URL }}
+              git pull origin main
+            fi
+
+            DOCKER_BUILDKIT=0 COMPOSE_DOCKER_CLI_BUILD=0 docker compose up --build -d
+
+            docker image prune -f
+            
+

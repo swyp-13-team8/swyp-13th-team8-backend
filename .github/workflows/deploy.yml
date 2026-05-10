@@ -13,6 +13,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # EC2에 .env 파일 생성
       - name: Create .env on EC2
         uses: appleboy/ssh-action@v1.0.0
         with:
@@ -20,9 +21,11 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            # 배포 디렉토리로 이동
             mkdir -p ~/silsonfit
             cd ~/silsonfit
 
+            # .env 파일 생성
             cat > .env <<EOF
             DB_PASSWORD=${{ secrets.DB_PASSWORD }}
             JWT_SECRET=${{ secrets.JWT_SECRET }}
@@ -33,6 +36,7 @@ jobs:
             EDI_PUBLIC_API_SERVICE_KEY=${{ secrets.EDI_PUBLIC_API_SERVICE_KEY }}
             EOF
 
+      # EC2에 배포
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v1.0.0
         with:
@@ -40,10 +44,13 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
+            # 배포 디렉토리로 이동
             cd ~/silsonfit
 
+            # 기존 컨테이너 중지 및 제거
             docker compose down || true
 
+            # Git 저장소 초기화 및 최신 코드 가져오기
             if [ -d ".git" ]; then
               git pull origin main
             else
@@ -52,8 +59,10 @@ jobs:
               git pull origin main
             fi
 
+            # Docker Compose를 사용하여 애플리케이션 빌드 및 실행
             DOCKER_BUILDKIT=0 COMPOSE_DOCKER_CLI_BUILD=0 docker compose up --build -d
 
+            # 불필요한 Docker 이미지 제거
             docker image prune -f
             
 

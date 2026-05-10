@@ -1,0 +1,84 @@
+package com.silsonfit.silsonfit_api.domain.auth.controller;
+
+import com.silsonfit.silsonfit_api.domain.auth.dto.LoginRequest;
+import com.silsonfit.silsonfit_api.domain.auth.dto.LoginResponse;
+import com.silsonfit.silsonfit_api.domain.auth.dto.LogoutRequest;
+import com.silsonfit.silsonfit_api.domain.auth.dto.LogoutResponse;
+import com.silsonfit.silsonfit_api.domain.auth.dto.TermsAgreeRequest;
+import com.silsonfit.silsonfit_api.domain.auth.dto.TokenReissueRequest;
+import com.silsonfit.silsonfit_api.domain.auth.dto.TokenReissueResponse;
+import com.silsonfit.silsonfit_api.domain.auth.service.AuthService;
+import com.silsonfit.silsonfit_api.global.auth.CustomUserDetails;
+import com.silsonfit.silsonfit_api.global.common.ApiResponse;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+/**
+ * 인증 관련 API
+ *
+ * 카카오 로그인, 토큰 재발급, 약관 동의, 로그아웃, 회원 탈퇴 제공
+ */
+@RestController
+@RequestMapping("/api/auth")
+@RequiredArgsConstructor
+public class AuthController {
+
+    private final AuthService authService;
+
+    /**
+     * 카카오 로그인
+     *
+     * 클라이언트가 카카오 SDK로 받은 Access Token 전달 시
+     * 서비스의 Access/Refresh Token 발급
+     */
+    @PostMapping("/login")
+    public ApiResponse<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
+        return ApiResponse.success(authService.login(request));
+    }
+
+    /**
+     * 토큰 재발급 (Refresh Token Rotation)
+     */
+    @PostMapping("/reissue")
+    public ApiResponse<TokenReissueResponse> reissue(
+            @Valid @RequestBody TokenReissueRequest request) {
+        return ApiResponse.success(authService.reissue(request));
+    }
+
+    /**
+     * 약관 동의 (신규 회원 가입 완료 처리)
+     */
+    @PostMapping("/terms")
+    public ApiResponse<Void> agreeTerms(
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @Valid @RequestBody TermsAgreeRequest request) {
+        authService.agreeTerms(userDetails.getUserId());
+        return ApiResponse.success();
+    }
+
+    /**
+     * 로그아웃 (Refresh Token 무효화)
+     */
+    @PostMapping("/logout")
+    public ApiResponse<LogoutResponse> logout(
+            @Valid @RequestBody LogoutRequest request) {
+        authService.logout(request.refreshToken());
+        return ApiResponse.success(new LogoutResponse(true));
+    }
+
+    /**
+     * 회원 탈퇴 (30일 유예, 재로그인 시 복구)
+     */
+    @DeleteMapping("/withdraw")
+    public ApiResponse<Void> withdraw(
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
+        authService.withdraw(userDetails.getUserId());
+        return ApiResponse.success();
+    }
+}

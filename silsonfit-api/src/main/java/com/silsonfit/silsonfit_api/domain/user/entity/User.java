@@ -1,0 +1,93 @@
+package com.silsonfit.silsonfit_api.domain.user.entity;
+
+import com.silsonfit.silsonfit_api.global.common.BaseTimeEntity;
+import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+
+/**
+ * 사용자 엔티티
+ *
+ * 카카오 소셜 로그인 기반 회원 정보 관리
+ */
+@Entity
+@Table(name = "users")
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class User extends BaseTimeEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    // 카카오 고유 ID
+    @Column(nullable = false, unique = true)
+    private Long socialId;
+
+    // 사용자 이름 (카카오에서 가져옴)
+    @Column(nullable = false)
+    private String name;
+
+    // 이메일 (카카오 선택 동의 항목, 미동의 시 null)
+    @Column
+    private String email;
+
+    // 프로필 이미지 URL (카카오 선택 동의 항목, 미동의 시 null)
+    @Column
+    private String profileImageUrl;
+
+    // 약관 동의 시각 (null이면 미동의)
+    @Column
+    private LocalDateTime termsAgreedAt;
+
+    // 탈퇴 요청 시각 (null이면 활성, non-null이면 탈퇴 유예 중)
+    @Column
+    private LocalDateTime deactivatedAt;
+
+    @Builder
+    public User(Long socialId, String name, String email, String profileImageUrl) {
+        this.socialId = socialId;
+        this.name = name;
+        this.email = email;
+        this.profileImageUrl = profileImageUrl;
+    }
+
+    /**
+     * 약관 동의 처리
+     */
+    public void agreeTerms() {
+        this.termsAgreedAt = LocalDateTime.now();
+    }
+
+    /**
+     * 닉네임 수정
+     */
+    public void updateName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * 회원 탈퇴 처리 (비활성화)
+     */
+    public void deactivate() {
+        this.deactivatedAt = LocalDateTime.now();
+    }
+
+    /**
+     * 탈퇴 유예 사용자 복구
+     */
+    public void reactivate() {
+        this.deactivatedAt = null;
+    }
+
+    /**
+     * 탈퇴 상태 여부 확인
+     */
+    public boolean isDeactivated() {
+        return this.deactivatedAt != null;
+    }
+}

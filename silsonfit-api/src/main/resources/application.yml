@@ -8,6 +8,25 @@ spring:
   profiles:
     active: dev
 
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+jwt:
+  access-token-expiration: 3600000      # 60분
+  refresh-token-expiration: 1209600000  # 14일
+
+kakao:
+  user-info-uri: https://kapi.kakao.com/v2/user/me
+
+edi:
+  public-api:
+    endpoint: https://apis.data.go.kr/B551182/mdfeeCrtrInfoService
+    service-key: ${EDI_PUBLIC_API_SERVICE_KEY:}
+    num-of-row: 10
+    page-no: 1
+
 management:
   endpoints:
     web:

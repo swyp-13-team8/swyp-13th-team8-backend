@@ -30,5 +30,15 @@ class PdfServiceTest {
         System.out.println("=========================================================");
 
     }
+    @Test
+    void 한글_파일명_S3_URL_텍스트_추출_테스트() {
+        String pdfUrl = "https://silsonfit-storage.s3.ap-northeast-2.amazonaws.com/insurances/무배당 프로미라이프 실손의료비보험1701_약관.pdf";
+
+        String s = pdfService.extractText(pdfUrl);
+
+        System.out.println("=================[파싱된 텍스트 결과]======================");
+        System.out.println(s.substring(0, 20000));
+        System.out.println("=========================================================");
+    }
 
 }

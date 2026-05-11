@@ -8,9 +8,11 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
 
 @Service
@@ -53,7 +55,12 @@ public class PdfService {
     public String extractText(String pdfFileUrl) {
         log.info("[URL] 텍스트 추출 start");
         // URL 에서 직접 InputStream 을 열어 PDFBox 에 넘겨준다.
-        try (InputStream in = new URL(pdfFileUrl).openStream();
+        URI uri = UriComponentsBuilder
+                .fromUriString(pdfFileUrl)
+                .build()
+                .encode()
+                .toUri();
+        try (InputStream in = uri.toURL().openStream();
              PDDocument document = Loader.loadPDF(in.readAllBytes())) {
 
             PDFTextStripper stripper = new PDFTextStripper();

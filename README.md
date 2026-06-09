@@ -68,7 +68,7 @@ silsonfit-api/
 
 ```
 ┌─────────────────┐
-│   클라이언트     │  (iOS/Android/Web)
+│   클라이언트     │  (Web)
 └────────┬────────┘
          │
     ┌────▼──────────────────────┐
@@ -121,7 +121,6 @@ External Services:
 - **Spring Security**: 사용자 인증/인가 처리
 - **Spring Data JPA**: ORM 기반 데이터베이스 접근
 - **Spring AI 1.1.4**: Google Gemini API 연동
-- **Spring Boot Actuator**: 헬스 체크 및 메트릭 수집
 
 ### Database
 - **PostgreSQL 15**: 프로덕션 데이터베이스
@@ -142,13 +141,11 @@ External Services:
 
 ### Development & Documentation
 - **Lombok**: 보일러플레이트 코드 제거
-- **Springdoc OpenAPI 2.8.16**: Swagger/OpenAPI 자동 문서화
-- **SLF4J & Logback**: 로깅
+- **SLF4J**: 로깅
 
 ### Testing
 - **JUnit 5**: 단위 테스트 프레임워크
 - **Spring Boot Test**: 통합 테스트
-- **Spring Security Test**: 보안 관련 테스트
 
 ### Build & Deployment
 - **Gradle**: 빌드 및 의존성 관리
